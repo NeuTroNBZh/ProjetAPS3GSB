@@ -42,6 +42,11 @@ Public Class FabriqueServices
                                  New EquipeDao(_connexion), TimeProvider.System)
     End Function
 
+    Public Function Administration() As ServiceAdministration
+        Return New ServiceAdministration(New AdministrationDao(_connexion), New ReferentielDao(_connexion),
+                                         New ConsultationDao(_connexion), TimeProvider.System)
+    End Function
+
     Public Function Messagerie() As ServiceMessagerie
         Return New ServiceMessagerie(New MessagerieDao(_connexion))
     End Function
