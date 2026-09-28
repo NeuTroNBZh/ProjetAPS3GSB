@@ -14,6 +14,8 @@ Indicateurs de la région sur la période (visites, praticiens vus, confiance mo
 
 ![Synthèse de la région](images/20_ma_region_synthese.png)
 
+**« Exporter en CSV »** (en bas à gauche) enregistre la synthèse et l'activité de chaque visiteur de la région dans un fichier lisible par Excel (voir [Mon activité](02-visiteur.md#exporter-les-statistiques)).
+
 ### Visiteurs
 
 Activité de chaque visiteur : visites, praticiens vus, confiance, échantillons, coût, brouillons et date de la dernière visite. Un visiteur **sans aucune visite** sur la période est signalé.

@@ -68,7 +68,7 @@ Priorité : **P1** = module Visiteur (urgent), **P2** = Délégué, **P3** = Res
 ## Optionnel / pistes
 
 - EX-50 : messagerie interne : envoyer un message à une personne ou à un groupe (région, secteur), boîte de réception avec état lu / non lu. P3
-- EX-51 : export des statistiques (CSV). P3
+- EX-51 : export des statistiques (CSV). P3 — réalisé en v1.1.0 : bouton « Exporter en CSV » dans Mon activité, Ma région et Mon secteur.
 
 ## Module Administration (proposition du prestataire)
 
@@ -82,7 +82,7 @@ Le CDC ne précise pas qui gère les comptes et les référentiels ; le prestata
 | EX-73 | Gérer les référentiels : praticiens, médicaments (composition, interactions, posologie), motifs. | P3 |
 | EX-74 | Consulter le journal des connexions. | P3 |
 
-Réalisé en v0.8.0. Pour EX-73, l'écran gère les praticiens (création, modification, désactivation), le prix et le statut des médicaments, et les motifs ; la composition, les interactions et la posologie restent alimentées par script SQL (données issues du dépôt légal, rarement modifiées).
+Réalisé en v0.8.0 ; EX-73 complété en v1.1.0 : en plus des praticiens, du prix et du statut des médicaments et des motifs, l'administrateur gère la composition, les interactions et la posologie de chaque médicament, ainsi que les composants et les dosages.
 
 ## Non fonctionnel / documentation
 

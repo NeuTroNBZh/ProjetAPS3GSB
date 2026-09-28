@@ -25,6 +25,16 @@
 | Je ne vois pas mes comptes-rendus anciens. | La consultation couvre les **trois dernières années**. |
 | Je ne peux pas modifier le compte-rendu d'un collègue. | Chacun ne modifie que ses propres comptes-rendus ; délégués et responsables les consultent en lecture seule. |
 
+## Export et référentiels
+
+| Question | Réponse |
+|---|---|
+| « Exporter en CSV » est grisé. | Affichez d'abord une synthèse (choisissez la période puis « Afficher »). |
+| « Impossible d'écrire le fichier ». | Le fichier est ouvert dans Excel ou le dossier est protégé : fermez-le, ou enregistrez ailleurs. |
+| Les accents s'affichent mal dans le fichier. | Ouvrez-le avec Excel (double-clic) ; un autre tableur doit l'importer en UTF-8 avec le point-virgule comme séparateur. |
+| « Ce composant figure déjà dans la composition ». | Retirez la ligne existante puis ajoutez-la avec la nouvelle quantité. |
+| « Ce dosage existe déjà ». | Il est déjà dans la liste « Dosage » de la posologie : choisissez-le. |
+
 ## Échantillons
 
 | Question | Réponse |

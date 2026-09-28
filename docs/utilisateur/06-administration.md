@@ -40,8 +40,29 @@ L'historique des suivis et des visites est toujours conservé.
 ![Référentiels](images/52_admin_referentiels.png)
 
 - **Praticiens** : « Nouveau praticien », « Modifier », « Désactiver » / « Réactiver ». Un praticien désactivé n'est plus proposé à la saisie des comptes-rendus mais reste visible dans l'historique.
-- **Médicaments** : « Modifier le prix ou le statut » (prix de l'échantillon, commercialisé ou retiré). La composition, les interactions et la posologie sont chargées par le service informatique à partir du dépôt légal.
+- **Médicaments** : « Modifier le prix ou le statut » (prix de l'échantillon, commercialisé ou retiré) et « Composition, interactions, posologie » (voir ci-dessous).
 - **Motifs de visite** : « Nouveau motif » (code et libellé, placé juste avant « Autre ») et « Modifier » (libellé, proposé ou non). Le motif « Autre » ne peut pas être désactivé.
+
+### Composition, interactions et posologie d'un médicament
+
+Dans le sous-onglet **Médicaments**, sélectionnez un médicament puis **« Composition, interactions, posologie »**.
+
+![Médicaments](images/54_admin_medicaments.png)
+
+La fenêtre du médicament a trois onglets. Dans chacun, **« Retirer »** supprime la ligne sélectionnée après confirmation.
+
+![Composition](images/55_admin_medicament_composition.png)
+
+- **Composition** : « Ajouter un composant » (composant, quantité, unité : mg, g, ml, %…). Un composant ne figure qu'une fois : pour changer sa quantité, retirez-le puis ajoutez-le de nouveau. Composant absent de la liste : **« Nouveau composant… »** (code de 2 à 4 lettres ou chiffres, et nom).
+- **Interactions** : « Ajouter une interaction » : choisissez l'autre médicament et le **sens** (le médicament affiché perturbe l'effet de l'autre, ou son effet est perturbé par l'autre), puis décrivez l'effet. L'interaction apparaît aussi sur la fiche de l'autre médicament, dans l'autre sens.
+
+![Interactions](images/56_admin_medicament_interactions.png)
+
+- **Posologie** : « Ajouter une posologie » : type d'individu (adulte, enfant…), présentation (comprimé, sirop…), dosage et texte de la posologie. Une seule posologie par combinaison. Dosage absent de la liste : **« Nouveau dosage… »** (quantité et unité).
+
+![Posologie](images/57_admin_medicament_posologie.png)
+
+Les modifications sont visibles aussitôt dans la fiche **Médicaments** de tous les collaborateurs.
 
 ## 4. Journal des connexions
 

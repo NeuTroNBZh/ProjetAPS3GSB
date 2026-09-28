@@ -1,6 +1,6 @@
 # Spécifications fonctionnelles détaillées — GSB-CR
 
-Version décrite : 1.0.0. Ce document détaille chaque écran : champs, contrôles, actions et messages. Les cas d'utilisation (`UC-xx`) et les règles de gestion (`RG-xx`) sont définis dans les [spécifications générales](specifications-generales.md) ; les captures d'écran viennent de la [documentation utilisateur](utilisateur/README.md) ; le modèle de données est dans [modele-donnees.md](modele-donnees.md).
+Version décrite : 1.1.0. Ce document détaille chaque écran : champs, contrôles, actions et messages. Les cas d'utilisation (`UC-xx`) et les règles de gestion (`RG-xx`) sont définis dans les [spécifications générales](specifications-generales.md) ; les captures d'écran viennent de la [documentation utilisateur](utilisateur/README.md) ; le modèle de données est dans [modele-donnees.md](modele-donnees.md).
 
 ## 0. Conventions communes à tous les écrans
 
@@ -161,7 +161,7 @@ Information : « Sa fiche sera conservée pour suivre son historique, même s'il
 | Liste | Nom commercial, Famille, Dépôt légal, Prix éch. |
 | Fiche | Nom, famille, statut ; effets ; contre-indications ; composition (composant, quantité, unité) ; interactions ; posologie (type d'individu, présentation, dosage, texte) |
 
-## 9. Mon activité (UC-15, UC-16)
+## 9. Mon activité (UC-15, UC-16, UC-17)
 
 ![Mon activité](utilisateur/images/15_mon_activite.png)
 
@@ -171,10 +171,11 @@ Information : « Sa fiche sera conservée pour suivre son historique, même s'il
 | « Afficher » | Recalcule la synthèse ; « La date de début doit précéder la date de fin. » ; « La consultation est limitée aux trois dernières années (depuis le <date>). » |
 | Onglet Synthèse | Indicateurs : Visites (dont avec remplaçant), Praticiens vus, Confiance moyenne (sur 5), Échantillons distribués (et coût), Temps moyen de saisie (et total), Brouillons à terminer ; graphique « Visites par mois » avec tableau ; Motifs des visites ; Produits présentés ; Échantillons par produit |
 | Onglet Praticiens à revoir (n) | Situation, Praticien, Ville, Dernière visite, Il y a (jours), Prochaine prévue, Téléphone ; ordre RG-20 ; « Saisir un compte-rendu » ouvre l'écran 5 avec le praticien présélectionné |
+| « Exporter en CSV » | Actif dès qu'une synthèse est affichée. Boîte « Exporter les statistiques » : nom proposé `GSB-activite-<périmètre>-<début>-au-<fin>.csv`, dossier Documents. Fichier : en-tête (périmètre, période, date d'export), indicateurs, visites par mois (tous les mois, zéro compris), motifs, produits présentés, échantillons (dépôt légal, produit, quantité, coût) ; RG-16. Messages : « Statistiques exportées dans : <chemin> » ; « Impossible d'écrire le fichier… Vérifiez qu'il n'est pas ouvert dans Excel, ou choisissez un autre dossier. » |
 
 ![Praticiens à revoir](utilisateur/images/16_praticiens_a_revoir.png)
 
-## 10. Ma région / Mon secteur (UC-20, UC-21, UC-30, UC-31)
+## 10. Ma région / Mon secteur (UC-20, UC-21, UC-30, UC-31, UC-17)
 
 Même écran pour le délégué (« Ma région », périmètre : sa région) et le responsable (« Mon secteur », périmètre : toutes les régions du secteur). Période : comme l'écran 9.
 
@@ -186,6 +187,8 @@ Même écran pour le délégué (« Ma région », périmètre : sa région) et 
 | Visiteurs (n) | Visiteur, [Région pour le secteur], Visites, Praticiens vus, Confiance moy., Échantillons, Coût, Brouillons, Dernière visite ; visiteur sans visite signalé | « Voir son activité » (ou double-clic) : fiche de synthèse du visiteur |
 | Comptes-rendus (n) | Visite le, Visiteur, Praticien, Ville, Remplaçant vu, Motif ; filtres « Tous les visiteurs » ou un visiteur, et praticien ou ville | « Consulter le compte-rendu » : fiche en lecture seule (visite, remplaçant, motif, produits, échantillons, bilan, confiance, prochaine visite) |
 | Praticiens à revoir (n) | Comme l'écran 9, avec la colonne « Suivi par » | — |
+
+« Exporter en CSV » : comme l'écran 9, avec en plus la section « Activité par visiteur » (visiteur, profil, région, visites, praticiens vus, confiance moyenne, échantillons, coût, brouillons, dernière visite).
 
 Seuls les comptes-rendus validés du périmètre sont visibles (RG-30) ; un compte-rendu hors périmètre est refusé (« Ce compte-rendu n'appartient pas à votre équipe. »).
 
@@ -278,7 +281,7 @@ Messages : « Choisissez au moins un praticien. », « Choisissez deux collabora
 | Sous-onglet | Liste | Actions et champs |
 |---|---|---|
 | Praticiens | Praticien, Type, Ville, Suivi par, État (inactifs en gris) ; recherche | Nouveau praticien, Modifier : Nom*, Prénom*, Type*, Adresse, Code postal (5 chiffres), Ville, Téléphone, E-mail (format vérifié), Coefficient de notoriété (0 à 9 999,99), Praticien actif ; Désactiver / Réactiver |
-| Médicaments | Nom commercial, Famille, Dépôt légal, Prix éch., Statut | Modifier le prix ou le statut : prix (0 à 999 999,99 €, 2 décimales), Commercialisé |
+| Médicaments | Nom commercial, Famille, Dépôt légal, Prix éch., Statut | Modifier le prix ou le statut : prix (0 à 999 999,99 €, 2 décimales), Commercialisé ; « Composition, interactions, posologie » : fenêtre 14.5 |
 | Motifs de visite | Code, Libellé, Statut | Nouveau motif : Code (2 à 6 lettres, AUTRE réservé), Libellé (60 caractères au plus) ; Modifier : libellé, Proposé à la saisie (« Autre » reste actif) |
 
 ### 14.4 Journal des connexions
@@ -292,3 +295,17 @@ Messages : « Choisissez au moins un praticien. », « Choisissez deux collabora
 | Échecs seulement | Case à cocher |
 | « Afficher » | Recharge la liste ; compteur « n tentative(s), dont n échec(s) » ; « affichage limité, affinez la période » au-delà de 1 000 lignes |
 | Liste | Date et heure (à la seconde), Login saisi, Collaborateur (ou « (login inconnu) »), Résultat (« Connexion réussie », « Échec » en rouge) |
+
+### 14.5 Composition, interactions et posologie d'un médicament
+
+Bandeau : nom commercial, dépôt légal et famille. Trois onglets, chacun avec son nombre de lignes ; « Retirer » demande confirmation et n'est actif que sur une ligne sélectionnée. Règle RG-56.
+
+![Composition](utilisateur/images/55_admin_medicament_composition.png)
+
+| Onglet | Liste | Actions et champs |
+|---|---|---|
+| Composition (n) | Composant, Quantité, Unité | « Ajouter un composant » : Composant* (liste), Quantité* (jusqu'à 3 décimales), Unité* (10 caractères, « mg » par défaut) ; « Nouveau composant… » : Code* (2 à 4 lettres ou chiffres, mis en majuscules), Nom* (60 caractères) |
+| Interactions (n) | Autre médicament, Sens (« perturbe l'effet de… » ou « voit son effet perturbé par… »), Description | « Ajouter une interaction » : Autre médicament* (liste sans le médicament affiché), Sens*, Description (500 caractères) |
+| Posologie (n) | Type d'individu, Présentation, Dosage, Posologie | « Ajouter une posologie » : Type d'individu*, Présentation*, Dosage* (listes), Posologie* (200 caractères) ; « Nouveau dosage… » : Quantité*, Unité* ; code calculé (« 500MG », « 0V5PC » pour 0,5 %) |
+
+Messages : « Choisissez le composant. » ; « La quantité doit être strictement positive. » ; « L'unité est obligatoire (10 caractères au plus : mg, g, ml, %…). » ; « Ce composant figure déjà dans la composition : retirez-le d'abord pour changer sa quantité. » ; « Un médicament ne peut pas interagir avec lui-même. » ; « Cette interaction est déjà enregistrée. » ; « Une posologie existe déjà pour ce type d'individu, cette présentation et ce dosage. » ; « Ce code de composant existe déjà. » ; « Ce dosage existe déjà : choisissez-le dans la liste. »

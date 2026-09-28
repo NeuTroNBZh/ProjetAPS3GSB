@@ -1,6 +1,6 @@
 # GSB-CR — Documentation utilisateur
 
-GSB-CR est l'application de bureau des collaborateurs de Galaxy Swiss Bourdin pour saisir et suivre les **comptes-rendus de visite** (CR) des visiteurs médicaux. Cette documentation présente le mode opératoire de chaque module (version 0.8.0).
+GSB-CR est l'application de bureau des collaborateurs de Galaxy Swiss Bourdin pour saisir et suivre les **comptes-rendus de visite** (CR) des visiteurs médicaux. Cette documentation présente le mode opératoire de chaque module (version 1.1.0).
 
 ## Quel guide lire ?
 

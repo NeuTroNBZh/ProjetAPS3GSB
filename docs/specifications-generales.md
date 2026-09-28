@@ -1,6 +1,6 @@
 # Spécifications fonctionnelles générales — GSB-CR
 
-Version de l'application décrite : 1.0.0. Ce document décrit **ce que fait** l'application : acteurs, cas d'utilisation et règles de gestion. Le détail des écrans et des champs est dans les [spécifications détaillées](specifications-detaillees.md) ; les exigences d'origine sont dans [exigences.md](exigences.md).
+Version de l'application décrite : 1.1.0. Ce document décrit **ce que fait** l'application : acteurs, cas d'utilisation et règles de gestion. Le détail des écrans et des champs est dans les [spécifications détaillées](specifications-detaillees.md) ; les exigences d'origine sont dans [exigences.md](exigences.md).
 
 ## 1. Objet et périmètre
 
@@ -10,10 +10,10 @@ GSB-CR remplace les comptes-rendus de visite papier et les fichiers Excel des vi
 |---|---|
 | Application de bureau Windows, base Oracle centrale | Version mobile ou tablette, accès par navigateur |
 | Saisie, modification et consultation des comptes-rendus | Lien avec l'intranet ou le site web de GSB |
-| Suivi d'activité par visiteur, région et secteur | Export des statistiques (EX-51, optionnelle, non réalisée) |
+| Suivi d'activité par visiteur, région et secteur, avec export CSV | Tableaux de bord en ligne, envoi automatique de rapports |
 | Échantillons : dotations et contrôle de stock | Gestion des stocks physiques d'échantillons |
 | Messagerie interne entre collaborateurs | Courrier électronique externe |
-| Administration des comptes, affectations, portefeuilles et référentiels | Saisie de la composition et de la posologie des médicaments (chargées par script) |
+| Administration des comptes, affectations, portefeuilles et référentiels (dont composition, interactions et posologie des médicaments) | Création d'un médicament (données du dépôt légal, chargées par script) |
 
 ## 2. Acteurs
 
@@ -59,6 +59,7 @@ Diagramme : [uml/01_cas_utilisation.svg](uml/01_cas_utilisation.svg).
 | UC-14 | Consulter ses comptes-rendus | Visiteur, délégué | EX-20 |
 | UC-15 | Consulter la synthèse de son activité | Visiteur, délégué | EX-23 |
 | UC-16 | Voir les praticiens à revoir | Visiteur, délégué | EX-24 |
+| UC-17 | Exporter les statistiques (extension de UC-15, UC-20 et UC-30) | Visiteur, délégué, responsable | EX-51 |
 | UC-20 | Consulter l'activité de la région | Délégué | EX-31, EX-35 |
 | UC-21 | Consulter les comptes-rendus de la région | Délégué | EX-32 |
 | UC-22 | Attribuer des échantillons | Délégué | EX-33 |
@@ -160,6 +161,11 @@ Les règles citées (`RG-xx`) sont regroupées en section 5.
 
 - **Scénario nominal** : le système liste les praticiens du portefeuille à planifier selon la périodicité (RG-20), du plus urgent au moins urgent ; le visiteur peut lancer directement la saisie d'un compte-rendu pour l'un d'eux (UC-10).
 
+### UC-17 — Exporter les statistiques
+
+- **Scénario nominal** : depuis la synthèse affichée (UC-15, UC-20 ou UC-30), l'utilisateur clique sur « Exporter en CSV » et choisit le fichier ; le système enregistre la période, les indicateurs, les visites par mois, les motifs, les produits présentés, les échantillons et, pour une équipe, l'activité de chaque visiteur.
+- **Règle** : RG-16.
+
 ### UC-20 — Consulter l'activité de la région
 
 - **Acteur** : délégué.
@@ -209,8 +215,8 @@ Les règles citées (`RG-xx`) sont regroupées en section 5.
 
 ### UC-43 — Gérer les référentiels
 
-- **Scénarios** : créer, modifier, désactiver ou réactiver un praticien ; modifier le prix d'échantillon et le statut (commercialisé ou retiré) d'un médicament ; créer un motif de visite, modifier son libellé, le désactiver.
-- **Règles** : RG-55.
+- **Scénarios** : créer, modifier, désactiver ou réactiver un praticien ; modifier le prix d'échantillon et le statut (commercialisé ou retiré) d'un médicament ; ajouter ou retirer un composant de sa composition, une interaction avec un autre médicament, une posologie ; créer un composant ou un dosage ; créer un motif de visite, modifier son libellé, le désactiver.
+- **Règles** : RG-55 et RG-56.
 
 ### UC-44 — Consulter le journal des connexions
 
@@ -239,6 +245,7 @@ Les règles citées (`RG-xx`) sont regroupées en section 5.
 | RG-13 | Chaque ouverture du formulaire de saisie crée une **session de saisie** (début, fin) qui mesure le temps passé. |
 | RG-14 | Un compte-rendu est **brouillon** ou **validé**. Seuls les validés comptent dans les statistiques et le contrôle de stock. Un validé ne redevient jamais brouillon et ne peut pas être supprimé ; un brouillon peut l'être par son auteur. |
 | RG-15 | La consultation (comptes-rendus, statistiques) porte sur les **trois dernières années**. |
+| RG-16 | L'export CSV reprend exactement la synthèse affichée (comptes-rendus validés de la période) ; il est lisible par Excel en français (point-virgule, virgule décimale, UTF-8) et protège les cellules contre l'interprétation comme formule. |
 
 ### Praticiens et périodicité
 
@@ -272,6 +279,7 @@ Les règles citées (`RG-xx`) sont regroupées en section 5.
 | RG-53 | Une nouvelle affectation commence après le début de l'affectation actuelle et au plus tard dans un an ; l'ancienne est close la veille. |
 | RG-54 | Un portefeuille n'est confié qu'à un visiteur ou un délégué en poste. |
 | RG-55 | Le motif « Autre » existe toujours, reste actif et est proposé en dernier. Un nouveau motif a un code de 2 à 6 lettres. |
+| RG-56 | Un composant figure au plus une fois dans une composition, avec une quantité positive et une unité (10 caractères au plus). Une interaction relie deux médicaments différents, dans un sens (l'un perturbe l'effet de l'autre). Une seule posologie par type d'individu, présentation et dosage. Un composant a un code de 2 à 4 lettres ou chiffres ; le code d'un dosage est calculé à partir de sa valeur (« 500MG »). |
 
 ## 6. Exigences non fonctionnelles
 
@@ -282,7 +290,7 @@ Les règles citées (`RG-xx`) sont regroupées en section 5.
 | EX-05 Sécurité | RG-01 à RG-06 ; requêtes SQL paramétrées ; compte Oracle des postes sans droit sur la structure |
 | Fiabilité | Enregistrements en transaction (tout ou rien) ; règles doublées par des contraintes et déclencheurs Oracle |
 | Performance | Chargements en arrière-plan : l'interface reste utilisable pendant les accès à la base ; listes limitées (500 praticiens, 1 000 lignes de journal) |
-| Maintenabilité | Architecture en 4 couches (IHM, Métier, Données, Modèles) ; 248 tests automatisés ; intégration continue |
+| Maintenabilité | Architecture en 4 couches (IHM, Métier, Données, Modèles) ; 288 tests automatisés ; intégration continue |
 
 ## 7. Traçabilité
 

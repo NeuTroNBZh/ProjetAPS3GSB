@@ -12,6 +12,7 @@ La tuile **« Mon secteur »** fonctionne comme « Ma région » du délégué, 
 - **Visiteurs** : activité de chaque visiteur, avec sa **région**. Sélectionnez un visiteur puis **« Voir son activité »** pour sa synthèse détaillée.
 - **Comptes-rendus** : les comptes-rendus validés de vos subordonnés, filtrables par visiteur et par praticien, en lecture seule.
 - **Praticiens à revoir** : praticiens suivis par les visiteurs du secteur qui doivent être revus.
+- **« Exporter en CSV »** : enregistre la synthèse du secteur et l'activité de chaque visiteur (avec sa région) dans un fichier lisible par Excel.
 
 ![Activité des visiteurs du secteur](images/31_mon_secteur_visiteurs.png)
 

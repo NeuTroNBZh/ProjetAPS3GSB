@@ -19,7 +19,7 @@ dotnet test GSB.CR.slnx --filter "TestCategory!=Integration"   # unitaires (comm
 dotnet test GSB.CR.slnx                                          # tous, base Oracle joignable
 ```
 
-Résultat de référence pour la version 0.8.0 : **240 tests, 0 échec**.
+Résultat de référence pour la version 1.1.0 : **288 tests, 0 échec** (dont 66 d'intégration Oracle).
 
 ## 2. Environnement de recette
 
@@ -89,6 +89,7 @@ Colonnes « Obtenu » et « Statut » à remplir pendant la campagne.
 | R-42 | EX-22 | `lvillechalane` | Médicaments : ouvrir AMOPIL. | Famille, composition, effets, contre-indications, interactions et posologie. | ConsultationDaoIntegrationTests | | |
 | R-43 | EX-23 | `lvillechalane` | Mon activité : choisir « Les 12 derniers mois », puis une période personnalisée. | Nombre de visites, praticiens vus, échantillons et leur coût, graphique par mois (et tableau), motifs, temps de saisie. Période limitée à 3 ans. | ServiceActiviteTests, ActiviteDaoIntegrationTests | | |
 | R-44 | EX-24 | `lvillechalane` | Mon activité > Praticiens à revoir. | Classement du plus urgent au moins urgent : plus de 8 mois, jamais visités, visite prévue dépassée, 6 à 8 mois. | PeriodiciteTests, ServiceActiviteTests | | |
+| R-45 | EX-51 | `lvillechalane` | Mon activité : « Les 12 derniers mois », « Afficher », puis « Exporter en CSV » ; enregistrer dans Documents et ouvrir le fichier avec Excel. | Nom proposé `GSB-activite-Mon-activite-<début>-au-<fin>.csv` ; colonnes séparées, accents corrects, virgule décimale ; mêmes chiffres qu'à l'écran, tous les mois de la période. Réessayer avec le fichier ouvert dans Excel : message « Impossible d'écrire le fichier ». | ExportStatistiquesTests | | |
 
 ### 4.4 Module Délégué régional
 
@@ -100,6 +101,7 @@ Colonnes « Obtenu » et « Statut » à remplir pendant la campagne.
 | R-53 | EX-33 | `ecadic` | Échantillons : choisir un mois, un visiteur, un produit, une quantité, « Enregistrer la dotation ». Saisir à nouveau pour le même trio. | Dotation enregistrée ; la seconde saisie remplace la première. Impossible de doter un visiteur hors de sa région. | ServiceEchantillonsTests | | |
 | R-54 | EX-34 | `ecadic` | Échantillons : contrôle de stock, cocher « Seulement les dépassements ». | L'écart négatif de Denise Bunisset sur EQUILAR est signalé. | ServiceEchantillonsTests, LigneStockTests | | |
 | R-55 | EX-35 | `cbedos` | Ma région > Praticiens à revoir. | Praticiens de la région non visités depuis plus de 8 mois, avec le visiteur qui les suit. | ServiceEquipeTests | | |
+| R-56 | EX-51 | `cbedos` | Ma région : « Afficher » puis « Exporter en CSV ». | Le fichier contient en plus la section « Activité par visiteur » (une ligne par visiteur de la région). | ExportStatistiquesTests | | |
 
 ### 4.5 Module Responsable de secteur
 
@@ -108,6 +110,7 @@ Colonnes « Obtenu » et « Statut » à remplir pendant la campagne.
 | R-60 | EX-40 | `pgarnier` | Mon secteur : choisir une période, puis double-cliquer sur un visiteur. | Statistiques et graphique du secteur Ouest ; activité de chaque visiteur avec sa région ; détail d'un visiteur. | ServiceEquipeTests, EquipeIntegrationTests | | |
 | R-61 | EX-41 | `pgarnier` | Mon secteur > Comptes-rendus. | CR validés des visiteurs du secteur, en lecture seule. | ServiceEquipeTests | | |
 | R-62 | EX-34 | `clemoine` | Échantillons. | Contrôle de stock consultable ; pas de saisie de dotation. | ServiceEchantillonsTests | | |
+| R-63 | EX-51 | `pgarnier` | Mon secteur : « Exporter en CSV ». | Activité par visiteur avec la région de chacun. | ExportStatistiquesTests | | |
 
 ### 4.6 Messagerie
 
@@ -130,6 +133,9 @@ Colonnes « Obtenu » et « Statut » à remplir pendant la campagne.
 | R-86 | EX-72 | `admin` | Portefeuilles : sélectionner des praticiens sans visiteur, « Confier les praticiens sélectionnés à ce visiteur ». | Praticiens ajoutés au portefeuille ; la liste « sans visiteur » diminue. | AdministrationDaoIntegrationTests | | |
 | R-87 | EX-72 | `admin` | « Transférer tout le portefeuille… » vers un autre visiteur. | Tous les praticiens sont transférés en une transaction ; message « n praticien(s) transféré(s) » ; l'historique des visites est conservé. | ServiceAdministrationTests, AdministrationDaoIntegrationTests | | |
 | R-88 | EX-73 | `admin` | Référentiels : créer un praticien, désactiver un praticien, modifier le prix d'un médicament, créer un motif. | Enregistrements pris en compte ; le praticien désactivé n'est plus proposé à la saisie ; le nouveau motif apparaît avant « Autre », qui ne peut pas être désactivé. | ServiceAdministrationTests | | |
+| R-94 | EX-73 | `admin` | Référentiels > Médicaments : NOVELIX > « Composition, interactions, posologie ». « Nouveau composant… » (code KETP, Kétoprofène), puis l'ajouter (50 mg) ; l'ajouter une seconde fois ; puis « Retirer ». | Composant créé et ajouté ; second ajout refusé (« figure déjà dans la composition ») ; retrait après confirmation. La fiche Médicaments d'un visiteur reflète chaque changement. | ServiceAdministrationMedicamentsTests, MedicamentsDaoIntegrationTests | | |
+| R-95 | EX-73 | `admin` | Onglet Interactions : ajouter DOLORIL, sens « NOVELIX perturbe l'effet de l'autre médicament » ; essayer avec NOVELIX lui-même impossible (absent de la liste). Ouvrir la fiche de DOLORIL. | L'interaction apparaît sur les deux fiches, dans le bon sens. | MedicamentsDaoIntegrationTests | | |
+| R-96 | EX-73 | `admin` | Onglet Posologie : « Nouveau dosage… » (200 mg), puis « Ajouter une posologie » Enfant, Comprimé, 200 mg ; recommencer la même combinaison. | Dosage 200 mg proposé ; posologie ajoutée ; doublon refusé (« Une posologie existe déjà… »). | ServiceAdministrationMedicamentsTests | | |
 | R-89 | EX-74 | `admin` | Journal des connexions : filtrer par login. | Seules les tentatives du login saisi sont listées, avec le nombre d'échecs. | AdministrationDaoIntegrationTests | | |
 
 ### 4.8 Exigences non fonctionnelles
@@ -183,18 +189,18 @@ Colonnes « Obtenu » et « Statut » à remplir pendant la campagne.
 | EX-40 | R-60 | oui |
 | EX-41 | R-61 | oui |
 | EX-50 | R-70, R-71, R-72 | oui |
-| EX-51 | — | non réalisée (optionnelle) |
+| EX-51 | R-45, R-56, R-63 | oui |
 | EX-70 | R-06, R-80 à R-84 | oui |
 | EX-71 | R-85 | oui |
 | EX-72 | R-86, R-87 | oui |
-| EX-73 | R-88 | oui (partielle : composition, interactions et posologie par script SQL) |
+| EX-73 | R-88, R-94 à R-96 | oui |
 | EX-74 | R-10, R-89 | oui |
 
 ## 6. Procès-verbal de recette
 
 | Campagne | Date | Version | Testeur | Scénarios OK / KO / NT | Décision |
 |---|---|---|---|---|---|
-| 1 | | 0.8.0 | | | |
+| 1 | | 1.1.0 | | | |
 
 ### Anomalies relevées
 

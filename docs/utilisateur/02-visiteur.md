@@ -88,6 +88,12 @@ La tuile **« Mon activité »** fait la synthèse de vos comptes-rendus **valid
 
 La synthèse donne le nombre de visites, les praticiens vus, la confiance moyenne, les échantillons distribués et leur coût, le temps moyen de saisie et les brouillons à terminer. Suivent les visites par mois (graphique et tableau), la répartition par motif et les produits présentés.
 
+### Exporter les statistiques
+
+Le bouton **« Exporter en CSV »** (en bas à gauche) enregistre la synthèse affichée dans un fichier que vous ouvrez avec **Excel** : choisissez le dossier (Documents par défaut), gardez ou changez le nom proposé, puis **« Enregistrer »**. Le fichier reprend la période, les indicateurs, les visites mois par mois, les motifs, les produits présentés et les échantillons par produit.
+
+Si l'enregistrement échoue, vérifiez que le fichier n'est pas déjà ouvert dans Excel.
+
 ### Praticiens à revoir
 
 Un praticien doit être visité **tous les 6 à 8 mois**. L'onglet **« Praticiens à revoir »** liste les praticiens de votre portefeuille à planifier, **du plus urgent au moins urgent** : plus de 8 mois sans visite, jamais visités, visite prévue dépassée, puis 6 à 8 mois.
