@@ -23,13 +23,13 @@ Liste issue de `AP3.pptx` (« Travail à faire : TOUT »). Cocher au fil de l'ea
 - [x] Synthèse d'activité et praticiens à revoir (EX-23, EX-24) — v0.5.0
 - [x] Module Délégué (EX-30 → EX-35) — v0.6.0
 - [x] Module Responsable (EX-40, EX-41) — v0.6.0
-
 - [x] Messagerie interne (EX-50) — v0.7.0
+- [x] Module Administration (EX-70 → EX-74) — v0.8.0
 
 ## Phase 3 — Qualité
-- [ ] Tests unitaires couche Métier
+- [x] Tests unitaires couche Métier (+ tests d'intégration Oracle hors CI)
 - [ ] Plan de tests / cahier de recette
-- [ ] Intégration continue (GitHub Actions : build + tests)
+- [x] Intégration continue (GitHub Actions : build + tests)
 
 ## Phase 4 — Livraison
 - [ ] Gestion de projet (planning, suivi)

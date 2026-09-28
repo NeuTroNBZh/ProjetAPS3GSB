@@ -1,6 +1,6 @@
 @startuml 03_classes_application
 !include style.iuml
-title GSB-CR — Diagramme de classes de l'application (architecture en couches, v0.7.0)
+title GSB-CR — Diagramme de classes de l'application (architecture en couches, v0.8.0)
 hide empty members
 skinparam packageStyle rectangle
 set separator none
@@ -59,6 +59,18 @@ package "GSB.CR.IHM" <<WinForms>> {
   }
   class RenduSynthese <<module>>
   class RenduARevoir <<module>>
+  class FrmAdministration {
+    -ChargerCollaborateurs()
+    -ChargerPortefeuille()
+    -ChargerJournal()
+    -Operer(operation, rafraichir)
+  }
+  class FrmFormulaire {
+    +Validation : Func<Task<ResultatOperation>>
+    +Resultat : ResultatOperation
+    +AjouterTexte / AjouterListe / AjouterDate
+    +AjouterNombre / AjouterCase / AjouterNote
+  }
   class FrmMessagerie
   class FrmNouveauMessage
   class GraphiqueBarres {
@@ -134,6 +146,28 @@ package "GSB.CR.Metier" {
     +Envoyer(u, objet, contenu, destinataires)
     +{static} Groupes(annuaire, u)
   }
+  class ServiceAdministration {
+    +Collaborateurs(u) / Affectations(u, matricule)
+    +CreerCollaborateur(u, c, affectation) : ResultatOperation
+    +ChangerAffectation(u, matricule, nouvelle, dateEffet)
+    +EnregistrerDepart(u, matricule, date)
+    +ReinitialiserMotDePasse(u, matricule)
+    +DefinirVerrouillage(u, matricule, verrouille)
+    +AttribuerPraticiens(u, numeros, matricule)
+    +TransfererPortefeuille(u, de, vers)
+    +EnregistrerPraticien(u, p) / ModifierMedicament(...)
+    +CreerMotif(...) / ModifierMotif(...)
+    +Journal(u, debut, fin, texte, echecs)
+  }
+  class ResultatOperation {
+    +Erreurs : List<String>
+    +Message : String
+    +MotDePasseProvisoire : String
+    +Reussi : Boolean
+  }
+  class GenerateurMotDePasse {
+    +{static} Generer(longueur = 12) : String
+  }
   class Periodicite {
     +{static} MoisMinimum = 6
     +{static} MoisMaximum = 8
@@ -200,6 +234,15 @@ package "GSB.CR.Donnees" {
     +SupprimerDotation(...)
   }
   class EchantillonDao
+  interface IAdministrationDao {
+    +ListerCollaborateurs() / ListerAffectations(matricule)
+    +CreerCollaborateur(c, affectation, hache)
+    +ChangerAffectation(matricule, nouvelle, dateEffet)
+    +AttribuerPraticiens(numeros, matricule, date)
+    +TransfererPortefeuille(de, vers, date)
+    +ListerJournal(debut, fin, texte, echecs)
+  }
+  class AdministrationDao
   interface IMessagerieDao
   class MessagerieDao
   class SqlPerimetre <<module>> {
@@ -275,6 +318,16 @@ package "GSB.CR.Modeles" {
     ARevoir
     JamaisVisite
   }
+  class FicheCollaborateur {
+    +TaillePortefeuille : Integer
+  }
+  class Region
+  class Secteur
+  class EntreeJournal {
+    +DateHeure : DateTime
+    +LoginSaisi : String
+    +Succes : Boolean
+  }
   class Motif {
     +{static} CodeAutre = "AUTRE"
   }
@@ -308,6 +361,11 @@ FrmAccueil ..> FrmMessagerie : ouvre
 FrmMessagerie --> ServiceMessagerie
 FrmMessagerie ..> FrmNouveauMessage : ouvre
 FrmNouveauMessage --> ServiceMessagerie
+FrmAccueil ..> FrmAdministration : ouvre
+FrmAdministration --> ServiceAdministration
+FrmAdministration ..> FrmFormulaire : ouvre
+FrmAdministration *-- PanneauFiche
+FrmFormulaire ..> ResultatOperation
 FrmFiche ..> ServiceEquipe
 FrmMonActivite ..> RenduSynthese
 FrmEquipe ..> RenduSynthese
@@ -332,6 +390,13 @@ FabriqueServices ..> ServiceEquipe : crée
 FabriqueServices ..> ServiceEchantillons : crée
 FabriqueServices ..> ServiceMessagerie : crée
 ServiceMessagerie --> IMessagerieDao
+FabriqueServices ..> ServiceAdministration : crée
+ServiceAdministration --> IAdministrationDao
+ServiceAdministration --> IReferentielDao
+ServiceAdministration --> IConsultationDao
+ServiceAdministration ..> GenerateurMotDePasse
+ServiceAdministration ..> HacheurMotDePasse
+ServiceAdministration ..> ResultatOperation : produit
 ServiceEquipe --> IActiviteDao
 ServiceEquipe --> IRapportDao
 ServiceEquipe --> IEquipeDao
@@ -369,6 +434,8 @@ DaoOracle <|-- EquipeDao
 DaoOracle <|-- EchantillonDao
 DaoOracle <|-- MessagerieDao
 MessagerieDao ..|> IMessagerieDao
+DaoOracle <|-- AdministrationDao
+AdministrationDao ..|> IAdministrationDao
 EquipeDao ..|> IEquipeDao
 EchantillonDao ..|> IEchantillonDao
 DaoOracle ..> SqlPerimetre
@@ -391,6 +458,8 @@ RapportVisite *-- "0..*" EchantillonOffert
 RapportVisite --> EtatRapport
 RapportResume --> EtatRapport
 Praticien ..> TypePraticien
+FicheCollaborateur --> Collaborateur
+FicheCollaborateur --> "0..1" Affectation : en cours
 
 note bottom of DaoOracle
   Base commune : connexion, transactions

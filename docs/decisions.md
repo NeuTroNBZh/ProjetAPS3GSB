@@ -20,5 +20,7 @@ Format : date — décision — raison — statut (proposée / validée / abando
 | D-14 | 2026-09-28 | CR en **brouillon / validé** ; contraintes de complétude seulement à la validation | Saisie en plusieurs fois sans perdre la garantie de CR complets | Validée |
 | D-15 | 2026-09-28 | Format mot de passe `PBKDF2-SHA256$100000$<sel>$<clé>` (sel 16 o, clé 32 o) | Compatible `Rfc2898DeriveBytes.Pbkdf2` et le jeu d'essai | Validée |
 | D-16 | 2026-09-28 | Règles simples en **base** (CHECK, index uniques, triggers) + règles de droits / périodes en couche **Métier** | Données cohérentes même hors de l'appli, logique métier testable en VB | Validée |
-| D-17 | 2026-09-28 | Module **Administration** (profil ADM) ajouté au périmètre | Gestion des comptes et référentiels non prévue par le CDC | Proposée |
+| D-17 | 2026-09-28 | Module **Administration** (profil ADM) ajouté au périmètre | Gestion des comptes et référentiels non prévue par le CDC | Validée (v0.8.0) |
 | D-18 | 2026-09-28 | Documentation UML 2 en PlantUML (`docs/uml/`) : sources versionnées + images SVG/PNG | Diagrammes modifiables et comparables dans Git, rendu direct sur GitHub | Validée |
+| D-19 | 2026-09-28 | Mot de passe provisoire **généré** (12 caractères aléatoires, sans caractères ambigus) à la création et à la réinitialisation, affiché une seule fois, changement imposé à la connexion | L'administrateur ne choisit ni ne connaît durablement le mot de passe ; seul le haché est stocké | Validée |
+| D-20 | 2026-09-28 | Portefeuilles et affectations **historisés** : un transfert clôt le suivi la veille et en ouvre un nouveau, jamais de suppression | Les CR et statistiques passés restent attribués au bon visiteur | Validée |
