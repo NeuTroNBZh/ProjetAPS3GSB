@@ -5,6 +5,18 @@ et chaque version livrée est marquée par un tag Git `vX.Y.Z`.
 
 ## [Non publié]
 
+## [1.1.0] — 2026-09-28
+
+Toutes les exigences sont couvertes : 44 sur 44.
+
+### Ajouté
+- Export des statistiques en CSV (EX-51) : bouton « Exporter en CSV » dans Mon activité, Ma région et Mon secteur ; fichier lisible directement par Excel (point-virgule, virgule décimale, accents) avec la période, les indicateurs, les visites par mois, les motifs, les produits présentés, les échantillons et, pour une équipe, l'activité de chaque visiteur.
+- Référentiel médicaments complet dans l'administration (EX-73) : fenêtre « Composition, interactions, posologie » pour ajouter ou retirer un composant, une interaction (dans un sens ou dans l'autre) ou une posologie, et créer un composant ou un dosage.
+- Tests : export CSV, règles du référentiel médicaments et requêtes Oracle correspondantes (288 tests).
+
+### Modifié
+- Documentation (exigences, spécifications, guides utilisateur, cahier de recette, guide technique) et captures d'écran mises à jour.
+
 ## [1.0.0] — 2026-09-28
 
 Première version complète : modules Visiteur, Délégué régional, Responsable de secteur, Messagerie et Administration.

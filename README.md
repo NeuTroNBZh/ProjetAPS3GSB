@@ -5,7 +5,7 @@
 **Comptes-rendus de visite des visiteurs médicaux — Galaxy Swiss Bourdin**
 
 [![CI](https://github.com/NeuTroNBZh/ProjetAPS3GSB/actions/workflows/ci.yml/badge.svg)](https://github.com/NeuTroNBZh/ProjetAPS3GSB/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-1.0.0-00529B)
+![Version](https://img.shields.io/badge/version-1.1.0-00529B)
 ![.NET](https://img.shields.io/badge/.NET-10-512BD4)
 ![VB.NET](https://img.shields.io/badge/langage-VB.NET-00529B)
 ![Oracle](https://img.shields.io/badge/Oracle-19c-C74634)
@@ -59,7 +59,7 @@ Chaque collaborateur ne voit que les modules de son profil.
 | 🩺 **Visiteur médical** | Saisir ses comptes-rendus (brouillon puis validation), consulter ses CR des 3 dernières années, fiches praticiens et médicaments, tableau de bord de son activité, praticiens à revoir |
 | 🗺️ **Délégué régional** | Tout ce que fait un visiteur + activité de sa région (synthèse, visiteurs, CR, praticiens à revoir) et suivi des échantillons |
 | 📊 **Responsable de secteur** | Activité de son secteur (toutes ses régions), consultation des échantillons, praticiens et médicaments |
-| ⚙️ **Administrateur** | Comptes et affectations des collaborateurs, portefeuilles de praticiens, référentiels (praticiens, médicaments, motifs), journal des connexions |
+| ⚙️ **Administrateur** | Comptes et affectations des collaborateurs, portefeuilles de praticiens, référentiels (praticiens, médicaments avec composition, interactions et posologie, motifs), journal des connexions |
 | ✉️ **Tous** | Messagerie interne, changement de mot de passe |
 
 Points forts :
@@ -67,7 +67,7 @@ Points forts :
 - **Brouillons** : un compte-rendu peut être enregistré incomplet et terminé plus tard ; seuls les CR validés comptent dans les statistiques.
 - **Contrôles de saisie clairs** : toutes les erreurs sont listées d'un coup, en français, avant tout enregistrement.
 - **Historique conservé** : un changement d'affectation ou de portefeuille ne réécrit jamais le passé.
-- **Tableaux de bord** : visites, praticiens vus, confiance moyenne, échantillons et leur coût, temps de saisie, graphique mensuel.
+- **Tableaux de bord** : visites, praticiens vus, confiance moyenne, échantillons et leur coût, temps de saisie, graphique mensuel ; **export CSV** ouvert directement dans Excel.
 - **Praticiens à revoir** : alerte selon la périodicité des visites (« À jour », « À revoir bientôt », « À revoir », « Jamais visité »).
 
 ## Aperçu
@@ -193,7 +193,7 @@ Les comptes du jeu d'essai (un par profil, données fictives) sont listés dans 
 
 ```powershell
 pwsh ./scripts/preparer-livraison.ps1      # construit les deux paquets en local (publication/livraison-<version>/)
-git tag v1.0.0 && git push origin v1.0.0   # le workflow « Release » teste, construit et publie la release
+git tag vX.Y.Z && git push origin vX.Y.Z   # le workflow « Release » teste, construit et publie la release
 ```
 
 ## Tests et intégration continue
@@ -203,7 +203,7 @@ dotnet test GSB.CR.slnx --filter "TestCategory!=Integration"   # tests unitaires
 dotnet test GSB.CR.slnx                                          # tous les tests, base Oracle joignable
 ```
 
-- **248 tests MSTest** : règles de gestion, droits par profil, validation des saisies, hachage des mots de passe, statistiques, et accès réels à Oracle pour les tests d'intégration.
+- **288 tests MSTest** : règles de gestion, droits par profil, validation des saisies, hachage des mots de passe, statistiques, et accès réels à Oracle pour les tests d'intégration.
 - Les tests qui touchent Oracle portent la catégorie `Integration` et sont exclus de la CI.
 - **GitHub Actions** compile la solution et exécute les tests unitaires à chaque push sur `main` et à chaque pull request.
 - À chaque tag `vX.Y.Z`, le workflow **Release** vérifie la version, relance les tests, construit les paquets et publie la release avec ses notes.
@@ -266,7 +266,8 @@ Le détail de chaque version est dans le [journal des versions](CHANGELOG.md).
 
 | Version | Contenu principal |
 |---|---|
-| **1.0.0** | Première version complète : installateur des postes, release GitHub automatique, documentation finalisée |
+| **1.1.0** | Export CSV des statistiques ; composition, interactions et posologie des médicaments : 44 exigences sur 44 |
+| 1.0.0 | Première version complète : installateur des postes, release GitHub automatique, documentation finalisée |
 | 0.9.0 | Mise en exploitation : installation de production, compte Oracle des postes, paquet d'installation |
 | 0.8.0 | Module Administration |
 | 0.1.0 → 0.7.0 | Socle, connexion, module Visiteur, Délégué, Responsable, messagerie |

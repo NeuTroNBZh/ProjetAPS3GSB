@@ -42,25 +42,26 @@ Projet individuel : toutes les fonctions (analyse, conception, développement, t
 | 0.8.0 | 28/09/2026 | Module Administration | EX-70 à EX-74 | 43 | 240 |
 | 0.9.0 | 28/09/2026 | Mise en exploitation, cahier de recette, documentation utilisateur, UML 2 complet | EX-61 | 51 | 248 |
 | 1.0.0 | 28/09/2026 | Spécifications, maquettes, documentation technique, README ; installateur des postes et release GitHub automatique | EX-60, EX-62 | 62 | 248 |
+| 1.1.0 | 28/09/2026 | Export CSV des statistiques ; composition, interactions et posologie des médicaments dans l'administration | EX-51, EX-73 | 73 | 288 |
 
 Les colonnes « Commits » et « Tests » sont mesurées sur les tags Git (`git rev-list --count vX.Y.Z`, cas de test MSTest).
 
-## 3. Indicateurs de suivi (version 1.0.0)
+## 3. Indicateurs de suivi (version 1.1.0)
 
 | Indicateur | Valeur |
 |---|---|
-| Exigences fonctionnelles réalisées | 43 sur 44 (EX-51, export CSV, optionnelle, non réalisée) ; EX-73 partielle (composition et posologie par script) |
-| Tests automatisés | 248, 0 échec |
+| Exigences fonctionnelles réalisées | 44 sur 44, toutes complètes (EX-51 et fin d'EX-73 livrées en 1.1.0) |
+| Tests automatisés | 288 (222 unitaires, 66 d'intégration), 0 échec |
 | Intégration continue | Verte sur toutes les versions |
 | Règles vérifiées par la base | 21 sur 21 (`bdd/tests_regles.sql`) |
-| Scénarios de recette | 59 rédigés, campagne 1 à dérouler |
+| Scénarios de recette | 65 rédigés, campagne 1 à dérouler |
 | Diagrammes UML 2 | 17 (13 types sur 14) |
-| Décisions tracées | 23 |
+| Décisions tracées | 24 |
 | Livraison | Release GitHub automatique : paquet poste (runtime inclus, installateur) et kit base Oracle |
 
 ## 4. Planning jusqu'au rendu
 
-La version 1.0.0 est livrée le 28/09 : tous les modules et tous les livrables écrits sont terminés, en avance sur le planning initial. Les semaines restantes servent aux deux campagnes de recette (corrections éventuelles livrées en 1.0.x), à la mise en production simulée et à la préparation de la soutenance, avec une large marge.
+La version 1.0.0 est livrée le 28/09 : tous les modules et tous les livrables écrits sont terminés, en avance sur le planning initial. La version 1.1.0, le même jour, réalise les deux derniers points ouverts (export CSV EX-51, composition et posologie EX-73) : toutes les exigences sont couvertes. Les semaines restantes servent aux deux campagnes de recette (corrections éventuelles livrées en 1.0.x), à la mise en production simulée et à la préparation de la soutenance, avec une large marge.
 
 ```mermaid
 gantt
@@ -68,7 +69,7 @@ gantt
     dateFormat YYYY-MM-DD
     axisFormat %d/%m
     section Réalisé
-    Versions 0.1.0 à 1.0.0 (modules, livrables écrits, livraison) :done, v, 2026-09-28, 1d
+    Versions 0.1.0 à 1.1.0 (modules, livrables écrits, livraison) :done, v, 2026-09-28, 1d
     section Recette
     Campagne de recette 1 et corrections    :r1, 2026-09-29, 6d
     Test du compte GSB_APP sur le serveur   :r2, 2026-09-29, 2d
@@ -102,7 +103,7 @@ Le suivi au jour le jour se fait dans la base « Tâches » de Notion (statut À
 | Écart de version Oracle (serveur en 26ai, cahier des charges en 19c) | Moyenne | Moyen : SQL refusé sur une 19c | SQL volontairement limité aux fonctions 19c (D-11), pas de type BOOLEAN ni de syntaxe récente |
 | Perte de données ou du poste de travail | Faible | Fort | Tout est versionné sur GitHub, poussé à chaque commit ; identifiants seuls hors dépôt (à recréer depuis le modèle) |
 | Fuite d'identifiants | Faible | Fort | `appsettings.Local.json` ignoré par Git, jamais inclus dans le paquet ; compte `GSB_APP` sans droits sur la structure |
-| Régression lors d'une correction | Moyenne | Moyen | 248 tests automatisés relancés par la CI à chaque envoi ; cahier de recette rejouable |
+| Régression lors d'une correction | Moyenne | Moyen | 288 tests automatisés relancés par la CI à chaque envoi ; cahier de recette rejouable |
 | Retard sur les livrables d'analyse | Moyenne | Moyen | Développement déjà terminé ; une semaine de marge avant le rendu |
 | Exigence mal comprise | Faible | Moyen | Exigences numérotées et tracées (matrice de couverture du cahier de recette) ; décisions documentées |
 
