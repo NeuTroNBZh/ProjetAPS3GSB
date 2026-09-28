@@ -488,3 +488,6 @@ appsettings.Local.json
 *.local.config
 # Fichiers temporaires Office
 ~$*
+
+# Paquets d'installation produits par scripts/publier.ps1
+publication/
