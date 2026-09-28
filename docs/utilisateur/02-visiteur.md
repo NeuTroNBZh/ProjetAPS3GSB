@@ -24,7 +24,7 @@ Cliquez sur **« Nouveau compte-rendu »**. Le compte-rendu est automatiquement 
 
 ### Partie « Visite »
 
-1. **Praticien visité (titulaire du cabinet)** : choisissez-le dans **votre portefeuille**. Tapez les premières lettres du nom pour le retrouver.
+1. **Praticien visité (titulaire du cabinet)** : choisissez-le dans **votre portefeuille** (liste triée par nom).
 2. **Remplaçant** : si la personne rencontrée n'est pas le titulaire, cochez « La personne rencontrée est un remplaçant » et choisissez-la. S'il n'existe pas encore, **« Nouveau… »** ouvre la fiche à créer (nom, prénom, type, téléphone, e-mail), puis **« Créer la fiche »**. Le compte-rendu garde les deux : le praticien du cabinet et la personne réellement vue.
 3. **Date de la visite** : elle ne peut pas être dans le futur.
 4. **Motif** : Périodicité, Nouveautés / actualisation, Remontage (baisse de prescription), Sollicitation du praticien ou **Autre**. Pour « Autre », la **précision** devient obligatoire.

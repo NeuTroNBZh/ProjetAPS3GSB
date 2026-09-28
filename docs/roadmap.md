@@ -10,8 +10,8 @@ Liste issue de `AP3.pptx` (« Travail à faire : TOUT »). Cocher au fil de l'ea
 - [x] Base Oracle : schéma GSB sur 100.109.217.110/FREEPDB1, connexion testée depuis l'appli
 
 ## Phase 1 — Conception
-- [ ] Spécifications fonctionnelles générales (cas d'utilisation par module)
-- [ ] Spécifications fonctionnelles détaillées (écrans, règles de gestion, `EX-xx`)
+- [x] Spécifications fonctionnelles générales (cas d'utilisation par module) — `docs/specifications-generales.md`
+- [x] Spécifications fonctionnelles détaillées (écrans, règles de gestion, `EX-xx`) — `docs/specifications-detaillees.md`
 - [x] MCD / MLD définitif (`docs/modele-donnees.md`) + scripts SQL `bdd/` (installé et testé : 21 règles OK)
 - [ ] Maquettes des écrans (bleu/blanc)
 
