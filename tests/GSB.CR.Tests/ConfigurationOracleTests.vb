@@ -59,7 +59,7 @@ Public Class ConfigurationOracleTests
         Assert.AreEqual("ALTER SESSION SET CURRENT_SCHEMA = GSB", config.InstructionSchema())
     End Sub
 
-    <DataTestMethod>
+    <TestMethod>
     <DataRow("GSB; DROP TABLE RAPPORT_VISITE")>
     <DataRow("GSB--")>
     <DataRow("1GSB")>
