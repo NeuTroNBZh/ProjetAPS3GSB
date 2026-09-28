@@ -9,5 +9,7 @@
     <NoWarn>$(NoWarn);42312;42314</NoWarn>
     <Company>Galaxy Swiss Bourdin</Company>
     <Product>GSB-CR</Product>
+    <!-- Version de l'application (voir CHANGELOG.md) -->
+    <Version>0.1.0</Version>
   </PropertyGroup>
 </Project>
