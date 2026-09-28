@@ -8,6 +8,11 @@ on:
 permissions:
   contents: write
 
+# Un même tag ne se publie qu'une fois à la fois (l'événement peut être reçu en double)
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: windows-latest
@@ -44,4 +49,12 @@ jobs:
           $tag = '${{ github.ref_name }}'
           $dossier = "publication/livraison-$($tag.TrimStart('v'))"
           $fichiers = Get-ChildItem $dossier -File | Where-Object Name -ne 'NOTES.md' | ForEach-Object FullName
-          gh release create $tag @fichiers --title "GSB-CR $($tag.TrimStart('v'))" --notes-file "$dossier/NOTES.md" --verify-tag
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -eq 0) {
+            # Release déjà publiée pour ce tag : on remplace les fichiers et les notes
+            gh release upload $tag @fichiers --clobber
+            gh release edit $tag --notes-file "$dossier/NOTES.md"
+          } else {
+            gh release create $tag @fichiers --title "GSB-CR $($tag.TrimStart('v'))" --notes-file "$dossier/NOTES.md" --verify-tag
+          }
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
