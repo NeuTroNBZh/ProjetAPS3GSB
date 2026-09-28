@@ -13,7 +13,7 @@ Liste issue de `AP3.pptx` (« Travail à faire : TOUT »). Cocher au fil de l'ea
 - [x] Spécifications fonctionnelles générales (cas d'utilisation par module) — `docs/specifications-generales.md`
 - [x] Spécifications fonctionnelles détaillées (écrans, règles de gestion, `EX-xx`) — `docs/specifications-detaillees.md`
 - [x] MCD / MLD définitif (`docs/modele-donnees.md`) + scripts SQL `bdd/` (installé et testé : 21 règles OK)
-- [ ] Maquettes des écrans (bleu/blanc)
+- [x] Maquettes des écrans (bleu/blanc) — `docs/maquettes/`
 
 ## Phase 2 — Programmation (module Visiteur d'abord)
 - [x] Connexion + redirection par profil (EX-01, EX-02, EX-05 à EX-09) — v0.2.0
