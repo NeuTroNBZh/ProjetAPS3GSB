@@ -103,7 +103,7 @@ Public Class ConfigurationOracleTests
                 cmd.CommandText = "select sys_context('USERENV', 'CURRENT_SCHEMA') from dual"
                 Assert.AreEqual("GSB", CStr(cmd.ExecuteScalar()))
                 cmd.CommandText = "select count(*) from MOTIF"
-                Assert.IsTrue(Convert.ToInt32(cmd.ExecuteScalar()) > 0)
+                Assert.IsGreaterThan(0, Convert.ToInt32(cmd.ExecuteScalar()))
             End Using
         End Using
     End Sub
