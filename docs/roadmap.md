@@ -28,7 +28,7 @@ Liste issue de `AP3.pptx` (« Travail à faire : TOUT »). Cocher au fil de l'ea
 
 ## Phase 3 — Qualité
 - [x] Tests unitaires couche Métier (+ tests d'intégration Oracle hors CI)
-- [ ] Plan de tests / cahier de recette
+- [x] Plan de tests / cahier de recette (`docs/cahier-de-recette.md`)
 - [x] Intégration continue (GitHub Actions : build + tests)
 
 ## Phase 4 — Livraison

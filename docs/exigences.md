@@ -80,9 +80,9 @@ Le CDC ne précise pas qui gère les comptes et les référentiels ; le prestata
 | EX-71 | Gérer les affectations (changement de région / de profil) en conservant l'historique. | P2 |
 | EX-72 | Gérer les portefeuilles (attribution / transfert de praticiens entre visiteurs). | P2 |
 | EX-73 | Gérer les référentiels : praticiens, médicaments (composition, interactions, posologie), motifs. | P3 |
+| EX-74 | Consulter le journal des connexions. | P3 |
 
 Réalisé en v0.8.0. Pour EX-73, l'écran gère les praticiens (création, modification, désactivation), le prix et le statut des médicaments, et les motifs ; la composition, les interactions et la posologie restent alimentées par script SQL (données issues du dépôt légal, rarement modifiées).
-| EX-74 | Consulter le journal des connexions. | P3 |
 
 ## Non fonctionnel / documentation
 
