@@ -175,7 +175,10 @@ echo "" | sql -S GSB/<mdp>@//100.109.217.110:1521/FREEPDB1 @bdd/tests_regles.sql
 | `01_tables.sql` | Tables, contraintes, index |
 | `02_vues.sql` | Vues |
 | `03_triggers.sql` | Déclencheurs |
-| `04_jeu_essai.sql` | Données de test (comptes : `docs/comptes-test.md`) |
+| `04_referentiels.sql` | Données de base : secteurs, régions, profils, types de praticiens, spécialités, médicaments, motifs |
+| `05_jeu_essai.sql` | Données de test, développement uniquement (comptes : `docs/comptes-test.md`) |
+| `06_compte_applicatif.sql` | Compte GSB_APP des postes (en SYSTEM), lecture et écriture des données seulement |
 | `99_suppression.sql` | Supprime tous les objets du schéma |
-| `installer.sql` | 99 → 01 → 02 → 03 → 04 + recompilation |
+| `installer.sql` | Développement : 99 → 01 → 02 → 03 → 04 → 05 + recompilation |
+| `installer_production.sql` | Production : 01 → 02 → 03 → 04 + compte administrateur ; refuse un schéma déjà installé (voir `docs/mise-en-exploitation.md`) |
 | `tests_regles.sql` | 21 tentatives interdites qui doivent toutes être refusées |

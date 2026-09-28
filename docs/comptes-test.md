@@ -1,6 +1,6 @@
 # Comptes de test (jeu d'essai)
 
-Données **fictives** de `bdd/04_jeu_essai.sql`. Mot de passe de tous les comptes : **`Gsb2026!`**
+Données **fictives** de `bdd/05_jeu_essai.sql`. Mot de passe de tous les comptes : **`Gsb2026!`**
 (uniquement pour le développement — à ne jamais réutiliser en production).
 
 | Login | Matricule | Nom | Profil | Rattachement | Particularité |

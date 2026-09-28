@@ -2,7 +2,7 @@ Imports GSB.CR.Donnees
 Imports GSB.CR.Modeles
 
 ''' <summary>
-''' Tests d'intégration sur la base réelle (jeu d'essai bdd/04_jeu_essai.sql).
+''' Tests d'intégration sur la base réelle (jeu d'essai bdd/05_jeu_essai.sql).
 ''' Exclus de la CI (catégorie Integration).
 ''' </summary>
 <TestClass>

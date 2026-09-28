@@ -3,7 +3,7 @@ Imports GSB.CR.Metier
 <TestClass>
 Public Class HacheurMotDePasseTests
 
-    ''' <summary>Hachage de « Gsb2026! » tel que produit pour le jeu d'essai (bdd/04_jeu_essai.sql).</summary>
+    ''' <summary>Hachage de « Gsb2026! » tel que produit pour le jeu d'essai (bdd/05_jeu_essai.sql).</summary>
     Private Const HacheJeuEssai As String =
         "PBKDF2-SHA256$100000$HZbeCl2b2eme0nWe9SIoug==$nw2KtNekqqAMPZrtQuvW7rjm2FzaAarjrR/rnytaeC4="
 

@@ -1,7 +1,8 @@
 -- =====================================================================
 -- GSB-CR : installation complète du schéma (à exécuter connecté en GSB)
 --   sql GSB/<mdp>@//100.109.217.110:1521/FREEPDB1 @bdd/installer.sql
--- Supprime tout puis recrée tables, vues, déclencheurs et jeu d'essai.
+-- DÉVELOPPEMENT : supprime tout puis recrée tables, vues, déclencheurs,
+-- référentiels et jeu d'essai. En production : installer_production.sql.
 -- =====================================================================
 whenever sqlerror exit failure
 set feedback off
@@ -15,8 +16,10 @@ prompt == Vues
 @@02_vues.sql
 prompt == Déclencheurs
 @@03_triggers.sql
+prompt == Référentiels
+@@04_referentiels.sql
 prompt == Jeu d'essai
-@@04_jeu_essai.sql
+@@05_jeu_essai.sql
 prompt == Recompilation des vues
 begin
     for v in (select object_name from user_objects where object_type = 'VIEW' and status <> 'VALID') loop
