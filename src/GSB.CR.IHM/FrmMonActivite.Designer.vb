@@ -43,6 +43,7 @@ Partial Class FrmMonActivite
         lblARevoir = New Label()
         pnlActions = New Panel()
         btnFermer = New Button()
+        btnExporter = New Button()
         pnlEntete.SuspendLayout()
         pnlPeriode.SuspendLayout()
         tabOnglets.SuspendLayout()
@@ -235,6 +236,7 @@ Partial Class FrmMonActivite
         '
         'pnlActions
         '
+        pnlActions.Controls.Add(btnExporter)
         pnlActions.Controls.Add(btnFermer)
         pnlActions.Dock = DockStyle.Bottom
         pnlActions.Location = New Point(0, 676)
@@ -251,6 +253,16 @@ Partial Class FrmMonActivite
         btnFermer.Size = New Size(120, 38)
         btnFermer.TabIndex = 0
         btnFermer.Text = "Fermer"
+        '
+        'btnExporter
+        '
+        btnExporter.Anchor = AnchorStyles.Top Or AnchorStyles.Left
+        btnExporter.Enabled = False
+        btnExporter.Location = New Point(24, 11)
+        btnExporter.Name = "btnExporter"
+        btnExporter.Size = New Size(180, 38)
+        btnExporter.TabIndex = 1
+        btnExporter.Text = "Exporter en CSV"
         '
         'FrmMonActivite
         '
@@ -301,5 +313,6 @@ Partial Class FrmMonActivite
     Friend WithEvents dgvARevoir As DataGridView
     Friend WithEvents pnlActions As Panel
     Friend WithEvents btnFermer As Button
+    Friend WithEvents btnExporter As Button
 
 End Class

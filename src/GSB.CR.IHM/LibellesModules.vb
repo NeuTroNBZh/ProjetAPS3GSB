@@ -32,12 +32,7 @@ Public Module LibellesModules
     End Function
 
     Public Function LibelleProfil(p As Modeles.Profil) As String
-        Select Case p
-            Case Modeles.Profil.Visiteur : Return "Visiteur médical"
-            Case Modeles.Profil.Delegue : Return "Délégué régional"
-            Case Modeles.Profil.Responsable : Return "Responsable de secteur"
-            Case Else : Return "Administrateur"
-        End Select
+        Return LibellesProfils.Libelle(p)
     End Function
 
 End Module

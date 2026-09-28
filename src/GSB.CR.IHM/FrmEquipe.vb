@@ -17,6 +17,8 @@ Public Class FrmEquipe
     Private ReadOnly _perimetre As Perimetre
     Private _rapports As IReadOnlyList(Of RapportResume) = Array.Empty(Of RapportResume)()
     Private _reglagePeriode As Boolean
+    Private _synthese As SyntheseActivite
+    Private _membres As IReadOnlyList(Of ActiviteMembre)
 
     ''' <param name="activite">Utilisé seulement pour les périodes prédéfinies (mêmes choix que « Mon activité »).</param>
     Public Sub New(equipe As ServiceEquipe, activite As ServiceActivite, utilisateur As UtilisateurConnecte)
@@ -44,6 +46,7 @@ Public Class FrmEquipe
         Theme.StyliserBoutonPrincipal(btnDetailVisiteur)
         Theme.StyliserBoutonPrincipal(btnConsulter)
         Theme.StyliserBoutonSecondaire(btnFermer)
+        Theme.StyliserBoutonSecondaire(btnExporter)
         For Each g In {dgvVisiteurs, dgvRapports, dgvARevoir}
             Theme.StyliserGrille(g)
         Next
@@ -114,13 +117,22 @@ Public Class FrmEquipe
             If IsDisposed Then Return
             RenduSynthese.Afficher(pnlSynthese, synthese, _perimetre.Libelle)
             AfficherMembres(membres)
+            _synthese = synthese
+            _membres = membres
         Catch ex As ErreurMetierException
+            _synthese = Nothing
             pnlSynthese.AfficherMessage(ex.Message)
         Finally
             UseWaitCursor = False
             btnAfficher.Enabled = True
+            btnExporter.Enabled = _synthese IsNot Nothing
         End Try
     End Function
+
+    ''' <summary>Export CSV de la synthèse et de l'activité par visiteur affichées (EX-51).</summary>
+    Private Sub btnExporter_Click(sender As Object, e As EventArgs) Handles btnExporter.Click
+        If _synthese IsNot Nothing Then EnregistrementExport.Exporter(Me, _perimetre.Libelle, _synthese, _membres)
+    End Sub
 
     Private Sub AfficherMembres(membres As IReadOnlyList(Of ActiviteMembre))
         Dim culture = CultureInfo.CurrentCulture
