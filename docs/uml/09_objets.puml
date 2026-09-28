@@ -1,0 +1,96 @@
+@startuml 09_objets
+!include style.iuml
+title GSB-CR — Diagramme d'objets : un compte-rendu validé de Louis Villechalane (exemple d'instantané)
+
+skinparam object {
+  BackgroundColor #E8F1FA
+  BorderColor #00529B
+  FontColor #00386C
+  AttributeFontColor #1F2933
+}
+
+object "ouest : Secteur" as sud {
+  code = "O"
+  libelle = "Ouest"
+}
+object "aqu : Region" as aqu {
+  code = "AQU"
+  nom = "Aquitaine"
+}
+object "louis : Collaborateur" as louis {
+  matricule = "a131"
+  nom = "Villechalane"
+  prenom = "Louis"
+  login = "lvillechalane"
+  verrouille = false
+  nbEchecsConnexion = 0
+}
+object "aff1 : Affectation" as aff1 {
+  profil = Visiteur
+  dateDebut = 21/12/2019
+  dateFin = null
+}
+object "martin : Praticien" as martin {
+  numero = 1
+  nom = "Martin"
+  prenom = "Hélène"
+  ville = "Bordeaux"
+  actif = true
+}
+object "mv : TypePraticien" as mv {
+  code = "MV"
+  libelle = "Médecin de ville"
+}
+object "ptf : Portefeuille" as ptf {
+  dateDebut = 21/12/2019
+  dateFin = null
+}
+object "cr : RapportVisite" as cr {
+  numero = 12
+  dateVisite = 15/09/2026
+  etat = Valide
+  bilan = "Intéressée par le nouveau..."
+  coefConfiance = 4
+  dateProchaineVisite = 15/03/2027
+}
+object "perio : Motif" as perio {
+  code = "PERIO"
+  libelle = "Périodicité"
+}
+object "p1 : ProduitPresente" as p1 {
+  ordre = 1
+}
+object "amopil : Medicament" as amopil {
+  depotLegal = "AMOPIL7"
+  nomCommercial = "AMOPIL"
+  prixEchantillon = 1,50
+}
+object "e1 : EchantillonOffert" as e1 {
+  quantite = 3
+}
+object "s1 : SessionSaisie" as s1 {
+  debut = 15/09/2026 17:02
+  fin = 15/09/2026 17:09
+}
+
+sud *-- aqu
+louis *-- aff1
+aff1 --> aqu : rattachement
+louis --> ptf : suit
+ptf --> martin
+martin --> mv
+cr --> louis : auteur
+cr --> martin : praticien visité
+cr --> perio : motif
+cr *-- p1
+p1 --> amopil
+cr *-- e1
+e1 --> amopil
+cr *-- s1
+
+note bottom of cr
+  CR complet : il peut être validé
+  (motif, bilan et confiance renseignés).
+  Seul son auteur (louis) peut le modifier.
+end note
+@enduml

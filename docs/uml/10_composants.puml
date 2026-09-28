@@ -1,0 +1,42 @@
+@startuml 10_composants
+!include style.iuml
+title GSB-CR — Diagramme de composants (assemblages .NET et interfaces)
+left to right direction
+
+component "GSB.CR.IHM\n<<executable WinForms>>" as IHM
+component "GSB.CR.Metier\n<<bibliothèque>>" as Metier
+component "GSB.CR.Donnees\n<<bibliothèque>>" as Donnees
+component "Oracle.ManagedDataAccess.Core\n<<NuGet>>" as Odp
+database "Oracle\nschéma GSB" as Bdd
+
+interface "Services" as ISvc
+interface "IDao" as IDao
+interface "ADO.NET" as IAdo
+
+IHM --( ISvc
+ISvc -- Metier
+Metier --( IDao
+IDao -- Donnees
+Donnees --( IAdo
+IAdo -- Odp
+Odp --> Bdd : Oracle Net\nTCP 1521
+
+component "GSB.CR.Modeles\n<<bibliothèque>>" as Modeles
+component "Microsoft.Extensions.Configuration\n<<NuGet>>" as Conf
+component "GSB.CR.Tests\n<<MSTest>>" as Tests
+
+IHM ..> Modeles
+Metier ..> Modeles
+Donnees ..> Modeles
+Donnees ..> Conf : lit appsettings
+Tests ..> Metier : unitaires\n(faux DAO)
+Tests ..> Donnees : intégration
+
+legend right
+  |= Interface |= Réalisée par |
+  | Services | ServiceAuthentification, ServiceRapports, ServiceConsultation,\nServiceActivite, ServiceEquipe, ServiceEchantillons,\nServiceMessagerie, ServiceAdministration |
+  | IDao | ICollaborateurDao, IRapportDao, IReferentielDao, IConsultationDao,\nIActiviteDao, IEquipeDao, IEchantillonDao, IMessagerieDao,\nIAdministrationDao |
+  | ADO.NET | OracleConnection, OracleCommand, OracleTransaction |
+  La couche Métier ne dépend que des interfaces DAO : testée sans Oracle.
+endlegend
+@enduml

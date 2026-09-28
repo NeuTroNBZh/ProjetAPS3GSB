@@ -1,0 +1,48 @@
+@startuml 17_vue_ensemble_interactions
+!include style.iuml
+title GSB-CR — Vue d'ensemble des interactions : session d'un visiteur
+' Chaque nœud « ref » renvoie à un diagramme de séquence ou d'interaction détaillé.
+
+start
+partition "ref : Connexion (diagramme 04)" {
+  :sd Connexion;
+}
+if (statut ?) then (ChangementMotDePasseRequis)
+  partition "ref : Changement du mot de passe" {
+    :sd ChangerMotDePasse;
+  }
+elseif (IdentifiantsInvalides / CompteVerrouille /\nCompteInactif / ServeurIndisponible) then
+  :message d'erreur;
+  stop
+else (Reussie)
+endif
+
+partition "sd Menu principal" {
+  :FrmAccueil -> Autorisations : PeutAcceder(profil, module);
+  :tuiles des modules autorisés + messages non lus;
+}
+
+repeat
+  if (module choisi ?) then (Mes comptes-rendus)
+    partition "ref : Enregistrement d'un CR (diagramme 08)" {
+      :sd EnregistrerCR;
+    }
+  elseif () then (Mon activité)
+    partition "ref : Synthèse d'activité" {
+      :sd MaSynthese\n+ PraticiensARevoir;
+    }
+  elseif () then (Praticiens / Médicaments)
+    partition "ref : Consultation d'une fiche" {
+      :sd FichePraticien / FicheMedicament;
+    }
+  else (Messagerie)
+    partition "ref : Envoi d'un message" {
+      :sd Envoyer;
+    }
+  endif
+repeat while (autre module ?) is (oui)
+->non;
+
+:Déconnexion;
+stop
+@enduml

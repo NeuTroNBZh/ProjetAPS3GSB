@@ -1,0 +1,64 @@
+@startuml 14_sequence_transfert_portefeuille
+!include style.iuml
+title GSB-CR — Séquence : transfert du portefeuille d'un visiteur (EX-72)
+autonumber
+
+actor "Administrateur" as Adm
+participant ":FrmAdministration" as Frm
+participant ":FrmFormulaire" as Form
+participant ":ServiceAdministration" as Svc
+participant ":AdministrationDao" as Dao
+database "Oracle" as Bdd
+
+Adm -> Frm : choisit le visiteur source\nclique « Transférer tout le portefeuille… »
+Frm -> Form ** : New(titre, sous-titre, "Transférer")
+Frm -> Form : AjouterListe("vers", visiteurs en poste)\n(même région proposée en premier)
+Frm -> Form : ShowDialog()
+activate Form
+Adm -> Form : choisit le destinataire, valide
+Form -> Svc : TransfererPortefeuille(u, de, vers)
+activate Svc
+Svc -> Svc : VerifierAcces(u)\n[profil Administrateur sinon ErreurMetierException]
+
+alt de = vers
+  Svc --> Form : Echec("Choisissez deux collaborateurs différents.")
+else destinataire ni visiteur ni délégué en poste
+  Svc -> Dao : ListerCollaborateurs()
+  Dao --> Svc : fiches
+  Svc --> Form : Echec("…confié à un visiteur ou à un délégué en poste.")
+else cas nominal
+  Svc -> Dao : ListerCollaborateurs()
+  Dao --> Svc : fiches
+  Svc -> Dao : TransfererPortefeuille(de, vers, aujourd'hui)
+  activate Dao
+  Dao -> Bdd : BEGIN (transaction)
+  Dao -> Bdd : select pra_num from PORTEFEUILLE\nwhere col_matricule = :de and ptf_date_fin is null
+  Bdd --> Dao : n praticiens
+  loop pour chaque praticien
+    Dao -> Bdd : delete suivi en cours commencé aujourd'hui
+    Dao -> Bdd : update suivi en cours : ptf_date_fin = veille
+    Dao -> Bdd : insert PORTEFEUILLE (praticien, vers, aujourd'hui)
+  end
+  alt erreur Oracle
+    Dao -> Bdd : ROLLBACK
+    Dao --> Svc : AccesDonneesException
+    Svc --> Form : Echec("Transfert du portefeuille impossible.")
+  else succès
+    Dao -> Bdd : COMMIT
+    Dao --> Svc : n
+    deactivate Dao
+    Svc --> Form : Succes("n praticien(s) transféré(s) à …")
+  end
+end
+deactivate Svc
+
+alt résultat en échec
+  Form -> Form : affiche les erreurs, reste ouvert
+else succès
+  Form --> Frm : DialogResult.OK + Resultat
+  deactivate Form
+  Frm -> Frm : affiche le message dans la barre d'état
+  Frm -> Svc : Collaborateurs(u), PortefeuilleDe(u, de),\nPraticiensSansVisiteur(u)
+  Frm --> Adm : listes rafraîchies
+end
+@enduml

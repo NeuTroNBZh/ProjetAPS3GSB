@@ -1,0 +1,45 @@
+@startuml 12_structure_composite
+!include style.iuml
+title GSB-CR — Diagramme de structure composite : l'application et le service des comptes-rendus
+allowmixing
+skinparam componentStyle rectangle
+
+component "Application GSB-CR <<classe structurée>>" as App {
+  portin "utilisateur" as pUtil
+  portout "base" as pBase
+
+  component "ihm : FrmAccueil" as ihm
+  component "fabrique : FabriqueServices" as fab
+  component "session : UtilisateurConnecte [1]" as sess
+
+  component "rapports : ServiceRapports" as SR {
+    portin "IRapports" as pSR
+    component "dao : IRapportDao [1]" as rdao
+    component "referentiel : IReferentielDao [1]" as refdao
+    component "validateur : ValidateurRapport [1]" as valid
+    component "horloge : Func<DateTime> [1]" as horl
+  }
+  component "connexion : ConnexionOracle [1]" as cnx
+}
+
+actor "Collaborateur" as Collab
+database "Oracle (GSB)" as Bdd
+
+Collab -- pUtil
+pUtil -- ihm
+ihm -- sess : connecteur
+ihm -- pSR : délégation
+fab ..> SR : crée et assemble
+pSR -- valid
+valid -- horl
+rdao -- cnx
+refdao -- cnx
+cnx -- pBase
+pBase -- Bdd
+
+note bottom of SR
+  Parties interchangeables : dans les tests,
+  dao et referentiel sont des faux en mémoire
+  et l'horloge est figée (tests déterministes).
+end note
+@enduml

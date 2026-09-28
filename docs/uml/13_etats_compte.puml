@@ -1,0 +1,40 @@
+@startuml 13_etats_compte
+!include style.iuml
+title GSB-CR — Diagramme d'états-transitions : compte d'un collaborateur
+
+[*] --> MotDePasseProvisoire : création par l'administrateur\n/ mot de passe généré, affiché une fois
+
+state "Mot de passe provisoire" as MotDePasseProvisoire
+state "Actif" as Actif {
+  state "Sans échec" as SansEchec
+  state "Échecs en cours" as Echecs : 1 à 4 échecs consécutifs
+  [*] --> SansEchec
+  SansEchec --> Echecs : échec de connexion\n/ nbEchecs++
+  Echecs --> Echecs : échec [nbEchecs < 4]\n/ nbEchecs++
+  Echecs --> SansEchec : connexion réussie\n/ nbEchecs := 0
+}
+state "Verrouillé" as Verrouille
+state "Parti" as Parti
+
+MotDePasseProvisoire --> Actif : connexion puis changement\ndu mot de passe [politique respectée]
+Actif --> Verrouille : 5e échec consécutif\n/ verrouille := vrai
+Actif --> Verrouille : verrouillage par l'administrateur
+Verrouille --> Actif : déverrouillage\n/ nbEchecs := 0
+Actif --> MotDePasseProvisoire : réinitialisation\n/ nouveau mot de passe généré
+Verrouille --> MotDePasseProvisoire : réinitialisation\n/ déverrouille et génère
+MotDePasseProvisoire --> Parti : départ enregistré
+Actif --> Parti : départ enregistré\n/ affectation et portefeuille clos
+Verrouille --> Parti : départ enregistré
+Parti --> [*]
+
+note right of Parti
+  Le compte n'est jamais supprimé :
+  ses comptes-rendus restent consultables
+  par le délégué et le responsable.
+end note
+note left of Verrouille
+  Message à la connexion :
+  « Votre compte est verrouillé.
+  Contactez l'administrateur. »
+end note
+@enduml

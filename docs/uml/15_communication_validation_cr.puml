@@ -1,0 +1,34 @@
+@startuml 15_communication_validation_cr
+!include style.iuml
+title GSB-CR — Diagramme de communication : validation d'un compte-rendu
+' PlantUML n'a pas de notation dédiée : objets reliés par des liens, messages numérotés sur les liens.
+left to right direction
+allowmixing
+skinparam object {
+  BackgroundColor #E8F1FA
+  BorderColor #00529B
+  FontColor #00386C
+}
+
+actor "Visiteur" as V
+object ":FrmCompteRendu" as F
+object ":ServiceRapports" as S
+object ":ValidateurRapport" as Val
+object ":RapportDao" as Dao
+object ":ConnexionOracle" as Cnx
+database "Oracle" as Bdd
+
+V -- F : "1 : Valider() →"
+F -- S : "1.1 : Enregistrer(u, rapport, valider = vrai, debutSaisie) →\n1.1.6 : ← ResultatEnregistrement"
+S -- Val : "1.1.1 : Verifier(rapport, aujourd'hui) →\n← erreurs (liste vide)"
+S -- Dao : "1.1.0 [existant] : Charger(numero) → (auteur, état)\n1.1.2 [nouveau] : Creer(rapport) →\n1.1.2' [existant] : Modifier(rapport) →\n1.1.5 : AjouterSessionSaisie(numero, matricule, debut, fin) →"
+Dao -- Cnx : "1.1.3 : Ouvrir() →"
+Cnx -- Bdd : "1.1.4 : INSERT / UPDATE RAPPORT_VISITE,\nPRODUIT_PRESENTE, ECHANTILLON_OFFERT\n(une transaction)"
+
+note bottom of S
+  Si Verifier renvoie des erreurs (motif, bilan,
+  confiance manquants, date future…), les messages
+  1.1.2 à 1.1.5 ne sont pas envoyés et le formulaire
+  affiche la liste des erreurs.
+end note
+@enduml

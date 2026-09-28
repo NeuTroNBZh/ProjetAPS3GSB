@@ -1,0 +1,64 @@
+@startuml 11_paquetages
+!include style.iuml
+title GSB-CR — Diagramme de paquetages (couches et dépendances)
+set separator none
+skinparam packageStyle folder
+
+package "GSB.CR" {
+  package "GSB.CR.IHM" as IHM {
+    package "Fenêtres" as Fen {
+    }
+    package "Composants visuels" as Comp {
+    }
+  }
+  package "GSB.CR.Metier" as Metier {
+    package "Services" as Svc {
+    }
+    package "Règles et sécurité" as Regles {
+    }
+  }
+  package "GSB.CR.Donnees" as Donnees {
+    package "Interfaces DAO" as IDao {
+    }
+    package "DAO Oracle" as Dao {
+    }
+  }
+  package "GSB.CR.Modeles" as Modeles {
+  }
+}
+package "tests" {
+  package "GSB.CR.Tests" as Tests {
+  }
+}
+package "bdd (scripts SQL)" as Bdd {
+}
+package "Bibliothèques externes" as Ext {
+  package "Oracle.ManagedDataAccess" as Odp {
+  }
+  package "System.Windows.Forms" as Wf {
+  }
+  package "Microsoft.Extensions.Configuration" as Conf {
+  }
+}
+
+Fen ..> Comp : <<import>>
+Fen ..> Svc : <<import>>
+IHM ..> Wf : <<import>>
+Svc ..> Regles : <<import>>
+Svc ..> IDao : <<import>>
+Dao ..> IDao : <<realize>>
+Dao ..> Odp : <<access>>
+Donnees ..> Conf : <<access>>
+IHM ..> Modeles : <<import>>
+Metier ..> Modeles : <<import>>
+Donnees ..> Modeles : <<import>>
+Tests ..> Metier : <<import>>
+Tests ..> Donnees : <<import>>
+Dao ..> Bdd : suppose le schéma
+
+note bottom of IHM
+  Règle d'architecture : l'IHM n'accède jamais
+  directement aux DAO ni à Oracle
+  (IHM -> Métier -> Données).
+end note
+@enduml

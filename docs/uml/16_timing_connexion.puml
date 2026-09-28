@@ -1,0 +1,66 @@
+@startuml 16_timing_connexion
+!include style.iuml
+title GSB-CR — Diagramme de timing : échecs de connexion et verrouillage d'un compte
+
+robust "Compte (fbunisset)" as Compte
+concise "Compteur d'échecs" as Nb
+robust "FrmConnexion" as Ecran
+binary "Accès à l'application" as Acces
+
+@0
+Compte is Actif
+Nb is 0
+Ecran is Saisie
+Acces is low
+
+@10
+Ecran is Controle
+@12
+Nb is 1
+Ecran is Saisie
+
+@20
+Ecran is Controle
+@22
+Nb is 2
+Ecran is Saisie
+
+@30
+Ecran is Controle
+@32
+Nb is 3
+Ecran is Saisie
+
+@40
+Ecran is Controle
+@42
+Nb is 4
+Ecran is Saisie
+
+@50
+Ecran is Controle
+@52
+Nb is 5
+Compte is Verrouille
+Ecran is Saisie
+
+@60
+Ecran is Controle
+@62
+Ecran is Saisie
+
+@80
+Compte is Actif
+Nb is 0
+
+@90
+Ecran is Controle
+@92
+Ecran is Ferme
+Acces is high
+
+Ecran@10 <-> @12 : contrôle < 1 s
+Compte@52 <-> @80 : bloqué jusqu'au déverrouillage par l'administrateur
+
+highlight 52 to 80 #FFE3E3 : compte verrouillé
+@enduml
