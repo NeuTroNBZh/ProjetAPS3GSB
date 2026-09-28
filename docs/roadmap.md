@@ -34,5 +34,5 @@ Liste issue de `AP3.pptx` (« Travail à faire : TOUT »). Cocher au fil de l'ea
 ## Phase 4 — Livraison
 - [ ] Gestion de projet (planning, suivi)
 - [ ] Documentation technique (classes, bibliothèques — EX-60, EX-62)
-- [ ] Documentation utilisateur / mode opératoire par module (EX-61)
+- [x] Documentation utilisateur / mode opératoire par module (EX-61) — `docs/utilisateur/`
 - [ ] Mise en exploitation (procédure d'installation, déploiement)
