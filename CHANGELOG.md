@@ -5,6 +5,16 @@ et chaque version livrée est marquée par un tag Git `vX.Y.Z`.
 
 ## [Non publié]
 
+## [1.0.0] — 2026-09-28
+
+Première version complète : modules Visiteur, Délégué régional, Responsable de secteur, Messagerie et Administration.
+
+### Ajouté
+- Installateur du poste client (`Installer.cmd`) : copie dans `C:\Program Files\GSB-CR`, saisie guidée des paramètres Oracle, fichier d'identifiants protégé, raccourcis du menu Démarrer et du bureau ; mise à jour en conservant la configuration ; désinstallateur (`Desinstaller.cmd`).
+- Livraison en deux paquets (`scripts/preparer-livraison.ps1`) : poste client avec le runtime .NET inclus, et kit d'installation de la base Oracle, avec empreintes SHA-256 et notes de version.
+- Publication automatique de la release GitHub à la pose d'un tag `vX.Y.Z` (workflow « Release » : compilation, tests, paquets).
+- README du dépôt, maquettes des écrans et charte graphique, spécifications générales et détaillées, documentation technique et référence des classes.
+
 ## [0.9.0] — 2026-09-28
 
 ### Ajouté

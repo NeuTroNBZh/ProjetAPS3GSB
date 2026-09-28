@@ -41,7 +41,7 @@ Projet individuel : toutes les fonctions (analyse, conception, développement, t
 | 0.7.0 | 28/09/2026 | Messagerie interne | EX-50 | 36 | 208 |
 | 0.8.0 | 28/09/2026 | Module Administration | EX-70 à EX-74 | 43 | 240 |
 | 0.9.0 | 28/09/2026 | Mise en exploitation, cahier de recette, documentation utilisateur, UML 2 complet | EX-61 | 51 | 248 |
-| 1.0.0 | 28/09/2026 | Spécifications, maquettes, documentation technique, README ; installateur des postes et release GitHub automatique | EX-60, EX-62 | 61 | 248 |
+| 1.0.0 | 28/09/2026 | Spécifications, maquettes, documentation technique, README ; installateur des postes et release GitHub automatique | EX-60, EX-62 | 62 | 248 |
 
 Les colonnes « Commits » et « Tests » sont mesurées sur les tags Git (`git rev-list --count vX.Y.Z`, cas de test MSTest).
 
