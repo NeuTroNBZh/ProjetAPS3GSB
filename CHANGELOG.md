@@ -5,6 +5,19 @@ et chaque version livrée est marquée par un tag Git `vX.Y.Z`.
 
 ## [Non publié]
 
+## [0.8.0] — 2026-09-28
+
+### Ajouté
+- Module Administration pour le profil Administrateur (EX-70 à EX-74) :
+  - collaborateurs : création avec mot de passe provisoire généré, modification, changement d'affectation (historique conservé), départ, réinitialisation du mot de passe, verrouillage / déverrouillage ; l'administrateur ne peut ni se verrouiller ni se retirer ses droits ;
+  - portefeuilles : praticiens sans visiteur, attribution, réattribution d'un praticien et transfert d'un portefeuille complet ;
+  - référentiels : praticiens (création, modification, désactivation), prix et statut des médicaments, motifs de visite (« Autre » toujours proposé en dernier) ;
+  - journal des connexions filtrable par période, login et échecs.
+- Formulaire de saisie générique réutilisable par les écrans d'administration.
+
+### Modifié
+- Les erreurs Oracle transmettent leur code : un doublon (login, matricule, code) produit un message clair.
+
 ## [0.7.0] — 2026-09-28
 
 ### Ajouté
