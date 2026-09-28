@@ -95,6 +95,40 @@ gantt
 
 Le suivi au jour le jour se fait dans la base « Tâches » de Notion (statut À faire, En cours ou Fait, avec l'échéance de chaque livrable) ; la [roadmap](roadmap.md) est cochée à chaque livrable terminé.
 
+### Outils de suivi et leurs équivalents dans le dépôt
+
+| Outil | Usage | Contenu repris dans le dépôt |
+|---|---|---|
+| Notion (base « Tâches ») | Suivi des tâches au jour le jour : statut, priorité, échéance | Tableau ci-dessous (export du 28/09/2026) |
+| Miro | Tableau de travail : modélisation UML 2, carte des vues, charte graphique, maquettes fil de fer | [Diagrammes UML](uml/README.md) (mêmes 17 diagrammes, sources PlantUML) et [maquettes](maquettes/README.md) |
+| GitHub | Code, versions (tags), intégration continue, releases | Le dépôt lui-même |
+
+### Suivi des tâches (export de Notion au 28/09/2026)
+
+Les livrables d'analyse ont été terminés en avance : leur échéance d'origine est conservée pour montrer l'écart avec le planning initial.
+
+| Tâche | Échéance | Priorité | Statut |
+|---|---|---|---|
+| Tests unitaires de la couche Métier | — | Haute | Fait |
+| Modélisation UML 2 complète (Miro) | — | Haute | Fait |
+| Documentation utilisateur, mode opératoire par module (EX-61) | — | Moyenne | Fait |
+| Mise en exploitation (installation, déploiement) | — | Basse | Fait |
+| Gestion de projet (planning, suivi) | 28/09/2026 | Moyenne | Fait |
+| Version 1.0.0 et release GitHub | 28/09/2026 | Haute | Fait |
+| Version 1.1.0 : export CSV (EX-51), référentiel médicaments (EX-73) | 28/09/2026 | Haute | Fait |
+| Tester le compte GSB_APP sur le serveur | 30/09/2026 | Moyenne | À faire |
+| Campagne de recette 1 et corrections | 04/10/2026 | Haute | À faire |
+| Essayer l'installateur sur un vrai poste | 04/10/2026 | Moyenne | À faire |
+| Spécifications fonctionnelles générales | 11/10/2026 | Haute | Fait |
+| Spécifications fonctionnelles détaillées | 18/10/2026 | Haute | Fait |
+| Maquettes des écrans (charte bleu/blanc) | 23/10/2026 | Moyenne | Fait |
+| Documentation technique (EX-60, EX-62) | 01/11/2026 | Moyenne | Fait |
+| Plan de tests, cahier de recette | 08/11/2026 | Moyenne | Fait |
+| Campagne de recette 2 et procès-verbal final | 08/11/2026 | Haute | À faire |
+| Mise en production simulée à partir de la release | 09/11/2026 | Haute | À faire |
+| Préparation de la soutenance | 22/11/2026 | Haute | En cours |
+| Relecture finale et rendu | 01/12/2026 | Haute | À faire |
+
 ## 5. Risques
 
 | Risque | Probabilité | Impact | Prévention ou réponse |
