@@ -21,3 +21,4 @@ Format : date — décision — raison — statut (proposée / validée / abando
 | D-15 | 2026-09-28 | Format mot de passe `PBKDF2-SHA256$100000$<sel>$<clé>` (sel 16 o, clé 32 o) | Compatible `Rfc2898DeriveBytes.Pbkdf2` et le jeu d'essai | Validée |
 | D-16 | 2026-09-28 | Règles simples en **base** (CHECK, index uniques, triggers) + règles de droits / périodes en couche **Métier** | Données cohérentes même hors de l'appli, logique métier testable en VB | Validée |
 | D-17 | 2026-09-28 | Module **Administration** (profil ADM) ajouté au périmètre | Gestion des comptes et référentiels non prévue par le CDC | Proposée |
+| D-18 | 2026-09-28 | Documentation UML 2 en PlantUML (`docs/uml/`) : sources versionnées + images SVG/PNG | Diagrammes modifiables et comparables dans Git, rendu direct sur GitHub | Validée |

@@ -1,0 +1,81 @@
+@startuml 04_sequence_connexion
+!include style.iuml
+title GSB-CR — Diagramme de séquence : connexion d'un collaborateur
+autonumber
+
+actor "Collaborateur" as U
+participant ":FrmConnexion" as F
+participant ":ServiceAuthentification" as S
+participant "HacheurMotDePasse" as H
+participant ":CollaborateurDao" as D
+database "Oracle\n(schéma GSB)" as O
+
+U -> F : saisit identifiant + mot de passe\npuis « Se connecter »
+activate F
+F -> F : désactive le formulaire
+F -> S : Connecter(login, motDePasse)\n(tâche d'arrière-plan)
+activate S
+
+alt identifiant ou mot de passe vide
+  S --> F : Refusée(IdentifiantsInvalides)
+else champs renseignés
+  S -> D : TrouverParLogin(login)
+  activate D
+  D -> O : SELECT … FROM COLLABORATEUR\nWHERE lower(col_login) = lower(:login)
+  O --> D : ligne ou rien
+  D --> S : collaborateur
+  deactivate D
+
+  alt login inconnu
+    S -> D : Journaliser(login, null, échec)
+    S --> F : Refusée(IdentifiantsInvalides)
+  else compte verrouillé
+    S -> D : Journaliser(login, matricule, échec)
+    S --> F : Refusée(CompteVerrouille)
+  else compte trouvé
+    S -> H : Verifier(motDePasse, hache)
+    H --> S : vrai / faux
+
+    alt mot de passe faux
+      S -> D : EnregistrerEchec(matricule, 5)
+      D -> O : UPDATE nb_echecs + 1\n(verrouille si >= 5) RETURNING nb
+      D --> S : nbEchecs
+      S -> D : Journaliser(login, matricule, échec)
+      alt nbEchecs >= 5
+        S --> F : Refusée(CompteVerrouille)
+      else
+        S --> F : Refusée(IdentifiantsInvalides,\n« encore n essai(s) » si n <= 2)
+      end
+    else mot de passe correct
+      S -> D : TrouverAffectationEnCours(matricule)
+      D -> O : SELECT … FROM V_AFFECTATION_EN_COURS
+      D --> S : affectation ou rien
+      alt parti ou sans affectation
+        S -> D : Journaliser(login, matricule, échec)
+        S --> F : Refusée(CompteInactif)
+      else compte actif
+        S -> D : EnregistrerSucces(matricule)
+        S -> D : Journaliser(login, matricule, succès)
+        S --> F : Acceptée(utilisateur,\nchangement requis ?)
+      end
+    end
+  end
+end
+deactivate S
+
+alt connexion acceptée
+  F --> U : fermeture (OK)
+  alt changement de mot de passe requis
+    U -> U : FrmChangementMotDePasse
+  end
+  U -> U : FrmAccueil\n(modules selon le profil)
+else connexion refusée
+  F --> U : affiche le message d'erreur,\nvide le mot de passe
+end
+deactivate F
+
+note over S, D
+  Toute AccesDonneesException (serveur injoignable)
+  est transformée en Refusée(ServeurIndisponible).
+end note
+@enduml

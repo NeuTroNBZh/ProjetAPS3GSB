@@ -1,0 +1,50 @@
+@startuml 06_activite_saisie_cr
+!include style.iuml
+title GSB-CR — Diagramme d'activité : saisie d'un compte-rendu de visite
+
+|Visiteur|
+start
+:Ouvrir « Nouveau compte-rendu »;
+|Système|
+:Démarrer une session de saisie (heure de début);
+:Proposer les praticiens du portefeuille\net la liste des motifs;
+|Visiteur|
+:Choisir le praticien (titulaire du cabinet);
+if (La personne vue est un remplaçant ?) then (oui)
+  if (Remplaçant déjà connu ?) then (oui)
+    :Le sélectionner;
+  else (non)
+    :Créer la fiche du remplaçant;
+  endif
+else (non)
+endif
+:Saisir la date de visite;
+:Choisir le motif;
+if (Motif = « Autre » ?) then (oui)
+  :Préciser le motif;
+endif
+:Choisir 0 à 2 produits présentés;
+:Saisir les échantillons offerts\n(produit + quantité à l'unité);
+:Saisir le bilan, le coefficient de confiance\net la prochaine visite éventuelle;
+repeat
+  |Visiteur|
+  :Choisir « Enregistrer en brouillon »
+ou « Valider »;
+  |Système|
+  :Contrôler la saisie : cohérence des dates,
+  2 produits présentés maximum, quantités > 0,
+  champs obligatoires si validation;
+  backward:Afficher les erreurs,
+le visiteur corrige;
+repeat while (Erreurs ?) is (oui)
+->non;
+if (Validation demandée ?) then (oui)
+  :Enregistrer le CR (état Validé);
+else (non)
+  :Enregistrer le CR (état Brouillon);
+endif
+|Système|
+:Clore la session de saisie (heure de fin);
+:Horodater (saisie / modification / validation);
+stop
+@enduml

@@ -5,6 +5,10 @@ et chaque version livrée est marquée par un tag Git `vX.Y.Z`.
 
 ## [Non publié]
 
+### Ajouté
+- Documentation UML 2 (`docs/uml/`) : cas d'utilisation, classes du domaine, classes de l'application, séquence de connexion, états d'un compte-rendu, activité de saisie, déploiement.
+- Exigence EX-29 : suppression d'un brouillon, un CR validé ne repasse pas en brouillon.
+
 ## [0.2.0] — 2026-09-28
 
 ### Ajouté

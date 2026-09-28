@@ -1,0 +1,175 @@
+@startuml 03_classes_application
+!include style.iuml
+title GSB-CR — Diagramme de classes de l'application (architecture en couches, v0.2.0)
+hide empty members
+skinparam packageStyle rectangle
+set separator none
+
+package "GSB.CR.IHM" <<WinForms>> {
+  class Program <<module>> {
+    +Main(args : String[])
+  }
+  class FrmConnexion {
+    +Utilisateur : UtilisateurConnecte
+    +ChangementMotDePasseRequis : Boolean
+    -btnConnexion_Click()
+  }
+  class FrmChangementMotDePasse {
+    +New(service, utilisateur, obligatoire : Boolean)
+    -btnValider_Click()
+  }
+  class FrmAccueil {
+    +Deconnexion : Boolean
+    -CreerTuilesModules()
+  }
+  class TuileModule {
+    +ModuleAssocie : ModuleApplication
+  }
+  class Theme <<module>> {
+    +BleuGsb : Color
+    +StyliserBoutonPrincipal(b : Button)
+  }
+  class LibellesModules <<module>> {
+    +Titre(m) : String
+    +Description(m) : String
+  }
+}
+
+package "GSB.CR.Metier" {
+  class FabriqueServices {
+    +{static} DepuisConfiguration() : FabriqueServices
+    +Authentification() : ServiceAuthentification
+  }
+  class ServiceAuthentification {
+    +{static} MaxEchecs : Integer = 5
+    +Connecter(login, motDePasse) : ResultatConnexion
+    +ChangerMotDePasse(utilisateur, ancien, nouveau, confirmation) : List<String>
+  }
+  class ResultatConnexion {
+    +Statut : StatutConnexion
+    +Message : String
+    +Utilisateur : UtilisateurConnecte
+    +EstAcceptee : Boolean
+  }
+  enum StatutConnexion {
+    Reussie
+    ChangementMotDePasseRequis
+    IdentifiantsInvalides
+    CompteVerrouille
+    CompteInactif
+    ServeurIndisponible
+  }
+  class HacheurMotDePasse {
+    +{static} Hacher(mdp) : String
+    +{static} Verifier(mdp, hache) : Boolean
+  }
+  class PolitiqueMotDePasse {
+    +{static} Verifier(mdp) : List<String>
+  }
+  class Autorisations {
+    +{static} ModulesAccessibles(p : Profil) : List<ModuleApplication>
+    +{static} PeutAcceder(p, m) : Boolean
+  }
+  enum ModuleApplication {
+    MesComptesRendus
+    Praticiens
+    Medicaments
+    MonActivite
+    ActiviteRegion
+    Echantillons
+    ActiviteSecteur
+    Messagerie
+    Administration
+  }
+}
+
+package "GSB.CR.Donnees" {
+  interface ICollaborateurDao {
+    +TrouverParLogin(login) : Collaborateur
+    +TrouverAffectationEnCours(matricule) : Affectation
+    +EnregistrerEchec(matricule, maxEchecs) : Integer
+    +EnregistrerSucces(matricule)
+    +ChangerMotDePasse(matricule, hache)
+    +Journaliser(login, matricule, succes)
+  }
+  class CollaborateurDao
+  class ConnexionOracle {
+    +Ouvrir() : OracleConnection
+    +Tester() : String
+  }
+  class ConfigurationOracle {
+    +Hote : String
+    +Port : Integer
+    +Service : String
+    +Utilisateur : String
+    +MotDePasse : String
+    +{static} Charger(dossier) : ConfigurationOracle
+    +ChaineDeConnexion() : String
+  }
+  class AccesDonneesException
+}
+
+package "GSB.CR.Modeles" {
+  class Collaborateur
+  class Affectation
+  class UtilisateurConnecte {
+    +Collaborateur : Collaborateur
+    +Affectation : Affectation
+    +Matricule : String
+    +Profil : Profil
+  }
+  enum Profil {
+    Visiteur
+    Delegue
+    Responsable
+    Administrateur
+  }
+  class ProfilCodes <<module>> {
+    +DepuisCode(code) : Profil
+    +VersCode(p) : String
+  }
+}
+
+class "Oracle — schéma GSB" as BDD <<base de données>>
+
+' IHM
+Program ..> FabriqueServices : crée
+Program ..> FrmConnexion
+Program ..> FrmChangementMotDePasse
+Program ..> FrmAccueil
+FrmConnexion --> ServiceAuthentification
+FrmChangementMotDePasse --> ServiceAuthentification
+FrmAccueil --> ServiceAuthentification
+FrmAccueil *-- "0..*" TuileModule
+FrmAccueil ..> Autorisations
+TuileModule ..> LibellesModules
+FrmConnexion ..> Theme
+
+' Métier
+FabriqueServices ..> ServiceAuthentification : crée
+FabriqueServices --> ConnexionOracle
+ServiceAuthentification --> ICollaborateurDao
+ServiceAuthentification ..> HacheurMotDePasse
+ServiceAuthentification ..> PolitiqueMotDePasse
+ServiceAuthentification ..> ResultatConnexion : produit
+ResultatConnexion --> StatutConnexion
+ResultatConnexion --> "0..1" UtilisateurConnecte
+Autorisations ..> ModuleApplication
+
+' Données
+CollaborateurDao ..|> ICollaborateurDao
+CollaborateurDao --> ConnexionOracle
+CollaborateurDao ..> AccesDonneesException : lève
+ConnexionOracle ..> ConfigurationOracle
+ConnexionOracle ..> BDD : ODP.NET\nTCP 1521
+
+' Modèles
+UtilisateurConnecte --> Collaborateur
+UtilisateurConnecte --> Affectation
+Affectation --> Profil
+
+note bottom of ICollaborateurDao
+  Interface : la couche Métier est testée
+  avec un DAO en mémoire (sans Oracle).
+end note
+@enduml

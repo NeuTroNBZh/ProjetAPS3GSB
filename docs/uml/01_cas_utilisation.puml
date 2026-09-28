@@ -1,0 +1,98 @@
+@startuml 01_cas_utilisation
+!include style.iuml
+title GSB-CR — Diagramme de cas d'utilisation
+left to right direction
+
+actor "Collaborateur" as Collab
+actor "Visiteur médical" as Visiteur
+actor "Délégué régional" as Delegue
+actor "Responsable de secteur" as Responsable
+actor "Administrateur" as Admin
+
+Visiteur -|> Collab
+Responsable -|> Collab
+Admin -|> Collab
+Delegue -|> Visiteur
+
+rectangle "Application GSB-CR" {
+
+  package "Commun" {
+    usecase "S'authentifier" as UC_Auth
+    usecase "Changer son mot de passe" as UC_Mdp
+    usecase "Consulter les praticiens" as UC_Pra
+    usecase "Consulter les médicaments\n(composition, interactions, posologie)" as UC_Med
+    usecase "Échanger des messages\n(personne ou groupe)" as UC_Msg
+  }
+
+  package "Module Visiteur" {
+    usecase "Saisir un compte-rendu" as UC_Saisir
+    usecase "Choisir le praticien\ndans son portefeuille" as UC_Choisir
+    usecase "Déclarer un remplaçant" as UC_Rempl
+    usecase "Enregistrer en brouillon" as UC_Brouillon
+    usecase "Valider le compte-rendu" as UC_Valider
+    usecase "Modifier un compte-rendu" as UC_Modifier
+    usecase "Consulter ses comptes-rendus\n(3 dernières années)" as UC_ConsCR
+    usecase "Consulter la synthèse\nde son activité" as UC_Synth
+    usecase "Voir les praticiens à revoir\n(périodicité 6 à 8 mois)" as UC_Perio
+  }
+
+  package "Module Délégué" {
+    usecase "Consulter l'activité\nde la région" as UC_ActReg
+    usecase "Consulter les CR\nde la région" as UC_CRReg
+    usecase "Attribuer des échantillons\n(dotations mensuelles)" as UC_Dot
+    usecase "Contrôler le stock\nd'échantillons" as UC_Stock
+  }
+
+  package "Module Responsable" {
+    usecase "Consulter l'activité du secteur\n(par visiteur ou par région)" as UC_ActSec
+    usecase "Consulter les CR\ndu secteur" as UC_CRSec
+  }
+
+  package "Module Administration" {
+    usecase "Gérer les collaborateurs\n(création, départ, déverrouillage)" as UC_GCollab
+    usecase "Gérer les affectations" as UC_GAff
+    usecase "Gérer les portefeuilles" as UC_GPtf
+    usecase "Gérer les référentiels\n(praticiens, médicaments, motifs)" as UC_GRef
+    usecase "Consulter le journal\ndes connexions" as UC_Journal
+  }
+}
+
+Collab --> UC_Auth
+Collab --> UC_Mdp
+Collab --> UC_Pra
+Collab --> UC_Med
+Collab --> UC_Msg
+
+Visiteur --> UC_Saisir
+Visiteur --> UC_Modifier
+Visiteur --> UC_ConsCR
+Visiteur --> UC_Synth
+Visiteur --> UC_Perio
+
+UC_Saisir ..> UC_Choisir : <<include>>
+UC_Rempl ..> UC_Saisir : <<extend>>
+UC_Brouillon ..> UC_Saisir : <<extend>>
+UC_Valider ..> UC_Saisir : <<extend>>
+UC_Valider ..> UC_Modifier : <<extend>>
+
+Delegue --> UC_ActReg
+Delegue --> UC_CRReg
+Delegue --> UC_Dot
+Delegue --> UC_Stock
+
+Responsable --> UC_ActSec
+Responsable --> UC_CRSec
+Responsable --> UC_Stock
+
+Admin --> UC_GCollab
+Admin --> UC_GAff
+Admin --> UC_GPtf
+Admin --> UC_GRef
+Admin --> UC_Journal
+
+note bottom of UC_Auth
+  Page d'accueil = zone d'identification uniquement.
+  Verrouillage après 5 échecs, changement de mot
+  de passe obligatoire à la 1re connexion.
+end note
+@enduml

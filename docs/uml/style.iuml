@@ -1,0 +1,76 @@
+' Charte commune des diagrammes GSB-CR (bleu / blanc)
+!pragma layout smetana
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam roundCorner 6
+skinparam backgroundColor #FFFFFF
+skinparam ArrowColor #00529B
+skinparam ArrowFontColor #38404A
+skinparam TitleFontSize 18
+skinparam TitleFontColor #00386C
+skinparam NoteBackgroundColor #FFF8DC
+skinparam NoteBorderColor #C9B458
+
+skinparam class {
+  BackgroundColor #E8F1FA
+  BorderColor #00529B
+  HeaderBackgroundColor #CFE0F3
+  FontColor #00386C
+  AttributeFontColor #1F2933
+  StereotypeFontColor #5A626E
+}
+skinparam package {
+  BackgroundColor #FFFFFF
+  BorderColor #00529B
+  FontColor #00386C
+}
+skinparam actor {
+  BorderColor #00529B
+  BackgroundColor #E8F1FA
+}
+skinparam usecase {
+  BackgroundColor #E8F1FA
+  BorderColor #00529B
+  FontColor #00386C
+}
+skinparam rectangle {
+  BorderColor #00529B
+  FontColor #00386C
+}
+skinparam state {
+  BackgroundColor #E8F1FA
+  BorderColor #00529B
+  FontColor #00386C
+}
+skinparam activity {
+  BackgroundColor #E8F1FA
+  BorderColor #00529B
+  FontColor #00386C
+  DiamondBackgroundColor #FFFFFF
+  DiamondBorderColor #00529B
+}
+skinparam sequence {
+  ParticipantBackgroundColor #E8F1FA
+  ParticipantBorderColor #00529B
+  ParticipantFontColor #00386C
+  LifeLineBorderColor #00529B
+  ActorBorderColor #00529B
+  ActorBackgroundColor #E8F1FA
+  GroupBorderColor #00529B
+  GroupBackgroundColor #E8F1FA
+}
+skinparam node {
+  BackgroundColor #E8F1FA
+  BorderColor #00529B
+  FontColor #00386C
+}
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #00529B
+  FontColor #00386C
+}
+skinparam database {
+  BackgroundColor #FFFFFF
+  BorderColor #00529B
+}

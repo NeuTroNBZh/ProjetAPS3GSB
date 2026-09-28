@@ -35,6 +35,7 @@ Priorité : **P1** = module Visiteur (urgent), **P2** = Délégué, **P3** = Res
 | EX-26 | Le **temps de saisie** est tracé (début/fin de chaque ouverture du formulaire) pour pouvoir être comptabilisé. | P1 |
 | EX-27 | La date de visite ne peut pas être dans le futur. | P1 |
 | EX-28 | Le visiteur choisit le praticien dans **son portefeuille** (avec recherche) ; il peut créer un remplaçant s'il n'existe pas. | P1 |
+| EX-29 | Un CR en **brouillon** peut être supprimé par son auteur ; un CR **validé** ne peut ni être supprimé ni repasser en brouillon (il reste modifiable). | P1 |
 
 ## Module Visiteur — consultation
 

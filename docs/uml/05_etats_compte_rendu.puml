@@ -1,0 +1,29 @@
+@startuml 05_etats_compte_rendu
+!include style.iuml
+title GSB-CR — Diagramme d'états-transitions : compte-rendu de visite
+
+[*] --> Brouillon : enregistrer en brouillon\n/ dateSaisie := maintenant
+[*] --> Valide : valider directement\n[CR complet]\n/ dateSaisie := dateValidation := maintenant
+
+state Brouillon {
+  Brouillon : incomplet autorisé
+  Brouillon : non compté dans les statistiques
+}
+
+state "Validé" as Valide {
+  Valide : motif, bilan et coefficient de confiance obligatoires
+  Valide : compté dans les statistiques et le contrôle de stock
+}
+
+Brouillon --> Brouillon : modifier\n/ dateModification := maintenant
+Brouillon --> Valide : valider [CR complet]\n/ dateValidation := maintenant
+Brouillon --> [*] : supprimer\n(par son auteur)
+Valide --> Valide : modifier [reste complet]\n/ dateModification := maintenant
+
+note right of Valide
+  Seule la dernière version compte (pas d'historique
+  des versions). L'auteur ne peut jamais être changé.
+  Chaque ouverture du formulaire crée une SessionSaisie
+  (temps de saisie).
+end note
+@enduml

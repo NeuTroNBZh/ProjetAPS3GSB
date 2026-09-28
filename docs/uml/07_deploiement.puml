@@ -1,0 +1,41 @@
+@startuml 07_deploiement
+!include style.iuml
+title GSB-CR — Diagramme de déploiement
+
+node "Poste du collaborateur\n<<Windows 10/11>>" as Poste {
+  node "Runtime .NET 10\n(Windows Desktop)" as Runtime {
+    artifact "GSB.CR.IHM.exe" as Exe
+    artifact "GSB.CR.Metier.dll" as MetierDll
+    artifact "GSB.CR.Donnees.dll" as DonneesDll
+    artifact "GSB.CR.Modeles.dll" as ModelesDll
+    artifact "Oracle.ManagedDataAccess.dll" as Odp
+    artifact "appsettings.json\nappsettings.Local.json" as Config
+  }
+}
+
+node "Serveur de base de données\n<<VM Linux — oracle-server>>" as VM {
+  node "Docker" as Docker {
+    node "Conteneur oracle-db\n<<Oracle Database Free>>" as Conteneur {
+      database "PDB FREEPDB1\nschéma GSB\n(28 tables, 6 vues, 3 triggers)" as Schema
+    }
+  }
+}
+
+cloud "GitHub (dépôt privé)" as GitHub {
+  component "Dépôt Git\n(sources, scripts SQL, docs)" as Repo
+  component "GitHub Actions\n(windows-latest : build + tests)" as CI
+}
+
+Exe ..> MetierDll
+MetierDll ..> DonneesDll
+DonneesDll ..> ModelesDll
+DonneesDll ..> Odp
+DonneesDll ..> Config : lit
+Odp --> Schema : Oracle Net (TCP 1521)\nréseau local / VPN
+Repo --> CI : push / pull request
+
+note bottom of Schema
+  SQL compatible Oracle 19c (cahier des charges).
+  Installation : bdd/installer.sql
+end note
+@enduml

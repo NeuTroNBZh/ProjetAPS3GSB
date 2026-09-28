@@ -1,0 +1,253 @@
+@startuml 02_classes_domaine
+!include style.iuml
+title GSB-CR — Diagramme de classes du domaine (modèle métier complet)
+hide empty methods
+
+package "Organisation" {
+  class Secteur {
+    code : String
+    libelle : String
+  }
+  class Region {
+    code : String
+    nom : String
+  }
+  enum Profil <<enumeration>> {
+    Visiteur
+    Delegue
+    Responsable
+    Administrateur
+  }
+  class Collaborateur {
+    matricule : String
+    nom : String
+    prenom : String
+    adresse : String [0..1]
+    codePostal : String [0..1]
+    ville : String [0..1]
+    telephone : String [0..1]
+    email : String [0..1]
+    dateEmbauche : Date
+    dateDepart : Date [0..1]
+    login : String {unique}
+    motDePasseHache : String
+    motDePasseAChanger : Boolean
+    nbEchecsConnexion : Integer
+    verrouille : Boolean
+    derniereConnexion : DateTime [0..1]
+    --
+    nomComplet() : String
+    estParti(date : Date) : Boolean
+  }
+  class Affectation {
+    profil : Profil
+    dateDebut : Date
+    dateFin : Date [0..1]
+  }
+}
+
+package "Praticiens" {
+  class TypePraticien {
+    code : String
+    libelle : String
+    lieu : String
+  }
+  class Praticien {
+    numero : Integer
+    nom : String
+    prenom : String
+    adresse : String [0..1]
+    codePostal : String [0..1]
+    ville : String [0..1]
+    telephone : String [0..1]
+    email : String [0..1]
+    coefNotoriete : Decimal [0..1]
+    actif : Boolean
+    dateMaj : Date
+  }
+  class Specialite {
+    code : String
+    libelle : String
+  }
+  class Possession <<association>> {
+    diplome : String [0..1]
+    coefPrescription : Decimal [0..1]
+  }
+  class Portefeuille {
+    dateDebut : Date
+    dateFin : Date [0..1]
+  }
+}
+
+package "Produits" {
+  class Famille {
+    code : String
+    libelle : String
+  }
+  class Medicament {
+    depotLegal : String
+    nomCommercial : String {unique}
+    effets : String [0..1]
+    contreIndications : String [0..1]
+    prixEchantillon : Decimal
+    dateCommercialisation : Date [0..1]
+    actif : Boolean
+  }
+  class Composant {
+    code : String
+    libelle : String
+  }
+  class Constitution <<association>> {
+    quantite : Decimal
+    unite : String
+  }
+  class Interaction {
+    description : String [0..1]
+  }
+  class Presentation {
+    code : String
+    libelle : String
+  }
+  class Dosage {
+    code : String
+    quantite : Decimal
+    unite : String
+  }
+  class TypeIndividu {
+    code : String
+    libelle : String
+  }
+  class Posologie {
+    texte : String
+  }
+}
+
+package "Comptes-rendus" {
+  enum EtatRapport <<enumeration>> {
+    Brouillon
+    Valide
+  }
+  class Motif {
+    code : String
+    libelle : String
+    ordre : Integer
+    actif : Boolean
+  }
+  class RapportVisite {
+    numero : Integer
+    dateVisite : Date
+    precisionMotif : String [0..1]
+    bilan : String [0..1]
+    coefConfiance : Integer [0..1] {1..5}
+    dateProchaineVisite : Date [0..1]
+    etat : EtatRapport
+    dateSaisie : DateTime
+    dateModification : DateTime [0..1]
+    dateValidation : DateTime [0..1]
+  }
+  class ProduitPresente {
+    ordre : Integer {1 ou 2}
+  }
+  class EchantillonOffert {
+    quantite : Integer {> 0}
+  }
+  class SessionSaisie {
+    debut : DateTime
+    fin : DateTime
+    --
+    duree() : Duration
+  }
+}
+
+package "Échantillons" {
+  class Dotation {
+    mois : Date
+    quantite : Integer
+    dateSaisie : DateTime
+  }
+}
+
+package "Communication" {
+  class Message {
+    objet : String
+    contenu : String
+    dateEnvoi : DateTime
+  }
+  class Reception <<association>> {
+    dateLecture : DateTime [0..1]
+  }
+}
+
+package "Sécurité" {
+  class JournalConnexion {
+    loginSaisi : String
+    date : DateTime
+    succes : Boolean
+  }
+}
+
+' --- Organisation
+Secteur "1" *-- "1..*" Region : contient >
+Collaborateur "1" *-- "1..*" Affectation : historique >
+Affectation "0..*" --> "0..1" Region : rattachement\n(visiteur, délégué)
+Affectation "0..*" --> "0..1" Secteur : rattachement\n(responsable)
+Affectation ..> Profil
+
+' --- Praticiens
+Praticien "0..*" --> "1" TypePraticien : est de type >
+(Praticien, Specialite) .. Possession
+Praticien "0..*" -- "0..*" Specialite
+Praticien "1" *-- "0..*" Portefeuille
+Portefeuille "0..*" --> "1" Collaborateur : suivi par >
+
+' --- Produits
+Medicament "0..*" --> "1" Famille : appartient à >
+Medicament "0..*" -- "0..*" Composant
+(Medicament, Composant) .. Constitution
+Interaction "0..*" --> "1" Medicament : perturbateur >
+Interaction "0..*" --> "1" Medicament : perturbé >
+Medicament "1" *-- "0..*" Posologie
+Posologie "0..*" --> "1" TypeIndividu
+Posologie "0..*" --> "1" Presentation
+Posologie "0..*" --> "1" Dosage
+
+' --- Comptes-rendus
+RapportVisite "0..*" --> "1" Collaborateur : auteur >
+RapportVisite "0..*" --> "1" Praticien : titulaire >
+RapportVisite "0..*" --> "0..1" Praticien : remplaçant vu >
+RapportVisite "0..*" --> "0..1" Motif
+RapportVisite ..> EtatRapport
+RapportVisite "1" *-- "0..2" ProduitPresente : présente >
+ProduitPresente "0..*" --> "1" Medicament
+RapportVisite "1" *-- "0..*" EchantillonOffert : offre >
+EchantillonOffert "0..*" --> "1" Medicament
+RapportVisite "1" *-- "0..*" SessionSaisie
+
+' --- Échantillons
+Dotation "0..*" --> "1" Collaborateur : bénéficiaire >
+Dotation "0..*" --> "1" Collaborateur : saisie par (délégué) >
+Dotation "0..*" --> "1" Medicament
+
+' --- Communication / sécurité
+Message "0..*" --> "1" Collaborateur : expéditeur >
+Message "0..*" -- "1..*" Collaborateur : destinataires >
+(Message, Collaborateur) .. Reception
+JournalConnexion "0..*" --> "0..1" Collaborateur
+
+note right of RapportVisite
+  Validé => motif, bilan et coefConfiance obligatoires.
+  precisionMotif renseignée si et seulement si motif = « AUTRE ».
+  dateVisite <= aujourd'hui ; dateProchaineVisite > dateVisite.
+  remplaçant <> titulaire ; auteur non modifiable.
+end note
+
+note bottom of Portefeuille
+  Un seul visiteur en cours
+  (dateFin vide) par praticien.
+end note
+
+note bottom of Affectation
+  Une seule affectation en cours par collaborateur,
+  un délégué par région, un responsable par secteur.
+end note
+@enduml
