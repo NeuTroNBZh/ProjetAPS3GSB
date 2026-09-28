@@ -29,4 +29,8 @@ Public Class FabriqueServices
         Return New ServiceRapports(New RapportDao(_connexion), New ReferentielDao(_connexion), TimeProvider.System)
     End Function
 
+    Public Function Consultation() As ServiceConsultation
+        Return New ServiceConsultation(New ConsultationDao(_connexion), New ReferentielDao(_connexion), TimeProvider.System)
+    End Function
+
 End Class
