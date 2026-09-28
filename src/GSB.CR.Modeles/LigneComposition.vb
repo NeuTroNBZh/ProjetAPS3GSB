@@ -1,6 +1,8 @@
 ''' <summary>Composant d'un médicament et sa quantité — table CONSTITUER.</summary>
 Public Class LigneComposition
 
+    Public Property CodeComposant As String = ""
+
     Public Property Composant As String = ""
 
     Public Property Quantite As Decimal

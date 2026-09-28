@@ -59,6 +59,28 @@ Public Interface IAdministrationDao
     Sub CreerMotif(code As String, libelle As String)
     Sub ModifierMotif(code As String, libelle As String, actif As Boolean)
 
+    ' --- Médicaments : composition, interactions, posologie (EX-73)
+
+    Function ListerComposants() As List(Of ElementReferentiel)
+    Function ListerTypesIndividu() As List(Of ElementReferentiel)
+    Function ListerPresentations() As List(Of ElementReferentiel)
+
+    ''' <summary>Dosages, libellé lisible (« 500 mg »), par unité puis quantité.</summary>
+    Function ListerDosages() As List(Of ElementReferentiel)
+
+    Sub CreerComposant(code As String, libelle As String)
+    Sub CreerDosage(code As String, quantite As Decimal, unite As String)
+
+    Sub AjouterComposition(depotLegal As String, codeComposant As String, quantite As Decimal, unite As String)
+    Sub RetirerComposition(depotLegal As String, codeComposant As String)
+
+    ''' <summary>Enregistre que <paramref name="perturbateur"/> perturbe l'effet de <paramref name="perturbe"/>.</summary>
+    Sub AjouterInteraction(perturbateur As String, perturbe As String, description As String)
+    Sub RetirerInteraction(perturbateur As String, perturbe As String)
+
+    Sub AjouterPosologie(depotLegal As String, codeTypeIndividu As String, codePresentation As String, codeDosage As String, texte As String)
+    Sub RetirerPosologie(depotLegal As String, codeTypeIndividu As String, codePresentation As String, codeDosage As String)
+
     ' --- Journal (EX-74)
 
     ''' <summary>Tentatives de connexion entre deux dates (incluses), les plus récentes d'abord.</summary>

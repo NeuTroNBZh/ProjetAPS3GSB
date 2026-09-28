@@ -136,7 +136,7 @@ Public Class ConsultationDao
                join FAMILLE f on f.fam_code = m.fam_code
               where m.med_depot_legal = :depot"
         Const sqlComposition As String =
-            "select c.cmp_libelle, co.cst_quantite, co.cst_unite
+            "select c.cmp_libelle, co.cst_quantite, co.cst_unite, co.cmp_code
                from CONSTITUER co
                join COMPOSANT c on c.cmp_code = co.cmp_code
               where co.med_depot_legal = :depot
@@ -153,7 +153,7 @@ Public Class ConsultationDao
              order by 2"
         ' Du plus âgé au plus jeune
         Const sqlPosologie As String =
-            "select t.tin_libelle, pr.pre_libelle, d.dos_quantite, d.dos_unite, p.prs_posologie
+            "select t.tin_libelle, pr.pre_libelle, d.dos_quantite, d.dos_unite, p.prs_posologie, p.tin_code, p.pre_code, p.dos_code
                from PRESCRIRE p
                join TYPE_INDIVIDU t on t.tin_code = p.tin_code
                join PRESENTATION pr on pr.pre_code = p.pre_code
@@ -178,7 +178,7 @@ Public Class ConsultationDao
                 If fiche Is Nothing Then Return Nothing
 
                 fiche.Composition = Lister(cnx, sqlComposition, parDepot,
-                    Function(l) New LigneComposition() With {.Composant = l.GetString(0), .Quantite = l.GetDecimal(1), .Unite = l.GetString(2)})
+                    Function(l) New LigneComposition() With {.CodeComposant = l.GetString(3), .Composant = l.GetString(0), .Quantite = l.GetDecimal(1), .Unite = l.GetString(2)})
                 fiche.Interactions = Lister(cnx, sqlInteractions, parDepot,
                     Function(l) New InteractionMedicamenteuse() With {
                         .DepotLegalAutre = l.GetString(0), .NomAutre = l.GetString(1),
@@ -186,7 +186,8 @@ Public Class ConsultationDao
                 fiche.Posologies = Lister(cnx, sqlPosologie, parDepot,
                     Function(l) New Posologie() With {
                         .TypeIndividu = l.GetString(0), .Presentation = l.GetString(1),
-                        .Dosage = $"{l.GetDecimal(2):0.###} {l.GetString(3)}", .Texte = l.GetString(4)})
+                        .Dosage = $"{l.GetDecimal(2):0.###} {l.GetString(3)}", .Texte = l.GetString(4),
+                        .CodeTypeIndividu = l.GetString(5), .CodePresentation = l.GetString(6), .CodeDosage = l.GetString(7)})
                 Return fiche
             End Function)
     End Function

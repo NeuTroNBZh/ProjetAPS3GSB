@@ -19,6 +19,7 @@ Public Class ServiceAdministration
     Private Shared ReadOnly FormatCodePostal As New Regex("^[0-9]{5}$")
     Private Shared ReadOnly FormatEmail As New Regex("^[^@\s]+@[^@\s]+\.[^@\s]+$")
     Private Shared ReadOnly FormatCodeMotif As New Regex("^[A-Z]{2,6}$")
+    Private Shared ReadOnly FormatCodeComposant As New Regex("^[A-Z0-9]{2,4}$")
 
     Private ReadOnly _admin As IAdministrationDao
     Private ReadOnly _referentiel As IReferentielDao
@@ -272,6 +273,151 @@ Public Class ServiceAdministration
     End Function
 
     ' ------------------------------------------------------------------
+    ' Médicaments : composition, interactions, posologie (EX-73)
+    ' ------------------------------------------------------------------
+
+    Private Const QuantiteMax As Decimal = 9_999_999.999D
+
+    ''' <summary>Fiche complète d'un médicament (composition, interactions, posologies avec leurs codes).</summary>
+    Public Function FicheMedicament(u As UtilisateurConnecte, depotLegal As String) As FicheMedicament
+        VerifierAcces(u)
+        Dim fiche = Appeler(Function() _consultation.ChargerFicheMedicament(depotLegal))
+        If fiche Is Nothing Then Throw New ErreurMetierException("Ce médicament n'existe pas.")
+        Return fiche
+    End Function
+
+    Public Function Composants(u As UtilisateurConnecte) As IReadOnlyList(Of ElementReferentiel)
+        VerifierAcces(u)
+        Return Appeler(Function() _admin.ListerComposants())
+    End Function
+
+    Public Function TypesIndividu(u As UtilisateurConnecte) As IReadOnlyList(Of ElementReferentiel)
+        VerifierAcces(u)
+        Return Appeler(Function() _admin.ListerTypesIndividu())
+    End Function
+
+    Public Function Presentations(u As UtilisateurConnecte) As IReadOnlyList(Of ElementReferentiel)
+        VerifierAcces(u)
+        Return Appeler(Function() _admin.ListerPresentations())
+    End Function
+
+    Public Function Dosages(u As UtilisateurConnecte) As IReadOnlyList(Of ElementReferentiel)
+        VerifierAcces(u)
+        Return Appeler(Function() _admin.ListerDosages())
+    End Function
+
+    ''' <summary>Nouveau composant : code de 2 à 4 lettres ou chiffres (mis en majuscules), libellé obligatoire.</summary>
+    Public Function CreerComposant(u As UtilisateurConnecte, code As String, libelle As String) As ResultatOperation
+        VerifierAcces(u)
+        code = Nettoyer(code).ToUpperInvariant()
+        libelle = Nettoyer(libelle)
+        Dim erreurs As New List(Of String)
+        If Not FormatCodeComposant.IsMatch(code) Then erreurs.Add("Le code du composant est obligatoire : 2 à 4 lettres ou chiffres.")
+        If libelle.Length = 0 OrElse libelle.Length > 60 Then erreurs.Add("Le nom du composant est obligatoire (60 caractères au plus).")
+        If erreurs.Count > 0 Then Return ResultatOperation.Echec(erreurs)
+        Return Executer(Sub() _admin.CreerComposant(code, libelle), $"Composant « {libelle} » créé.",
+                        messageDoublon:="Ce code de composant existe déjà.")
+    End Function
+
+    ''' <summary>
+    ''' Code d'un dosage calculé à partir de sa valeur, comme dans le jeu d'essai : « 500MG », « 1G » ;
+    ''' la virgule devient V et le signe % devient PC (« 0V5PC » pour 0,5 %).
+    ''' </summary>
+    Public Shared Function CodeDosage(quantite As Decimal, unite As String) As String
+        Dim texte = quantite.ToString("0.###", Globalization.CultureInfo.InvariantCulture).Replace(".", "V") &
+                    Nettoyer(unite).ToUpperInvariant().Replace("%", "PC")
+        Return Regex.Replace(texte, "[^A-Z0-9]", "")
+    End Function
+
+    Public Function CreerDosage(u As UtilisateurConnecte, quantite As Decimal, unite As String) As ResultatOperation
+        VerifierAcces(u)
+        unite = Nettoyer(unite)
+        quantite = Math.Round(quantite, 3)
+        Dim erreurs = ControlerQuantite(quantite, unite)
+        Dim code = CodeDosage(quantite, unite)
+        If erreurs.Count = 0 AndAlso code.Length > 10 Then erreurs.Add("Ce dosage est trop long pour être enregistré : simplifiez la quantité ou l'unité.")
+        If erreurs.Count > 0 Then Return ResultatOperation.Echec(erreurs)
+        Return Executer(Sub() _admin.CreerDosage(code, quantite, unite), $"Dosage {quantite:0.###} {unite} créé.",
+                        messageDoublon:="Ce dosage existe déjà : choisissez-le dans la liste.")
+    End Function
+
+    Public Function AjouterComposant(u As UtilisateurConnecte, depotLegal As String, codeComposant As String, quantite As Decimal, unite As String) As ResultatOperation
+        VerifierAcces(u)
+        unite = Nettoyer(unite)
+        quantite = Math.Round(quantite, 3)
+        Dim erreurs As New List(Of String)
+        If String.IsNullOrEmpty(codeComposant) Then erreurs.Add("Choisissez le composant.")
+        erreurs.AddRange(ControlerQuantite(quantite, unite))
+        If erreurs.Count > 0 Then Return ResultatOperation.Echec(erreurs)
+        Return Executer(Sub() _admin.AjouterComposition(depotLegal, codeComposant, quantite, unite), "Composant ajouté à la composition.",
+                        messageDoublon:="Ce composant figure déjà dans la composition : retirez-le d'abord pour changer sa quantité.")
+    End Function
+
+    Public Function RetirerComposant(u As UtilisateurConnecte, depotLegal As String, ligne As LigneComposition) As ResultatOperation
+        VerifierAcces(u)
+        ArgumentNullException.ThrowIfNull(ligne)
+        Return Executer(Sub() _admin.RetirerComposition(depotLegal, ligne.CodeComposant), $"{ligne.Composant} retiré de la composition.")
+    End Function
+
+    ''' <summary>
+    ''' Interaction entre le médicament et un autre ; <paramref name="perturbeLAutre"/> indique le sens
+    ''' (vrai : le médicament perturbe l'effet de l'autre ; faux : il est perturbé par l'autre).
+    ''' </summary>
+    Public Function AjouterInteraction(u As UtilisateurConnecte, depotLegal As String, autreDepotLegal As String,
+                                       perturbeLAutre As Boolean, description As String) As ResultatOperation
+        VerifierAcces(u)
+        description = NettoyerOuRien(description)
+        Dim erreurs As New List(Of String)
+        If String.IsNullOrEmpty(autreDepotLegal) Then
+            erreurs.Add("Choisissez l'autre médicament.")
+        ElseIf autreDepotLegal = depotLegal Then
+            erreurs.Add("Un médicament ne peut pas interagir avec lui-même.")
+        End If
+        If description IsNot Nothing AndAlso description.Length > 500 Then erreurs.Add("La description est limitée à 500 caractères.")
+        If erreurs.Count > 0 Then Return ResultatOperation.Echec(erreurs)
+        Dim perturbateur = If(perturbeLAutre, depotLegal, autreDepotLegal)
+        Dim perturbe = If(perturbeLAutre, autreDepotLegal, depotLegal)
+        Return Executer(Sub() _admin.AjouterInteraction(perturbateur, perturbe, description), "Interaction enregistrée.",
+                        messageDoublon:="Cette interaction est déjà enregistrée.")
+    End Function
+
+    Public Function RetirerInteraction(u As UtilisateurConnecte, depotLegal As String, interaction As InteractionMedicamenteuse) As ResultatOperation
+        VerifierAcces(u)
+        ArgumentNullException.ThrowIfNull(interaction)
+        Dim perturbateur = If(interaction.EstPerturbateur, depotLegal, interaction.DepotLegalAutre)
+        Dim perturbe = If(interaction.EstPerturbateur, interaction.DepotLegalAutre, depotLegal)
+        Return Executer(Sub() _admin.RetirerInteraction(perturbateur, perturbe), "Interaction retirée.")
+    End Function
+
+    Public Function AjouterPosologie(u As UtilisateurConnecte, depotLegal As String, codeTypeIndividu As String, codePresentation As String,
+                                     codeDosage As String, texte As String) As ResultatOperation
+        VerifierAcces(u)
+        texte = Nettoyer(texte)
+        Dim erreurs As New List(Of String)
+        If String.IsNullOrEmpty(codeTypeIndividu) Then erreurs.Add("Choisissez le type d'individu.")
+        If String.IsNullOrEmpty(codePresentation) Then erreurs.Add("Choisissez la présentation.")
+        If String.IsNullOrEmpty(codeDosage) Then erreurs.Add("Choisissez le dosage.")
+        If texte.Length = 0 OrElse texte.Length > 200 Then erreurs.Add("La posologie est obligatoire (200 caractères au plus).")
+        If erreurs.Count > 0 Then Return ResultatOperation.Echec(erreurs)
+        Return Executer(Sub() _admin.AjouterPosologie(depotLegal, codeTypeIndividu, codePresentation, codeDosage, texte), "Posologie ajoutée.",
+                        messageDoublon:="Une posologie existe déjà pour ce type d'individu, cette présentation et ce dosage.")
+    End Function
+
+    Public Function RetirerPosologie(u As UtilisateurConnecte, depotLegal As String, posologie As Posologie) As ResultatOperation
+        VerifierAcces(u)
+        ArgumentNullException.ThrowIfNull(posologie)
+        Return Executer(Sub() _admin.RetirerPosologie(depotLegal, posologie.CodeTypeIndividu, posologie.CodePresentation, posologie.CodeDosage),
+                        "Posologie retirée.")
+    End Function
+
+    Private Shared Function ControlerQuantite(quantite As Decimal, unite As String) As List(Of String)
+        Dim erreurs As New List(Of String)
+        If quantite <= 0 OrElse quantite > QuantiteMax Then erreurs.Add("La quantité doit être strictement positive.")
+        If unite.Length = 0 OrElse unite.Length > 10 Then erreurs.Add("L'unité est obligatoire (10 caractères au plus : mg, g, ml, %…).")
+        Return erreurs
+    End Function
+
+    ' ------------------------------------------------------------------
     ' Journal (EX-74)
     ' ------------------------------------------------------------------
 
@@ -351,12 +497,13 @@ Public Class ServiceAdministration
     End Function
 
     ''' <summary>Exécute une écriture et traduit les erreurs de base en messages compréhensibles.</summary>
-    Private Shared Function Executer(action As Action, message As String, Optional motDePasse As String = Nothing) As ResultatOperation
+    Private Shared Function Executer(action As Action, message As String, Optional motDePasse As String = Nothing,
+                                     Optional messageDoublon As String = Nothing) As ResultatOperation
         Try
             action()
             Return ResultatOperation.Succes(message, motDePasse)
         Catch ex As AccesDonneesException When ex.EstDoublon
-            Return ResultatOperation.Echec(MessageDoublon)
+            Return ResultatOperation.Echec(If(messageDoublon, ServiceAdministration.MessageDoublon))
         Catch ex As AccesDonneesException
             Return ResultatOperation.Echec(ServiceRapports.MessageServeur)
         End Try
