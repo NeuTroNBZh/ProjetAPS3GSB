@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\GSB.CR.Modeles\GSB.CR.Modeles.vbproj" />
+    <ProjectReference Include="..\GSB.CR.Donnees\GSB.CR.Donnees.vbproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <RootNamespace>GSB.CR.Metier</RootNamespace>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+</Project>

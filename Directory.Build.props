@@ -1,0 +1,13 @@
+<Project>
+  <!-- Réglages communs à tous les projets VB.NET de la solution -->
+  <PropertyGroup>
+    <OptionStrict>On</OptionStrict>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionInfer>On</OptionInfer>
+    <OptionCompare>Binary</OptionCompare>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);42312;42314</NoWarn>
+    <Company>Galaxy Swiss Bourdin</Company>
+    <Product>GSB-CR</Product>
+  </PropertyGroup>
+</Project>

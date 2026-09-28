@@ -5,8 +5,9 @@ Liste issue de `AP3.pptx` (« Travail à faire : TOUT »). Cocher au fil de l'ea
 ## Phase 0 — Mise en place
 - [x] Documentation du projet (`docs/`)
 - [x] Dépôt Git + GitHub (privé)
-- [ ] Solution Visual Studio (4 projets + tests)
-- [ ] Base Oracle 19c accessible (locale ou serveur école) + chaîne de connexion
+- [x] Solution Visual Studio (4 projets + tests) — `GSB.CR.slnx`
+- [x] Intégration continue GitHub Actions (build + tests)
+- [ ] Base Oracle 19c : serveur 100.109.217.110 joignable ✔ — reste : compte applicatif + nom de service + `appsettings.Local.json`
 
 ## Phase 1 — Conception
 - [ ] Spécifications fonctionnelles générales (cas d'utilisation par module)

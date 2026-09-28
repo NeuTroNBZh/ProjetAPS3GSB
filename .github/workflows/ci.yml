@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: windows-latest   # WinForms (net10.0-windows) nécessite Windows
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restauration
+        run: dotnet restore GSB.CR.slnx
+
+      - name: Compilation
+        run: dotnet build GSB.CR.slnx --configuration Release --no-restore
+
+      - name: Tests unitaires (hors intégration Oracle)
+        run: dotnet test GSB.CR.slnx --configuration Release --no-build --filter "TestCategory!=Integration"

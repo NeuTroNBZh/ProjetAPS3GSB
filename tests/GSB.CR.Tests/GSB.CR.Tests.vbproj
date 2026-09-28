@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest" Version="4.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Import Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\GSB.CR.Modeles\GSB.CR.Modeles.vbproj" />
+    <ProjectReference Include="..\..\src\GSB.CR.Metier\GSB.CR.Metier.vbproj" />
+    <ProjectReference Include="..\..\src\GSB.CR.Donnees\GSB.CR.Donnees.vbproj" />
+  </ItemGroup>
+
+  <!-- Même configuration Oracle que l'application (pour le test d'intégration) -->
+  <ItemGroup>
+    <None Include="..\..\src\GSB.CR.IHM\appsettings.json" Link="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\src\GSB.CR.IHM\appsettings.Local.json" Link="appsettings.Local.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\src\GSB.CR.IHM\appsettings.Local.json')" />
+  </ItemGroup>
+
+</Project>

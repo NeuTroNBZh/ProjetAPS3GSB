@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/GSB.CR.Donnees/GSB.CR.Donnees.vbproj" />
+    <Project Path="src/GSB.CR.IHM/GSB.CR.IHM.vbproj" />
+    <Project Path="src/GSB.CR.Metier/GSB.CR.Metier.vbproj" />
+    <Project Path="src/GSB.CR.Modeles/GSB.CR.Modeles.vbproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GSB.CR.Tests/GSB.CR.Tests.vbproj" />
+  </Folder>
+</Solution>
