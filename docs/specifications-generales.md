@@ -1,6 +1,6 @@
 # Spécifications fonctionnelles générales — GSB-CR
 
-Version de l'application décrite : 0.9.0. Ce document décrit **ce que fait** l'application : acteurs, cas d'utilisation et règles de gestion. Le détail des écrans et des champs est dans les [spécifications détaillées](specifications-detaillees.md) ; les exigences d'origine sont dans [exigences.md](exigences.md).
+Version de l'application décrite : 1.0.0. Ce document décrit **ce que fait** l'application : acteurs, cas d'utilisation et règles de gestion. Le détail des écrans et des champs est dans les [spécifications détaillées](specifications-detaillees.md) ; les exigences d'origine sont dans [exigences.md](exigences.md).
 
 ## 1. Objet et périmètre
 

@@ -1,6 +1,6 @@
 # Documentation technique — GSB-CR
 
-Guide destiné au développeur qui reprend l'application (transfert de compétences, EX-60 et EX-62). Version décrite : 0.9.0.
+Guide destiné au développeur qui reprend l'application (transfert de compétences, EX-60 et EX-62). Version décrite : 1.0.0.
 
 | Document | Contenu |
 |---|---|
@@ -172,9 +172,10 @@ L'intégration continue (`.github/workflows/ci.yml`, Windows) compile en Release
 
 1. Tous les tests passent (`dotnet test`), la CI est verte.
 2. Mettre à jour `<Version>` dans `Directory.Build.props` et ajouter l'entrée du `CHANGELOG.md`.
-3. Commit, tag `vX.Y.Z`, envoi sur GitHub.
-4. Mettre à jour la documentation (`docs/`) et régénérer la référence des classes : `pwsh ./scripts/generer-reference.ps1`.
-5. Produire le paquet : `pwsh ./scripts/publier.ps1`.
+3. Mettre à jour la documentation (`docs/`) et régénérer la référence des classes : `pwsh ./scripts/generer-reference.ps1`.
+4. Vérifier les paquets en local : `pwsh ./scripts/preparer-livraison.ps1` (résultat dans `publication/livraison-<version>/`).
+5. Commit, puis tag `vX.Y.Z` et envoi : `git tag vX.Y.Z && git push origin main vX.Y.Z`.
+6. Le workflow **Release** (`.github/workflows/release.yml`) vérifie que le tag correspond à la version, compile, exécute les tests, construit les paquets et publie la release GitHub avec les notes tirées du `CHANGELOG.md`.
 
 ## 8. Sécurité (mise en œuvre)
 

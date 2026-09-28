@@ -5,7 +5,7 @@
 **Comptes-rendus de visite des visiteurs médicaux — Galaxy Swiss Bourdin**
 
 [![CI](https://github.com/NeuTroNBZh/ProjetAPS3GSB/actions/workflows/ci.yml/badge.svg)](https://github.com/NeuTroNBZh/ProjetAPS3GSB/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.9.0-00529B)
+![Version](https://img.shields.io/badge/version-1.0.0-00529B)
 ![.NET](https://img.shields.io/badge/.NET-10-512BD4)
 ![VB.NET](https://img.shields.io/badge/langage-VB.NET-00529B)
 ![Oracle](https://img.shields.io/badge/Oracle-19c-C74634)
@@ -152,14 +152,22 @@ et [diagrammes UML](docs/uml/README.md).
 
 ## Démarrage rapide
 
-### Prérequis
+### Installer l'application (utilisateurs et service informatique)
 
-- Windows 10 ou 11
-- [SDK .NET 10](https://dotnet.microsoft.com/download)
-- Une base Oracle 19c ou plus récente, avec un schéma `GSB`
-- [SQLcl](https://www.oracle.com/database/sqldeveloper/technologies/sqlcl/) pour exécuter les scripts SQL
+Tout se télécharge depuis la page **[Releases](https://github.com/NeuTroNBZh/ProjetAPS3GSB/releases/latest)** :
+
+| Paquet | Pour qui | Utilisation |
+|---|---|---|
+| `GSB-CR-<version>-poste-win-x64.zip` | Chaque poste Windows 10/11 | Décompresser, double-cliquer sur **`Installer.cmd`**, répondre aux questions (serveur, mot de passe du compte des postes). Runtime .NET inclus, raccourci créé sur le bureau |
+| `GSB-CR-<version>-base-oracle.zip` | Administrateur de la base | Suivre `LISEZMOI.txt` : création du schéma, installation de production, compte des postes |
+
+Déploiement sur de nombreux postes sans questions (`installer.ps1 -Silencieux`), mise à jour et désinstallation :
+voir la [procédure de mise en exploitation](docs/mise-en-exploitation.md).
 
 ### Installation (poste de développement)
+
+Prérequis : Windows 10 ou 11, [SDK .NET 10](https://dotnet.microsoft.com/download), une base Oracle 19c ou plus récente
+avec un schéma `GSB`, et [SQLcl](https://www.oracle.com/database/sqldeveloper/technologies/sqlcl/) pour les scripts SQL.
 
 ```bash
 # 1. Cloner le dépôt
@@ -181,14 +189,11 @@ dotnet run --project src/GSB.CR.IHM
 Le serveur, le port et le service se règlent dans `src/GSB.CR.IHM/appsettings.json`.
 Les comptes du jeu d'essai (un par profil, données fictives) sont listés dans [`docs/comptes-test.md`](docs/comptes-test.md).
 
-### Mise en production
-
-Base vierge avec un seul compte administrateur, compte Oracle limité pour les postes et paquet d'installation
-sans identifiants : suivre la [procédure de mise en exploitation](docs/mise-en-exploitation.md).
+### Publier une version
 
 ```powershell
-pwsh ./scripts/hacher-mot-de-passe.ps1     # empreinte du mot de passe du premier administrateur
-pwsh ./scripts/publier.ps1 -Autonome       # paquet .zip du poste client (runtime .NET inclus)
+pwsh ./scripts/preparer-livraison.ps1      # construit les deux paquets en local (publication/livraison-<version>/)
+git tag v1.0.0 && git push origin v1.0.0   # le workflow « Release » teste, construit et publie la release
 ```
 
 ## Tests et intégration continue
@@ -201,6 +206,7 @@ dotnet test GSB.CR.slnx                                          # tous les test
 - **248 tests MSTest** : règles de gestion, droits par profil, validation des saisies, hachage des mots de passe, statistiques, et accès réels à Oracle pour les tests d'intégration.
 - Les tests qui touchent Oracle portent la catégorie `Integration` et sont exclus de la CI.
 - **GitHub Actions** compile la solution et exécute les tests unitaires à chaque push sur `main` et à chaque pull request.
+- À chaque tag `vX.Y.Z`, le workflow **Release** vérifie la version, relance les tests, construit les paquets et publie la release avec ses notes.
 - Règles côté base : `bdd/tests_regles.sql` vérifie les contraintes et déclencheurs.
 - Recette fonctionnelle : [cahier de recette](docs/cahier-de-recette.md).
 
@@ -245,9 +251,10 @@ ProjetAPS3GSB/
 ├── tests/
 │   └── GSB.CR.Tests/       tests unitaires et d'intégration (MSTest)
 ├── bdd/                    scripts Oracle : tables, vues, déclencheurs, référentiels, jeu d'essai, installation
-├── scripts/                publication, hachage de mot de passe, génération de la référence des classes
+├── deploiement/            installateur et désinstallateur des postes, notices des paquets
+├── scripts/                livraison, publication, hachage de mot de passe, référence des classes
 ├── docs/                   documentation du projet
-├── .github/workflows/      intégration continue
+├── .github/workflows/      intégration continue et publication des releases
 ├── Directory.Build.props   réglages communs et numéro de version
 └── CHANGELOG.md            journal des versions
 ```
@@ -259,6 +266,7 @@ Le détail de chaque version est dans le [journal des versions](CHANGELOG.md).
 
 | Version | Contenu principal |
 |---|---|
+| **1.0.0** | Première version complète : installateur des postes, release GitHub automatique, documentation finalisée |
 | 0.9.0 | Mise en exploitation : installation de production, compte Oracle des postes, paquet d'installation |
 | 0.8.0 | Module Administration |
 | 0.1.0 → 0.7.0 | Socle, connexion, module Visiteur, Délégué, Responsable, messagerie |

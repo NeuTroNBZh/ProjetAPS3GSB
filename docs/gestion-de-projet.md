@@ -41,10 +41,11 @@ Projet individuel : toutes les fonctions (analyse, conception, développement, t
 | 0.7.0 | 28/09/2026 | Messagerie interne | EX-50 | 36 | 208 |
 | 0.8.0 | 28/09/2026 | Module Administration | EX-70 à EX-74 | 43 | 240 |
 | 0.9.0 | 28/09/2026 | Mise en exploitation, cahier de recette, documentation utilisateur, UML 2 complet | EX-61 | 51 | 248 |
+| 1.0.0 | 28/09/2026 | Spécifications, maquettes, documentation technique, README ; installateur des postes et release GitHub automatique | EX-60, EX-62 | 61 | 248 |
 
 Les colonnes « Commits » et « Tests » sont mesurées sur les tags Git (`git rev-list --count vX.Y.Z`, cas de test MSTest).
 
-## 3. Indicateurs de suivi (version 0.9.0)
+## 3. Indicateurs de suivi (version 1.0.0)
 
 | Indicateur | Valeur |
 |---|---|
@@ -54,11 +55,12 @@ Les colonnes « Commits » et « Tests » sont mesurées sur les tags Git (`git 
 | Règles vérifiées par la base | 21 sur 21 (`bdd/tests_regles.sql`) |
 | Scénarios de recette | 59 rédigés, campagne 1 à dérouler |
 | Diagrammes UML 2 | 17 (13 types sur 14) |
-| Décisions tracées | 22 |
+| Décisions tracées | 23 |
+| Livraison | Release GitHub automatique : paquet poste (runtime inclus, installateur) et kit base Oracle |
 
 ## 4. Planning jusqu'au rendu
 
-Le développement des modules est terminé. Les semaines restantes servent à la recette, aux livrables d'analyse encore ouverts et à la préparation de la soutenance, avec une semaine de marge.
+La version 1.0.0 est livrée le 28/09 : tous les modules et tous les livrables écrits sont terminés, en avance sur le planning initial. Les semaines restantes servent aux deux campagnes de recette (corrections éventuelles livrées en 1.0.x), à la mise en production simulée et à la préparation de la soutenance, avec une large marge.
 
 ```mermaid
 gantt
@@ -66,19 +68,13 @@ gantt
     dateFormat YYYY-MM-DD
     axisFormat %d/%m
     section Réalisé
-    Versions 0.1.0 à 0.9.0                  :done, v, 2026-09-28, 1d
+    Versions 0.1.0 à 1.0.0 (modules, livrables écrits, livraison) :done, v, 2026-09-28, 1d
     section Recette
     Campagne de recette 1 et corrections    :r1, 2026-09-29, 6d
     Test du compte GSB_APP sur le serveur   :r2, 2026-09-29, 2d
     Campagne de recette 2, procès-verbal    :r3, 2026-11-02, 5d
-    section Analyse et conception
-    Spécifications fonctionnelles générales :s1, 2026-10-05, 7d
-    Spécifications fonctionnelles détaillées:s2, after s1, 7d
-    Maquettes des écrans                    :s3, 2026-10-19, 5d
-    section Documentation
-    Documentation technique (EX-60, EX-62)  :d1, 2026-10-24, 9d
     section Livraison
-    Version 1.0.0 (mise en production simulée) :milestone, m1, 2026-11-09, 0d
+    Mise en production simulée (release 1.0.x) :milestone, m1, 2026-11-09, 0d
     Préparation de la soutenance            :p1, 2026-11-16, 7d
     Marge et relecture                      :p2, 2026-11-23, 7d
     Rendu                                   :milestone, m2, 2026-12-01, 0d
@@ -86,12 +82,12 @@ gantt
 
 | Semaine | Travail prévu | Livrable |
 |---|---|---|
-| 29/09 – 04/10 | Dérouler la campagne de recette 1 ; corriger les anomalies ; tester `GSB_APP` sur le serveur | Procès-verbal (campagne 1), version 0.9.x si corrections |
-| 05/10 – 11/10 | Spécifications fonctionnelles générales : cas d'utilisation détaillés par module | `docs/specifications-generales.md` |
-| 12/10 – 18/10 | Spécifications fonctionnelles détaillées : écrans, champs, règles (EX-xx) | `docs/specifications-detaillees.md` |
-| 19/10 – 23/10 | Maquettes des écrans (charte bleu/blanc) à partir des écrans réalisés | `docs/maquettes/` |
-| 24/10 – 01/11 | Documentation technique : classes, bibliothèques, transfert de compétences | `docs/technique/` |
-| 02/11 – 08/11 | Campagne de recette 2 ; mise en production simulée avec `installer_production.sql` | Procès-verbal final, tag **v1.0.0** |
+| 29/09 – 04/10 | Dérouler la campagne de recette 1 ; corriger les anomalies ; tester `GSB_APP` sur le serveur | Procès-verbal (campagne 1), version 1.0.x si corrections |
+| 05/10 – 11/10 | ~~Spécifications fonctionnelles générales~~ — réalisé le 28/09 | `docs/specifications-generales.md` |
+| 12/10 – 18/10 | ~~Spécifications fonctionnelles détaillées~~ — réalisé le 28/09 | `docs/specifications-detaillees.md` |
+| 19/10 – 23/10 | ~~Maquettes des écrans~~ — réalisé le 28/09 | `docs/maquettes/` |
+| 24/10 – 01/11 | ~~Documentation technique~~ — réalisé le 28/09 | `docs/technique/` |
+| 02/11 – 08/11 | Campagne de recette 2 ; mise en production simulée à partir des paquets de la release | Procès-verbal final, release **v1.0.x** si corrections |
 | 16/11 – 22/11 | Soutenance : support, scénario de démonstration, comptes de démonstration | Support de présentation |
 | 23/11 – 30/11 | Marge : imprévus, relecture de l'ensemble des livrables | — |
 | **01/12** | **Rendu** | Dépôt, documents, application |
@@ -113,6 +109,6 @@ Le suivi au jour le jour se fait dans la base « Tâches » de Notion (statut À
 ## 6. Gestion de configuration
 
 - **Dépôt** : une branche principale `main`, protégée par l'intégration continue ; commits courts, messages en français, préfixés par la couche concernée (« Métier : », « IHM : », « Docs : »…).
-- **Versions** : numérotation `MAJEUR.MINEUR.CORRECTIF`, définie une seule fois dans `Directory.Build.props` (affichée sur l'écran de connexion) ; chaque version livrée a une entrée dans le CHANGELOG et un tag `vX.Y.Z`. La version 1.0.0 marquera la première mise en production.
+- **Versions** : numérotation `MAJEUR.MINEUR.CORRECTIF`, définie une seule fois dans `Directory.Build.props` (affichée sur l'écran de connexion) ; chaque version livrée a une entrée dans le CHANGELOG et un tag `vX.Y.Z`. La version 1.0.0 est la première version complète ; chaque tag déclenche la publication automatique de la release GitHub (paquets et notes de version).
 - **Base de données** : scripts numérotés dans `bdd/` ; installation de développement (`installer.sql`) et de production (`installer_production.sql`) séparées ; toute évolution future du schéma passera par un script de migration versionné (`bdd/migrations/`).
 - **Secrets** : jamais dans le dépôt ; modèles `*.example.json` versionnés à la place.

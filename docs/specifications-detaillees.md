@@ -1,6 +1,6 @@
 # Spécifications fonctionnelles détaillées — GSB-CR
 
-Version décrite : 0.9.0. Ce document détaille chaque écran : champs, contrôles, actions et messages. Les cas d'utilisation (`UC-xx`) et les règles de gestion (`RG-xx`) sont définis dans les [spécifications générales](specifications-generales.md) ; les captures d'écran viennent de la [documentation utilisateur](utilisateur/README.md) ; le modèle de données est dans [modele-donnees.md](modele-donnees.md).
+Version décrite : 1.0.0. Ce document détaille chaque écran : champs, contrôles, actions et messages. Les cas d'utilisation (`UC-xx`) et les règles de gestion (`RG-xx`) sont définis dans les [spécifications générales](specifications-generales.md) ; les captures d'écran viennent de la [documentation utilisateur](utilisateur/README.md) ; le modèle de données est dans [modele-donnees.md](modele-donnees.md).
 
 ## 0. Conventions communes à tous les écrans
 
