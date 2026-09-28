@@ -174,6 +174,7 @@ L'intégration continue (`.github/workflows/ci.yml`, Windows) compile en Release
 2. Mettre à jour `<Version>` dans `Directory.Build.props` et ajouter l'entrée du `CHANGELOG.md`.
 3. Mettre à jour la documentation (`docs/`) et régénérer la référence des classes : `pwsh ./scripts/generer-reference.ps1`.
 4. Vérifier les paquets en local : `pwsh ./scripts/preparer-livraison.ps1` (résultat dans `publication/livraison-<version>/`).
+   Régénérer le dossier de projet PDF : `pwsh ./scripts/generer-dossier.ps1` (Microsoft Edge ou Google Chrome requis ; résultat dans `docs/dossier/`).
 5. Commit, puis tag `vX.Y.Z` et envoi : `git tag vX.Y.Z && git push origin main vX.Y.Z`.
 6. Le workflow **Release** (`.github/workflows/release.yml`) vérifie que le tag correspond à la version, compile, exécute les tests, construit les paquets et publie la release GitHub avec les notes tirées du `CHANGELOG.md`.
 

@@ -224,6 +224,7 @@ dotnet test GSB.CR.slnx                                          # tous les test
 
 | Document | Contenu |
 |---|---|
+| 📘 [**Dossier de projet (PDF)**](docs/dossier/GSB-CR-dossier-de-projet.pdf) | Toute la documentation ci-dessous en un seul fichier (page de garde, sommaire, diagrammes UML) |
 | [Documentation utilisateur](docs/utilisateur/README.md) | Mode opératoire par module, avec captures |
 | [Spécifications générales](docs/specifications-generales.md) | Acteurs, cas d'utilisation, règles de gestion |
 | [Spécifications détaillées](docs/specifications-detaillees.md) | Écrans, champs, contrôles et messages |
@@ -252,7 +253,7 @@ ProjetAPS3GSB/
 │   └── GSB.CR.Tests/       tests unitaires et d'intégration (MSTest)
 ├── bdd/                    scripts Oracle : tables, vues, déclencheurs, référentiels, jeu d'essai, installation
 ├── deploiement/            installateur et désinstallateur des postes, notices des paquets
-├── scripts/                livraison, publication, hachage de mot de passe, référence des classes
+├── scripts/                livraison, publication, dossier PDF, hachage de mot de passe, référence des classes
 ├── docs/                   documentation du projet
 ├── .github/workflows/      intégration continue et publication des releases
 ├── Directory.Build.props   réglages communs et numéro de version
