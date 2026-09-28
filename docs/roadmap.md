@@ -16,7 +16,7 @@ Liste issue de `AP3.pptx` (« Travail à faire : TOUT »). Cocher au fil de l'ea
 - [ ] Maquettes des écrans (bleu/blanc)
 
 ## Phase 2 — Programmation (module Visiteur d'abord)
-- [ ] Connexion + redirection par profil (EX-01, EX-02, EX-05)
+- [x] Connexion + redirection par profil (EX-01, EX-02, EX-05 à EX-09) — v0.2.0
 - [ ] Saisie d'un CR (EX-10 → EX-19)
 - [ ] Consultation CR 3 ans (EX-20)
 - [ ] Fiches praticiens / produits (EX-21, EX-22)

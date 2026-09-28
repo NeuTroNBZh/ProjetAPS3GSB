@@ -5,6 +5,15 @@ et chaque version livrée est marquée par un tag Git `vX.Y.Z`.
 
 ## [Non publié]
 
+## [0.2.0] — 2026-09-28
+
+### Ajouté
+- Connexion à l'application (EX-01, EX-02) : page d'accueil limitée à l'identification, ouverture du menu correspondant au profil (visiteur, délégué, responsable, administrateur).
+- Sécurité (EX-05 à EX-09) : mots de passe hachés PBKDF2, verrouillage après 5 échecs, refus des collaborateurs partis, changement de mot de passe obligatoire à la première connexion, journal des connexions.
+- Changement de mot de passe à la demande, avec règles de robustesse.
+- Menu principal aux couleurs GSB avec les modules accessibles selon le profil.
+- Tests : 56 tests unitaires (couche Métier) et 13 tests d'intégration sur la base.
+
 ## [0.1.0] — 2026-09-28
 
 ### Ajouté
