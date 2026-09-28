@@ -1,6 +1,6 @@
 @startuml 03_classes_application
 !include style.iuml
-title GSB-CR — Diagramme de classes de l'application (architecture en couches, v0.2.0)
+title GSB-CR — Diagramme de classes de l'application (architecture en couches, v0.3.0)
 hide empty members
 skinparam packageStyle rectangle
 set separator none
@@ -12,164 +12,200 @@ package "GSB.CR.IHM" <<WinForms>> {
   class FrmConnexion {
     +Utilisateur : UtilisateurConnecte
     +ChangementMotDePasseRequis : Boolean
-    -btnConnexion_Click()
   }
-  class FrmChangementMotDePasse {
-    +New(service, utilisateur, obligatoire : Boolean)
-    -btnValider_Click()
-  }
+  class FrmChangementMotDePasse
   class FrmAccueil {
     +Deconnexion : Boolean
-    -CreerTuilesModules()
   }
   class TuileModule {
     +ModuleAssocie : ModuleApplication
   }
-  class Theme <<module>> {
-    +BleuGsb : Color
-    +StyliserBoutonPrincipal(b : Button)
+  class FrmMesComptesRendus {
+    -Recharger(numero)
+    -OuvrirRapport(numero)
   }
-  class LibellesModules <<module>> {
-    +Titre(m) : String
-    +Description(m) : String
+  class FrmCompteRendu {
+    +NumeroEnregistre : Integer
+    +EnregistreValide : Boolean
+    -LireFormulaire()
+    -Enregistrer(valider : Boolean)
   }
+  class FrmNouveauRemplacant {
+    +Praticien : Praticien
+  }
+  class Theme <<module>>
+  class LibellesModules <<module>>
 }
 
 package "GSB.CR.Metier" {
   class FabriqueServices {
     +{static} DepuisConfiguration() : FabriqueServices
     +Authentification() : ServiceAuthentification
+    +Rapports() : ServiceRapports
   }
   class ServiceAuthentification {
-    +{static} MaxEchecs : Integer = 5
     +Connecter(login, motDePasse) : ResultatConnexion
-    +ChangerMotDePasse(utilisateur, ancien, nouveau, confirmation) : List<String>
+    +ChangerMotDePasse(...) : List<String>
   }
-  class ResultatConnexion {
-    +Statut : StatutConnexion
-    +Message : String
-    +Utilisateur : UtilisateurConnecte
-    +EstAcceptee : Boolean
+  class ServiceRapports {
+    +{static} AnneesConsultation : Integer = 3
+    +MesRapports(u) : List<RapportResume>
+    +NouveauRapport(u) : RapportVisite
+    +Charger(u, numero) : RapportVisite
+    +Enregistrer(u, rapport, valider, debutSaisie) : ResultatEnregistrement
+    +SupprimerBrouillon(u, numero)
+    +Portefeuille(u) : List<Praticien>
+    +Motifs() / Medicaments() / TypesPraticien()
+    +CreerRemplacant(p) : List<String>
   }
-  enum StatutConnexion {
-    Reussie
-    ChangementMotDePasseRequis
-    IdentifiantsInvalides
-    CompteVerrouille
-    CompteInactif
-    ServeurIndisponible
+  class ValidateurRapport {
+    +{static} Verifier(rapport, aujourdhui) : List<String>
   }
-  class HacheurMotDePasse {
-    +{static} Hacher(mdp) : String
-    +{static} Verifier(mdp, hache) : Boolean
+  class ResultatEnregistrement {
+    +Numero : Integer
+    +Erreurs : List<String>
+    +Reussi : Boolean
   }
-  class PolitiqueMotDePasse {
-    +{static} Verifier(mdp) : List<String>
-  }
+  class ResultatConnexion
+  class ErreurMetierException
+  class HacheurMotDePasse
+  class PolitiqueMotDePasse
   class Autorisations {
-    +{static} ModulesAccessibles(p : Profil) : List<ModuleApplication>
     +{static} PeutAcceder(p, m) : Boolean
   }
-  enum ModuleApplication {
-    MesComptesRendus
-    Praticiens
-    Medicaments
-    MonActivite
-    ActiviteRegion
-    Echantillons
-    ActiviteSecteur
-    Messagerie
-    Administration
-  }
+  enum ModuleApplication
+  enum StatutConnexion
 }
 
 package "GSB.CR.Donnees" {
-  interface ICollaborateurDao {
-    +TrouverParLogin(login) : Collaborateur
-    +TrouverAffectationEnCours(matricule) : Affectation
-    +EnregistrerEchec(matricule, maxEchecs) : Integer
-    +EnregistrerSucces(matricule)
-    +ChangerMotDePasse(matricule, hache)
-    +Journaliser(login, matricule, succes)
+  abstract class DaoOracle {
+    #Executer(message, traitement)
+    #ExecuterTransaction(message, traitement)
+    #Lister(message, sql, parametrer, lire)
+  }
+  interface ICollaborateurDao
+  interface IRapportDao {
+    +ListerParAuteur(matricule, depuis)
+    +Charger(numero) : RapportVisite
+    +Creer(rapport) : Integer
+    +Modifier(rapport)
+    +SupprimerBrouillon(numero) : Boolean
+    +AjouterSessionSaisie(numero, matricule, debut, fin)
+  }
+  interface IReferentielDao {
+    +ListerPortefeuille(matricule)
+    +RechercherPraticiens(debut, maximum)
+    +TrouverPraticien(numero)
+    +CreerPraticien(p) : Integer
+    +ListerMedicaments() / ListerMotifs()
   }
   class CollaborateurDao
+  class RapportDao
+  class ReferentielDao
   class ConnexionOracle {
     +Ouvrir() : OracleConnection
-    +Tester() : String
   }
-  class ConfigurationOracle {
-    +Hote : String
-    +Port : Integer
-    +Service : String
-    +Utilisateur : String
-    +MotDePasse : String
-    +{static} Charger(dossier) : ConfigurationOracle
-    +ChaineDeConnexion() : String
-  }
+  class ConfigurationOracle
   class AccesDonneesException
 }
 
 package "GSB.CR.Modeles" {
   class Collaborateur
   class Affectation
-  class UtilisateurConnecte {
-    +Collaborateur : Collaborateur
-    +Affectation : Affectation
-    +Matricule : String
-    +Profil : Profil
+  class UtilisateurConnecte
+  enum Profil
+  class RapportVisite {
+    +Numero : Integer [0..1]
+    +MatriculeAuteur : String
+    +NumeroPraticien : Integer [0..1]
+    +NumeroRemplacant : Integer [0..1]
+    +DateVisite : Date [0..1]
+    +CodeMotif : String
+    +PrecisionMotif : String
+    +Bilan : String
+    +CoefConfiance : Integer [0..1]
+    +DateProchaineVisite : Date [0..1]
+    +Etat : EtatRapport
+    +ProduitsPresentes : List<String>
+    +EstNouveau : Boolean
   }
-  enum Profil {
-    Visiteur
-    Delegue
-    Responsable
-    Administrateur
+  class RapportResume
+  class EchantillonOffert {
+    +DepotLegal : String
+    +Quantite : Integer
   }
-  class ProfilCodes <<module>> {
-    +DepuisCode(code) : Profil
-    +VersCode(p) : String
+  enum EtatRapport {
+    Brouillon
+    Valide
+  }
+  class Praticien
+  class TypePraticien
+  class Medicament
+  class Motif {
+    +{static} CodeAutre = "AUTRE"
   }
 }
 
 class "Oracle — schéma GSB" as BDD <<base de données>>
 
-' IHM
+' --- IHM
 Program ..> FabriqueServices : crée
 Program ..> FrmConnexion
-Program ..> FrmChangementMotDePasse
 Program ..> FrmAccueil
-FrmConnexion --> ServiceAuthentification
-FrmChangementMotDePasse --> ServiceAuthentification
-FrmAccueil --> ServiceAuthentification
 FrmAccueil *-- "0..*" TuileModule
+FrmAccueil ..> FrmMesComptesRendus : ouvre
+FrmMesComptesRendus ..> FrmCompteRendu : ouvre
+FrmCompteRendu ..> FrmNouveauRemplacant : ouvre
+FrmConnexion --> ServiceAuthentification
+FrmMesComptesRendus --> ServiceRapports
+FrmCompteRendu --> ServiceRapports
+FrmNouveauRemplacant --> ServiceRapports
 FrmAccueil ..> Autorisations
 TuileModule ..> LibellesModules
-FrmConnexion ..> Theme
 
-' Métier
+' --- Métier
 FabriqueServices ..> ServiceAuthentification : crée
-FabriqueServices --> ConnexionOracle
+FabriqueServices ..> ServiceRapports : crée
 ServiceAuthentification --> ICollaborateurDao
 ServiceAuthentification ..> HacheurMotDePasse
 ServiceAuthentification ..> PolitiqueMotDePasse
-ServiceAuthentification ..> ResultatConnexion : produit
+ServiceAuthentification ..> ResultatConnexion
 ResultatConnexion --> StatutConnexion
-ResultatConnexion --> "0..1" UtilisateurConnecte
+ServiceRapports --> IRapportDao
+ServiceRapports --> IReferentielDao
+ServiceRapports ..> ValidateurRapport
+ServiceRapports ..> Autorisations
+ServiceRapports ..> ResultatEnregistrement : produit
+ServiceRapports ..> ErreurMetierException : lève
 Autorisations ..> ModuleApplication
 
-' Données
+' --- Données
+DaoOracle <|-- CollaborateurDao
+DaoOracle <|-- RapportDao
+DaoOracle <|-- ReferentielDao
 CollaborateurDao ..|> ICollaborateurDao
-CollaborateurDao --> ConnexionOracle
-CollaborateurDao ..> AccesDonneesException : lève
+RapportDao ..|> IRapportDao
+ReferentielDao ..|> IReferentielDao
+DaoOracle --> ConnexionOracle
+DaoOracle ..> AccesDonneesException : lève
 ConnexionOracle ..> ConfigurationOracle
 ConnexionOracle ..> BDD : ODP.NET\nTCP 1521
 
-' Modèles
+' --- Modèles
 UtilisateurConnecte --> Collaborateur
 UtilisateurConnecte --> Affectation
 Affectation --> Profil
+RapportVisite *-- "0..*" EchantillonOffert
+RapportVisite --> EtatRapport
+RapportResume --> EtatRapport
+Praticien ..> TypePraticien
 
-note bottom of ICollaborateurDao
-  Interface : la couche Métier est testée
-  avec un DAO en mémoire (sans Oracle).
+note bottom of DaoOracle
+  Base commune : connexion, transactions
+  (tout ou rien), traduction des erreurs Oracle.
+end note
+note bottom of IRapportDao
+  Interfaces : la couche Métier est testée
+  avec des DAO en mémoire (sans Oracle).
 end note
 @enduml

@@ -1,0 +1,73 @@
+@startuml 08_sequence_enregistrement_cr
+!include style.iuml
+title GSB-CR — Diagramme de séquence : enregistrement d'un compte-rendu
+autonumber
+
+actor "Visiteur" as U
+participant ":FrmCompteRendu" as F
+participant ":ServiceRapports" as S
+participant "ValidateurRapport" as V
+participant ":RapportDao" as D
+database "Oracle\n(schéma GSB)" as O
+
+U -> F : clique « Valider » ou\n« Enregistrer le brouillon »
+activate F
+F -> F : LireFormulaire()\n(praticien, remplaçant, date, motif,\nproduits, échantillons, bilan…)
+F -> S : Enregistrer(utilisateur, rapport,\nvalider, debutSaisie)\n(tâche d'arrière-plan)
+activate S
+S -> S : VerifierAcces(profil)
+
+opt rapport existant
+  S -> D : Charger(numero)
+  D -> O : SELECT … FROM RAPPORT_VISITE
+  D --> S : existant
+  alt autre auteur
+    S --> F : Échec(« vos propres comptes-rendus »)
+  else validé et demande de brouillon
+    S --> F : Échec(« ne peut pas repasser en brouillon »)
+  end
+end
+
+S -> S : auteur := utilisateur connecté\nétat := Validé ou Brouillon\nnormaliser la saisie
+S -> V : Verifier(rapport, aujourd'hui)
+activate V
+V --> S : erreurs
+deactivate V
+
+alt erreurs de saisie
+  S --> F : Échec(erreurs)
+  F --> U : affiche les erreurs en rouge
+else saisie correcte
+  alt nouveau rapport
+    S -> D : Creer(rapport)
+    activate D
+    D -> O : BEGIN
+    D -> O : INSERT RAPPORT_VISITE … RETURNING rap_num
+    note right of O
+      Déclencheur : date de visite <= aujourd'hui,
+      date de saisie / validation automatiques
+    end note
+    D -> O : INSERT PRESENTER (ordre 1, 2)
+    D -> O : INSERT OFFRIR (quantités)
+    D -> O : COMMIT
+    D --> S : numéro
+    deactivate D
+  else rapport existant
+    S -> D : Modifier(rapport)
+    activate D
+    D -> O : BEGIN · UPDATE RAPPORT_VISITE\nDELETE puis INSERT PRESENTER / OFFRIR · COMMIT
+    deactivate D
+  end
+  S -> D : AjouterSessionSaisie(numero, matricule,\ndebutSaisie, maintenant)
+  D -> O : INSERT SESSION_SAISIE
+  S --> F : Succès(numéro)
+  F --> U : ferme le formulaire ;\nla liste est rechargée et le CR sélectionné
+end
+deactivate S
+deactivate F
+
+note over S, D
+  Toute erreur Oracle (serveur injoignable, contrainte refusée) annule
+  la transaction : aucun rapport partiel. Le visiteur voit « serveur indisponible ».
+end note
+@enduml

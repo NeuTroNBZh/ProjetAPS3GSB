@@ -12,6 +12,7 @@ Charte commune : `style.iuml` (bleu / blanc).
 | 5 | [États : compte-rendu](05_etats_compte_rendu.svg) | Comportement | Cycle de vie d'un CR (brouillon → validé) |
 | 6 | [Activité : saisie d'un CR](06_activite_saisie_cr.svg) | Comportement | Étapes de la saisie d'un compte-rendu (visiteur / système) |
 | 7 | [Déploiement](07_deploiement.svg) | Structure | Poste client, serveur Oracle, dépôt et intégration continue |
+| 8 | [Séquence : enregistrement d'un CR](08_sequence_enregistrement_cr.svg) | Interaction | Contrôles, transaction et temps de saisie lors de l'enregistrement d'un compte-rendu |
 
 ## Régénérer les images
 
