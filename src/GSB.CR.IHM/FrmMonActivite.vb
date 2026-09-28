@@ -14,6 +14,7 @@ Public Class FrmMonActivite
     Private ReadOnly _rapports As ServiceRapports
     Private ReadOnly _utilisateur As UtilisateurConnecte
     Private _reglagePeriode As Boolean
+    Private _synthese As SyntheseActivite
 
     Public Sub New(activite As ServiceActivite, rapports As ServiceRapports, utilisateur As UtilisateurConnecte)
         InitializeComponent()
@@ -31,6 +32,7 @@ Public Class FrmMonActivite
         Theme.StyliserBoutonPrincipal(btnAfficher)
         Theme.StyliserBoutonPrincipal(btnNouveauCR)
         Theme.StyliserBoutonSecondaire(btnFermer)
+        Theme.StyliserBoutonSecondaire(btnExporter)
         Theme.StyliserGrille(dgvARevoir)
         tabSynthese.BackColor = Theme.Blanc
         tabARevoir.BackColor = Theme.Blanc
@@ -88,13 +90,21 @@ Public Class FrmMonActivite
             Dim synthese = Await Task.Run(Function() _activite.MaSynthese(_utilisateur, debut, fin))
             If IsDisposed Then Return
             AfficherSynthese(synthese)
+            _synthese = synthese
         Catch ex As ErreurMetierException
+            _synthese = Nothing
             pnlSynthese.AfficherMessage(ex.Message)
         Finally
             UseWaitCursor = False
             btnAfficher.Enabled = True
+            btnExporter.Enabled = _synthese IsNot Nothing
         End Try
     End Function
+
+    ''' <summary>Export CSV de la synthèse affichée (EX-51).</summary>
+    Private Sub btnExporter_Click(sender As Object, e As EventArgs) Handles btnExporter.Click
+        If _synthese IsNot Nothing Then EnregistrementExport.Exporter(Me, "Mon activité", _synthese)
+    End Sub
 
     Private Sub AfficherSynthese(s As SyntheseActivite)
         RenduSynthese.Afficher(pnlSynthese, s, "Mon activité")
