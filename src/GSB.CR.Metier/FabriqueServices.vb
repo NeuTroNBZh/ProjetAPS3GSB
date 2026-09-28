@@ -42,6 +42,10 @@ Public Class FabriqueServices
                                  New EquipeDao(_connexion), TimeProvider.System)
     End Function
 
+    Public Function Messagerie() As ServiceMessagerie
+        Return New ServiceMessagerie(New MessagerieDao(_connexion))
+    End Function
+
     Public Function Echantillons() As ServiceEchantillons
         Return New ServiceEchantillons(New EchantillonDao(_connexion), New EquipeDao(_connexion),
                                        New ReferentielDao(_connexion), TimeProvider.System)
