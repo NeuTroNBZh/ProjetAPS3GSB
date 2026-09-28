@@ -7,17 +7,30 @@ Imports Oracle.ManagedDataAccess.Client
 Public Class ConnexionOracle
 
     Private ReadOnly _chaine As String
+    Private ReadOnly _instructionSchema As String
 
     ''' <summary>Crée la fabrique à partir d'une configuration Oracle.</summary>
     Public Sub New(config As ConfigurationOracle)
         ArgumentNullException.ThrowIfNull(config)
         _chaine = config.ChaineDeConnexion()
+        _instructionSchema = config.InstructionSchema()
     End Sub
 
-    ''' <summary>Ouvre et renvoie une nouvelle connexion.</summary>
+    ''' <summary>Ouvre et renvoie une nouvelle connexion, placée sur le schéma configuré le cas échéant.</summary>
     Public Function Ouvrir() As OracleConnection
         Dim connexion As New OracleConnection(_chaine)
         connexion.Open()
+        If _instructionSchema.Length > 0 Then
+            Try
+                Using cmd = connexion.CreateCommand()
+                    cmd.CommandText = _instructionSchema
+                    cmd.ExecuteNonQuery()
+                End Using
+            Catch
+                connexion.Dispose()
+                Throw
+            End Try
+        End If
         Return connexion
     End Function
 

@@ -26,6 +26,12 @@ Public Class ConfigurationOracle
     Public Property MotDePasse As String = ""
 
     ''' <summary>
+    ''' Schéma des tables, si l'utilisateur n'en est pas le propriétaire (facultatif).
+    ''' En production, les postes se connectent avec le compte applicatif GSB_APP et travaillent sur le schéma GSB.
+    ''' </summary>
+    Public Property Schema As String = ""
+
+    ''' <summary>
     ''' Charge la configuration depuis le dossier indiqué (par défaut celui de l'exécutable).
     ''' </summary>
     Public Shared Function Charger(Optional dossier As String = Nothing) As ConfigurationOracle
@@ -65,6 +71,21 @@ Public Class ConfigurationOracle
             .Password = MotDePasse
         }
         Return constructeur.ConnectionString
+    End Function
+
+    ''' <summary>
+    ''' Instruction à exécuter après l'ouverture d'une connexion pour travailler sur <see cref="Schema"/>,
+    ''' ou chaîne vide si aucun schéma n'est configuré. Un nom d'objet ne se passe pas en paramètre SQL :
+    ''' il est donc contrôlé (identifiant Oracle simple) avant d'être inséré dans l'instruction.
+    ''' </summary>
+    ''' <exception cref="InvalidOperationException">Si le nom de schéma n'est pas un identifiant Oracle valide.</exception>
+    Public Function InstructionSchema() As String
+        If String.IsNullOrWhiteSpace(Schema) Then Return ""
+        Dim nom = Schema.Trim().ToUpperInvariant()
+        If Not Text.RegularExpressions.Regex.IsMatch(nom, "^[A-Z][A-Z0-9_$#]{0,127}$") Then
+            Throw New InvalidOperationException($"Schéma Oracle invalide dans la configuration : « {Schema} ».")
+        End If
+        Return $"ALTER SESSION SET CURRENT_SCHEMA = {nom}"
     End Function
 
 End Class
