@@ -35,4 +35,4 @@ Liste issue de `AP3.pptx` (« Travail à faire : TOUT »). Cocher au fil de l'ea
 - [ ] Gestion de projet (planning, suivi)
 - [ ] Documentation technique (classes, bibliothèques — EX-60, EX-62)
 - [x] Documentation utilisateur / mode opératoire par module (EX-61) — `docs/utilisateur/`
-- [ ] Mise en exploitation (procédure d'installation, déploiement)
+- [x] Mise en exploitation (procédure d'installation, déploiement) — `docs/mise-en-exploitation.md`, `scripts/`
