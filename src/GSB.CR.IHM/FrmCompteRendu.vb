@@ -81,6 +81,7 @@ Public Class FrmCompteRendu
         UseWaitCursor = True
         Try
             Dim donnees = Await Task.Run(Function() ChargerDonnees())
+            If IsDisposed Then Return
             Remplir(donnees.Rapport, donnees.Portefeuille, donnees.Praticiens, donnees.Motifs, donnees.Medicaments)
             pnlContenu.Enabled = True
             pnlActions.Enabled = True

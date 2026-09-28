@@ -59,6 +59,7 @@ Public Class FrmMesComptesRendus
         UseWaitCursor = True
         Try
             _rapports = Await Task.Run(Function() _service.MesRapports(_utilisateur))
+            If IsDisposed Then Return
             Afficher(numeroASelectionner)
         Catch ex As ErreurMetierException
             MessageBox.Show(Me, ex.Message, "GSB", MessageBoxButtons.OK, MessageBoxIcon.Warning)

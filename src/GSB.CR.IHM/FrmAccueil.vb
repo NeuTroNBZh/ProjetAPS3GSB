@@ -73,6 +73,16 @@ Public Class FrmAccueil
                     frm.ShowDialog(Me)
                 End Using
                 Return
+            Case ModuleApplication.Praticiens
+                Using frm As New FrmPraticiens(_fabrique.Consultation(), _utilisateur)
+                    frm.ShowDialog(Me)
+                End Using
+                Return
+            Case ModuleApplication.Medicaments
+                Using frm As New FrmMedicaments(_fabrique.Consultation(), _utilisateur)
+                    frm.ShowDialog(Me)
+                End Using
+                Return
         End Select
         ' Les autres modules seront branchés au fur et à mesure de leur développement
         MessageBox.Show(Me, $"Le module « {LibellesModules.Titre(m)} » sera disponible dans une prochaine version.",

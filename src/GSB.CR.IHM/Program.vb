@@ -12,6 +12,9 @@ Friend Module Program
         Application.SetHighDpiMode(HighDpiMode.SystemAware)
         Application.EnableVisualStyles()
         Application.SetCompatibleTextRenderingDefault(False)
+        ' Contexte WinForms installé une fois pour toutes : les suites des « Await » reviennent toujours
+        ' sur le thread de l'interface, y compris entre deux fenêtres modales (connexion, puis menu).
+        Threading.SynchronizationContext.SetSynchronizationContext(New WindowsFormsSynchronizationContext())
 
         Dim fabrique As FabriqueServices
         Try
