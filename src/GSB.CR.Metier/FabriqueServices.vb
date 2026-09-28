@@ -25,4 +25,8 @@ Public Class FabriqueServices
         Return New ServiceAuthentification(New CollaborateurDao(_connexion), TimeProvider.System)
     End Function
 
+    Public Function Rapports() As ServiceRapports
+        Return New ServiceRapports(New RapportDao(_connexion), New ReferentielDao(_connexion), TimeProvider.System)
+    End Function
+
 End Class
