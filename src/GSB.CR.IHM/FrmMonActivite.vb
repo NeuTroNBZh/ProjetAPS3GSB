@@ -35,11 +35,7 @@ Public Class FrmMonActivite
         tabSynthese.BackColor = Theme.Blanc
         tabARevoir.BackColor = Theme.Blanc
 
-        For Each c In {("Situation", "Situation", 16), ("Praticien", "Praticien", 22), ("Ville", "Ville", 14),
-                       ("Derniere", "Dernière visite", 13), ("Depuis", "Il y a", 10), ("Prevue", "Prochaine prévue", 13), ("Tel", "Téléphone", 12)}
-            dgvARevoir.Columns.Add(New DataGridViewTextBoxColumn() With {
-                .Name = c.Item1, .HeaderText = c.Item2, .FillWeight = c.Item3, .SortMode = DataGridViewColumnSortMode.NotSortable})
-        Next
+        RenduARevoir.CreerColonnes(dgvARevoir, avecSuivi:=False)
 
         ' Périodes : bornes limitées à la profondeur de consultation (3 ans) et à aujourd'hui
         dtpDebut.MinDate = _activite.DebutConsultable
@@ -101,70 +97,8 @@ Public Class FrmMonActivite
     End Function
 
     Private Sub AfficherSynthese(s As SyntheseActivite)
-        Dim culture = CultureInfo.CurrentCulture
-        pnlSynthese.SuspendLayout()
-        pnlSynthese.Vider()
-        pnlSynthese.AjouterTitre($"Du {s.Debut:dd/MM/yyyy} au {s.Fin:dd/MM/yyyy}")
-        pnlSynthese.AjouterSousTitre("Seuls les comptes-rendus validés sont comptés.")
-
-        pnlSynthese.AjouterIndicateurs({
-            New TuileIndicateur("Visites", s.NbVisites.ToString("N0", culture),
-                                If(s.NbVisitesRemplacant > 0, $"dont {s.NbVisitesRemplacant} avec un remplaçant", Nothing)),
-            New TuileIndicateur("Praticiens vus", s.NbPraticiens.ToString("N0", culture)),
-            New TuileIndicateur("Confiance moyenne", If(s.ConfianceMoyenne.HasValue, s.ConfianceMoyenne.Value.ToString("0.0", culture), "—"), "sur 5"),
-            New TuileIndicateur("Échantillons distribués", s.NbEchantillons.ToString("N0", culture), $"coût : {s.CoutEchantillons.ToString("C", culture)}"),
-            New TuileIndicateur("Temps moyen de saisie", Duree(s.TempsSaisieMoyen), $"total : {Duree(s.TempsSaisieTotal)}"),
-            New TuileIndicateur("Brouillons à terminer", s.NbBrouillons.ToString("N0", culture), "toutes dates confondues")})
-
-        pnlSynthese.AjouterSection("Visites par mois")
-        Dim graphique As New GraphiqueBarres() With {.MessageVide = "Aucune visite validée sur la période."}
-        graphique.DefinirDonnees(s.ParMois.Select(Function(m) (
-            m.Mois.ToString("MMM yy", culture),
-            m.Nombre,
-            $"{m.Mois.ToString("MMMM yyyy", culture)} : {m.Nombre} visite(s)")))
-        pnlSynthese.AjouterControle(graphique)
-        If s.NbVisites > 0 Then
-            ' Vue tableau du graphique (lecture exacte des valeurs)
-            pnlSynthese.AjouterTableau({("Mois", 60.0F), ("Visites", 40.0F)},
-                s.ParMois.Where(Function(m) m.Nombre > 0).Select(Function(m) New Object() {m.Mois.ToString("MMMM yyyy", culture), m.Nombre}),
-                hauteurMax:=160)
-        End If
-
-        pnlSynthese.AjouterSection("Motifs des visites")
-        If s.ParMotif.Count = 0 Then
-            pnlSynthese.AjouterTexte("Aucune visite.", Theme.TexteGris, italique:=True)
-        Else
-            pnlSynthese.AjouterTableau({("Motif", 60.0F), ("Visites", 20.0F), ("Part", 20.0F)},
-                s.ParMotif.Select(Function(m) New Object() {m.Libelle, m.Nombre, (m.Nombre / CDbl(s.NbVisites)).ToString("P0", culture)}))
-        End If
-
-        pnlSynthese.AjouterSection("Produits présentés")
-        If s.ProduitsPresentes.Count = 0 Then
-            pnlSynthese.AjouterTexte("Aucun produit présenté.", Theme.TexteGris, italique:=True)
-        Else
-            pnlSynthese.AjouterTableau({("Produit", 60.0F), ("Présentations", 40.0F)},
-                s.ProduitsPresentes.Select(Function(p) New Object() {p.Libelle, p.Nombre}))
-        End If
-
-        pnlSynthese.AjouterSection("Échantillons distribués")
-        If s.Echantillons.Count = 0 Then
-            pnlSynthese.AjouterTexte("Aucun échantillon distribué.", Theme.TexteGris, italique:=True)
-        Else
-            pnlSynthese.AjouterTableau({("Produit", 50.0F), ("Quantité", 25.0F), ("Coût", 25.0F)},
-                s.Echantillons.Select(Function(x) New Object() {x.NomCommercial, x.Quantite, x.Cout.ToString("C", culture)}))
-        End If
-        pnlSynthese.ResumeLayout()
-        pnlSynthese.AutoScrollPosition = New Point(0, 0)
+        RenduSynthese.Afficher(pnlSynthese, s, "Mon activité")
     End Sub
-
-    ''' <summary>Durée lisible : « 6 min 40 s ».</summary>
-    Private Shared Function Duree(secondes As Decimal?) As String
-        If Not secondes.HasValue Then Return "—"
-        Dim t = TimeSpan.FromSeconds(CDbl(secondes.Value))
-        If t.TotalHours >= 1 Then Return $"{CInt(Math.Floor(t.TotalHours))} h {t.Minutes:00}"
-        If t.TotalMinutes >= 1 Then Return $"{t.Minutes} min {t.Seconds:00} s"
-        Return $"{t.Seconds} s"
-    End Function
 
     ' ------------------------------------------------------------------
     ' Praticiens à revoir
@@ -181,21 +115,7 @@ Public Class FrmMonActivite
     End Function
 
     Private Sub AfficherARevoir(liste As IReadOnlyList(Of PraticienARevoir))
-        dgvARevoir.Rows.Clear()
-        For Each x In liste
-            Dim situation = If(x.ProchainePrevueDepassee AndAlso x.Etat <> EtatPeriodicite.ARevoir AndAlso x.Etat <> EtatPeriodicite.JamaisVisite,
-                               "Visite prévue dépassée", AffichagePeriodicite.Libelle(x.Etat))
-            Dim i = dgvARevoir.Rows.Add(situation, x.Praticien.NomComplet, x.Praticien.Ville,
-                                        x.Praticien.DateDerniereVisite?.ToString("dd/MM/yyyy"),
-                                        If(x.JoursDepuisDerniereVisite.HasValue, $"{x.JoursDepuisDerniereVisite} j", ""),
-                                        x.Praticien.DateProchainePrevue?.ToString("dd/MM/yyyy"), x.Praticien.Telephone)
-            Dim ligne = dgvARevoir.Rows(i)
-            ligne.Tag = x
-            Dim couleurs = AffichagePeriodicite.Couleurs(If(situation = "Visite prévue dépassée", EtatPeriodicite.ARevoirBientot, x.Etat))
-            ligne.Cells("Situation").Style.BackColor = couleurs.Fond
-            ligne.Cells("Situation").Style.ForeColor = couleurs.Encre
-            ligne.Cells("Situation").Style.Font = New Font(dgvARevoir.Font, FontStyle.Bold)
-        Next
+        RenduARevoir.Remplir(dgvARevoir, liste, avecSuivi:=False)
         tabARevoir.Text = $"Praticiens à revoir ({liste.Count})"
         lblARevoir.Text = If(liste.Count = 0,
             "Tous les praticiens de votre portefeuille sont à jour. Bravo !",

@@ -67,32 +67,53 @@ Public Class FrmAccueil
 
     Private Sub Tuile_Click(sender As Object, e As EventArgs)
         Dim m = CType(sender, TuileModule).ModuleAssocie
+        Try
+            If OuvrirModule(m) Then Return
+        Catch ex As ErreurMetierException
+            MessageBox.Show(Me, ex.Message, "GSB", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End Try
+        ' Les autres modules seront branchés au fur et à mesure de leur développement
+        MessageBox.Show(Me, $"Le module « {LibellesModules.Titre(m)} » sera disponible dans une prochaine version.",
+                        "GSB", MessageBoxButtons.OK, MessageBoxIcon.Information)
+    End Sub
+
+    ''' <summary>Ouvre la fenêtre du module ; renvoie Faux si le module n'est pas encore disponible.</summary>
+    Private Function OuvrirModule(m As ModuleApplication) As Boolean
         Select Case m
             Case ModuleApplication.MesComptesRendus
                 Using frm As New FrmMesComptesRendus(_fabrique.Rapports(), _utilisateur)
                     frm.ShowDialog(Me)
                 End Using
-                Return
+                Return True
             Case ModuleApplication.MonActivite
                 Using frm As New FrmMonActivite(_fabrique.Activite(), _fabrique.Rapports(), _utilisateur)
                     frm.ShowDialog(Me)
                 End Using
-                Return
+                Return True
             Case ModuleApplication.Praticiens
                 Using frm As New FrmPraticiens(_fabrique.Consultation(), _utilisateur)
                     frm.ShowDialog(Me)
                 End Using
-                Return
+                Return True
             Case ModuleApplication.Medicaments
                 Using frm As New FrmMedicaments(_fabrique.Consultation(), _utilisateur)
                     frm.ShowDialog(Me)
                 End Using
-                Return
+                Return True
+            Case ModuleApplication.ActiviteRegion, ModuleApplication.ActiviteSecteur
+                Using frm As New FrmEquipe(_fabrique.Equipe(), _fabrique.Activite(), _utilisateur)
+                    frm.ShowDialog(Me)
+                End Using
+                Return True
+            Case ModuleApplication.Echantillons
+                Using frm As New FrmEchantillons(_fabrique.Echantillons(), _utilisateur)
+                    frm.ShowDialog(Me)
+                End Using
+                Return True
         End Select
-        ' Les autres modules seront branchés au fur et à mesure de leur développement
-        MessageBox.Show(Me, $"Le module « {LibellesModules.Titre(m)} » sera disponible dans une prochaine version.",
-                        "GSB", MessageBoxButtons.OK, MessageBoxIcon.Information)
-    End Sub
+        Return False
+    End Function
 
     Private Sub btnMotDePasse_Click(sender As Object, e As EventArgs) Handles btnMotDePasse.Click
         Using frm As New FrmChangementMotDePasse(_service, _utilisateur, obligatoire:=False)

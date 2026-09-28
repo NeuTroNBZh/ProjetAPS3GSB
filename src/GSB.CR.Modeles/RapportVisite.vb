@@ -25,6 +25,9 @@ Public Class RapportVisite
 
     Public Property CodeMotif As String
 
+    ''' <summary>Libellé du motif (affichage, renseigné à la lecture).</summary>
+    Public Property LibelleMotif As String
+
     ''' <summary>Précision libre, uniquement pour le motif « Autre ».</summary>
     Public Property PrecisionMotif As String
 
@@ -45,6 +48,9 @@ Public Class RapportVisite
 
     ''' <summary>Dépôts légaux des produits présentés, dans l'ordre (2 au maximum).</summary>
     Public Property ProduitsPresentes As New List(Of String)
+
+    ''' <summary>Noms commerciaux des produits présentés, dans l'ordre (affichage, renseignés à la lecture).</summary>
+    Public Property NomsProduitsPresentes As New List(Of String)
 
     ''' <summary>Échantillons offerts (indépendants des produits présentés).</summary>
     Public Property Echantillons As New List(Of EchantillonOffert)

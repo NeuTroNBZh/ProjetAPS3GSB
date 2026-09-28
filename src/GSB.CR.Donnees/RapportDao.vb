@@ -15,9 +15,10 @@ Public Class RapportDao
 
     Public Function ListerParPerimetre(perimetre As Perimetre, depuis As Date, inclureBrouillons As Boolean) As List(Of RapportResume) Implements IRapportDao.ListerParPerimetre
         Dim sql = $"select rap_num, rap_date_visite, pra_nom_complet, pra_ville, remplacant_nom_complet,
-                           motif, rap_etat, rap_date_saisie, rap_date_modif, col_matricule, col_nom_complet
-                      from V_RAPPORT_DETAIL
-                     where {SqlPerimetre.Condition("col_matricule", perimetre)}
+                           motif, rap_etat, rap_date_saisie, rap_date_modif, d.col_matricule, c.col_prenom || ' ' || c.col_nom
+                      from V_RAPPORT_DETAIL d
+                      join COLLABORATEUR c on c.col_matricule = d.col_matricule
+                     where {SqlPerimetre.Condition("d.col_matricule", perimetre)}
                        and rap_date_visite >= :depuis
                        and (:brouillons = 1 or rap_etat = 'V')
                      order by rap_date_visite desc, rap_num desc"
@@ -48,13 +49,17 @@ Public Class RapportDao
             "select r.rap_num, r.col_matricule, r.pra_num, p.pra_nom || ' ' || p.pra_prenom,
                     r.pra_num_remplacant, rp.pra_nom || ' ' || rp.pra_prenom,
                     r.rap_date_visite, r.mot_code, r.rap_motif_autre, r.rap_bilan, r.rap_coef_confiance,
-                    r.rap_date_prochaine_visite, r.rap_etat, r.rap_date_saisie, r.rap_date_modif, r.rap_date_validation
+                    r.rap_date_prochaine_visite, r.rap_etat, r.rap_date_saisie, r.rap_date_modif, r.rap_date_validation,
+                    mo.mot_libelle
                from RAPPORT_VISITE r
                join PRATICIEN p       on p.pra_num = r.pra_num
                left join PRATICIEN rp on rp.pra_num = r.pra_num_remplacant
+               left join MOTIF mo     on mo.mot_code = r.mot_code
               where r.rap_num = :numero"
         Const sqlPresentes As String =
-            "select med_depot_legal from PRESENTER where rap_num = :numero order by pst_ordre"
+            "select p.med_depot_legal, m.med_nom_commercial
+               from PRESENTER p join MEDICAMENT m on m.med_depot_legal = p.med_depot_legal
+              where p.rap_num = :numero order by p.pst_ordre"
         Const sqlEchantillons As String =
             "select o.med_depot_legal, m.med_nom_commercial, o.off_quantite
                from OFFRIR o
@@ -83,11 +88,14 @@ Public Class RapportDao
                         .Etat = VersEtat(l.GetString(12)),
                         .DateSaisie = l.GetDateTime(13),
                         .DateModification = DateOuRien(l, 14),
-                        .DateValidation = DateOuRien(l, 15)
+                        .DateValidation = DateOuRien(l, 15),
+                        .LibelleMotif = TexteOuRien(l, 16)
                     }).FirstOrDefault()
                 If rapport Is Nothing Then Return Nothing
 
-                rapport.ProduitsPresentes = Lister(cnx, sqlPresentes, parNumero, Function(l) l.GetString(0))
+                Dim presentes = Lister(cnx, sqlPresentes, parNumero, Function(l) (Depot:=l.GetString(0), Nom:=l.GetString(1)))
+                rapport.ProduitsPresentes = presentes.Select(Function(x) x.Depot).ToList()
+                rapport.NomsProduitsPresentes = presentes.Select(Function(x) x.Nom).ToList()
                 rapport.Echantillons = Lister(cnx, sqlEchantillons, parNumero,
                     Function(l) New EchantillonOffert() With {
                         .DepotLegal = l.GetString(0), .NomCommercial = l.GetString(1), .Quantite = l.GetInt32(2)})

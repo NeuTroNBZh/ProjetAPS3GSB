@@ -57,7 +57,7 @@ Public Class EquipeIntegrationTests
         Dim liste = New RapportDao(_connexion).ListerParPerimetre(Aquitaine, #2023-09-28#, inclureBrouillons:=False)
 
         Assert.IsFalse(liste.Any(Function(r) r.Etat = EtatRapport.Brouillon))
-        Assert.IsTrue(liste.Any(Function(r) r.Auteur = "Bedos Christian"))
+        Assert.IsTrue(liste.Any(Function(r) r.Auteur = "Christian Bedos"))
         Assert.IsTrue(liste.Any(Function(r) r.MatriculeAuteur = "a17"))
     End Sub
 
