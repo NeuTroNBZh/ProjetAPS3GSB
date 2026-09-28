@@ -3,6 +3,11 @@ Public Class RapportResume
 
     Public Property Numero As Integer
 
+    ''' <summary>Auteur du compte-rendu (utile pour les CR d'une équipe).</summary>
+    Public Property MatriculeAuteur As String = ""
+
+    Public Property Auteur As String = ""
+
     Public Property DateVisite As Date
 
     Public Property Praticien As String = ""
