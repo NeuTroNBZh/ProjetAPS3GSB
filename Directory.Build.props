@@ -10,6 +10,6 @@
     <Company>Galaxy Swiss Bourdin</Company>
     <Product>GSB-CR</Product>
     <!-- Version de l'application (voir CHANGELOG.md) -->
-    <Version>0.6.0</Version>
+    <Version>0.7.0</Version>
   </PropertyGroup>
 </Project>

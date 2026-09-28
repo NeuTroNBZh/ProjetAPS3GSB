@@ -1,6 +1,6 @@
 @startuml 03_classes_application
 !include style.iuml
-title GSB-CR — Diagramme de classes de l'application (architecture en couches, v0.6.0)
+title GSB-CR — Diagramme de classes de l'application (architecture en couches, v0.7.0)
 hide empty members
 skinparam packageStyle rectangle
 set separator none
@@ -59,6 +59,8 @@ package "GSB.CR.IHM" <<WinForms>> {
   }
   class RenduSynthese <<module>>
   class RenduARevoir <<module>>
+  class FrmMessagerie
+  class FrmNouveauMessage
   class GraphiqueBarres {
     +DefinirDonnees(donnees)
   }
@@ -126,6 +128,12 @@ package "GSB.CR.Metier" {
     +{static} DeLEquipe(u) : Perimetre
     +{static} ControlerPeriode(debut, fin, aujourdhui)
   }
+  class ServiceMessagerie {
+    +BoiteDeReception(u) / MessagesEnvoyes(u)
+    +Lire(u, id) : MessageDetaille
+    +Envoyer(u, objet, contenu, destinataires)
+    +{static} Groupes(annuaire, u)
+  }
   class Periodicite {
     +{static} MoisMinimum = 6
     +{static} MoisMaximum = 8
@@ -192,6 +200,8 @@ package "GSB.CR.Donnees" {
     +SupprimerDotation(...)
   }
   class EchantillonDao
+  interface IMessagerieDao
+  class MessagerieDao
   class SqlPerimetre <<module>> {
     +Condition(colonne, perimetre) : String
   }
@@ -294,6 +304,10 @@ FrmAccueil ..> FrmEchantillons : ouvre
 FrmEquipe --> ServiceEquipe
 FrmEquipe ..> FrmFiche : ouvre
 FrmEchantillons --> ServiceEchantillons
+FrmAccueil ..> FrmMessagerie : ouvre
+FrmMessagerie --> ServiceMessagerie
+FrmMessagerie ..> FrmNouveauMessage : ouvre
+FrmNouveauMessage --> ServiceMessagerie
 FrmFiche ..> ServiceEquipe
 FrmMonActivite ..> RenduSynthese
 FrmEquipe ..> RenduSynthese
@@ -316,6 +330,8 @@ FabriqueServices ..> ServiceConsultation : crée
 FabriqueServices ..> ServiceActivite : crée
 FabriqueServices ..> ServiceEquipe : crée
 FabriqueServices ..> ServiceEchantillons : crée
+FabriqueServices ..> ServiceMessagerie : crée
+ServiceMessagerie --> IMessagerieDao
 ServiceEquipe --> IActiviteDao
 ServiceEquipe --> IRapportDao
 ServiceEquipe --> IEquipeDao
@@ -351,6 +367,8 @@ DaoOracle <|-- ConsultationDao
 DaoOracle <|-- ActiviteDao
 DaoOracle <|-- EquipeDao
 DaoOracle <|-- EchantillonDao
+DaoOracle <|-- MessagerieDao
+MessagerieDao ..|> IMessagerieDao
 EquipeDao ..|> IEquipeDao
 EchantillonDao ..|> IEchantillonDao
 DaoOracle ..> SqlPerimetre

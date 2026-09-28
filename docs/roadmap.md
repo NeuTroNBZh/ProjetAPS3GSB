@@ -24,6 +24,8 @@ Liste issue de `AP3.pptx` (« Travail à faire : TOUT »). Cocher au fil de l'ea
 - [x] Module Délégué (EX-30 → EX-35) — v0.6.0
 - [x] Module Responsable (EX-40, EX-41) — v0.6.0
 
+- [x] Messagerie interne (EX-50) — v0.7.0
+
 ## Phase 3 — Qualité
 - [ ] Tests unitaires couche Métier
 - [ ] Plan de tests / cahier de recette

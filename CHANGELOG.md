@@ -5,6 +5,12 @@ et chaque version livrée est marquée par un tag Git `vX.Y.Z`.
 
 ## [Non publié]
 
+## [0.7.0] — 2026-09-28
+
+### Ajouté
+- Messagerie interne pour tous les profils (EX-50) : envoi à une ou plusieurs personnes ou à un groupe (région, secteur), boîte de réception avec messages non lus en évidence, messages envoyés avec suivi de lecture par destinataire, réponse avec citation.
+- Nombre de messages non lus affiché sur la tuile Messagerie du menu principal.
+
 ## [0.6.0] — 2026-09-28
 
 ### Ajouté
