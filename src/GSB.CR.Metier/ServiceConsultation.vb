@@ -41,8 +41,9 @@ Public Class ServiceConsultation
     Public Function RechercherPraticiens(utilisateur As UtilisateurConnecte, texte As String,
                                          seulementMonPortefeuille As Boolean, inclureInactifs As Boolean) As IReadOnlyList(Of PraticienResume)
         VerifierAcces(utilisateur, ModuleApplication.Praticiens)
-        Dim matricule = If(seulementMonPortefeuille AndAlso APortefeuille(utilisateur.Profil), utilisateur.Matricule, Nothing)
-        Return Appeler(Function() _consultation.RechercherPraticiens(texte, matricule, inclureInactifs, MaxResultats))
+        Dim portefeuille = If(seulementMonPortefeuille AndAlso APortefeuille(utilisateur.Profil),
+                              Perimetre.DuCollaborateur(utilisateur.Matricule), Nothing)
+        Return Appeler(Function() _consultation.RechercherPraticiens(texte, portefeuille, inclureInactifs, MaxResultats))
     End Function
 
     Public Function FichePraticien(utilisateur As UtilisateurConnecte, numero As Integer) As FichePraticien

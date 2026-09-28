@@ -31,7 +31,7 @@ Public Class ConsultationDaoIntegrationTests
 
     <TestMethod>
     Public Sub Rechercher_PortefeuilleDuVisiteur()
-        Dim liste = _dao.RechercherPraticiens("", "a131", False, 100)
+        Dim liste = _dao.RechercherPraticiens("", Perimetre.DuCollaborateur("a131"), False, 100)
 
         CollectionAssert.AreEquivalent({1, 2}, liste.Select(Function(p) p.Numero).ToList())
         Assert.IsTrue(liste.All(Function(p) p.NomVisiteur = "Louis Villechalane"))

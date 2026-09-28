@@ -19,7 +19,7 @@ Public Class ConsultationDao
         MyBase.New(connexion)
     End Sub
 
-    Public Function RechercherPraticiens(texte As String, matriculePortefeuille As String,
+    Public Function RechercherPraticiens(texte As String, perimetre As Perimetre,
                                          inclureInactifs As Boolean, maximum As Integer) As List(Of PraticienResume) Implements IConsultationDao.RechercherPraticiens
         Dim sql = $"select * from (
                       select p.pra_num, p.pra_nom, p.pra_prenom, t.typ_libelle, p.pra_cp, p.pra_ville, p.pra_telephone,
@@ -33,7 +33,7 @@ Public Class ConsultationDao
                               or lower(p.pra_nom)    like '%' || lower(:texte) || '%'
                               or lower(p.pra_prenom) like '%' || lower(:texte) || '%'
                               or lower(p.pra_ville)  like '%' || lower(:texte) || '%')
-                         and (:matricule is null or pf.col_matricule = :matricule)
+                         and {If(perimetre Is Nothing, "1 = 1", SqlPerimetre.Condition("pf.col_matricule", perimetre))}
                          and (:inactifs = 1 or p.pra_actif = 'O')
                        order by p.pra_nom, p.pra_prenom)
                      where rownum <= :maximum"
@@ -42,7 +42,7 @@ Public Class ConsultationDao
             Sub(cmd)
                 Dim t = If(texte, "").Trim()
                 Parametre(cmd, "texte", OracleDbType.Varchar2, If(t.Length = 0, Nothing, t))
-                Parametre(cmd, "matricule", OracleDbType.Varchar2, matriculePortefeuille)
+                If perimetre IsNot Nothing Then SqlPerimetre.Lier(cmd, perimetre)
                 Parametre(cmd, "inactifs", OracleDbType.Int32, If(inclureInactifs, 1, 0))
                 Parametre(cmd, "maximum", OracleDbType.Int32, maximum)
             End Sub,

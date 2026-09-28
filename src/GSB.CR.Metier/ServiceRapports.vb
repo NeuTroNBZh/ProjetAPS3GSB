@@ -49,7 +49,7 @@ Public Class ServiceRapports
     ''' <summary>CR de l'utilisateur sur les 3 dernières années, du plus récent au plus ancien (EX-20).</summary>
     Public Function MesRapports(utilisateur As UtilisateurConnecte) As IReadOnlyList(Of RapportResume)
         VerifierAcces(utilisateur)
-        Return Appeler(Function() _rapports.ListerParAuteur(utilisateur.Matricule, Aujourdhui.AddYears(-AnneesConsultation)))
+        Return Appeler(Function() _rapports.ListerParPerimetre(Perimetre.DuCollaborateur(utilisateur.Matricule), Aujourdhui.AddYears(-AnneesConsultation), inclureBrouillons:=True))
     End Function
 
     ''' <summary>Nouveau CR vide, daté du jour, au nom de l'utilisateur.</summary>

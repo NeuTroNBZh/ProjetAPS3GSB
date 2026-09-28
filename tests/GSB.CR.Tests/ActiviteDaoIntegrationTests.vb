@@ -1,4 +1,5 @@
 Imports GSB.CR.Donnees
+Imports GSB.CR.Modeles
 
 ''' <summary>Tests d'intégration de la synthèse d'activité sur le jeu d'essai. Exclus de la CI.</summary>
 <TestClass>
@@ -17,7 +18,7 @@ Public Class ActiviteDaoIntegrationTests
     <TestMethod>
     Public Sub Synthese_2026_LouisVillechalane()
         ' CR validés 2026 de a131 : n°3 (Durand), n°4 et n°5 (Martin, remplaçante vue au n°5)
-        Dim s = _dao.ChargerSynthese("a131", #2026-01-01#, #2026-09-28#)
+        Dim s = _dao.ChargerSynthese(Perimetre.DuCollaborateur("a131"), #2026-01-01#, #2026-09-28#)
 
         Assert.AreEqual(3, s.NbVisites)
         Assert.AreEqual(2, s.NbPraticiens)
@@ -34,7 +35,7 @@ Public Class ActiviteDaoIntegrationTests
 
     <TestMethod>
     Public Sub Synthese_PeriodeSansVisite_ZerosEtListesVides()
-        Dim s = _dao.ChargerSynthese("a131", #2024-01-01#, #2024-12-31#)
+        Dim s = _dao.ChargerSynthese(Perimetre.DuCollaborateur("a131"), #2024-01-01#, #2024-12-31#)
 
         Assert.AreEqual(0, s.NbVisites)
         Assert.IsNull(s.ConfianceMoyenne)
@@ -45,7 +46,7 @@ Public Class ActiviteDaoIntegrationTests
 
     <TestMethod>
     Public Sub Synthese_CompteLesBrouillonsEnAttente()
-        Assert.AreEqual(1, _dao.ChargerSynthese("a17", #2026-01-01#, #2026-09-28#).NbBrouillons)
+        Assert.AreEqual(1, _dao.ChargerSynthese(Perimetre.DuCollaborateur("a17"), #2026-01-01#, #2026-09-28#).NbBrouillons)
     End Sub
 
 End Class

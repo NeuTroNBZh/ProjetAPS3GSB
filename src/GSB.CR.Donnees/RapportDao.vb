@@ -13,19 +13,20 @@ Public Class RapportDao
         MyBase.New(connexion)
     End Sub
 
-    Public Function ListerParAuteur(matricule As String, depuis As Date) As List(Of RapportResume) Implements IRapportDao.ListerParAuteur
-        Const sql As String =
-            "select rap_num, rap_date_visite, pra_nom_complet, pra_ville, remplacant_nom_complet,
-                    motif, rap_etat, rap_date_saisie, rap_date_modif
-               from V_RAPPORT_DETAIL
-              where col_matricule = :matricule
-                and rap_date_visite >= :depuis
-              order by rap_date_visite desc, rap_num desc"
+    Public Function ListerParPerimetre(perimetre As Perimetre, depuis As Date, inclureBrouillons As Boolean) As List(Of RapportResume) Implements IRapportDao.ListerParPerimetre
+        Dim sql = $"select rap_num, rap_date_visite, pra_nom_complet, pra_ville, remplacant_nom_complet,
+                           motif, rap_etat, rap_date_saisie, rap_date_modif, col_matricule, col_nom_complet
+                      from V_RAPPORT_DETAIL
+                     where {SqlPerimetre.Condition("col_matricule", perimetre)}
+                       and rap_date_visite >= :depuis
+                       and (:brouillons = 1 or rap_etat = 'V')
+                     order by rap_date_visite desc, rap_num desc"
 
         Return Lister("Lecture des comptes-rendus impossible.", sql,
                       Sub(cmd)
-                          Parametre(cmd, "matricule", OracleDbType.Varchar2, matricule)
+                          SqlPerimetre.Lier(cmd, perimetre)
                           Parametre(cmd, "depuis", OracleDbType.Date, depuis)
+                          Parametre(cmd, "brouillons", OracleDbType.Int32, If(inclureBrouillons, 1, 0))
                       End Sub,
                       Function(l) New RapportResume() With {
                           .Numero = l.GetInt32(0),
@@ -36,7 +37,9 @@ Public Class RapportDao
                           .Motif = TexteOuRien(l, 5),
                           .Etat = VersEtat(l.GetString(6)),
                           .DateSaisie = l.GetDateTime(7),
-                          .DateModification = DateOuRien(l, 8)
+                          .DateModification = DateOuRien(l, 8),
+                          .MatriculeAuteur = l.GetString(9),
+                          .Auteur = l.GetString(10)
                       })
     End Function
 

@@ -7,16 +7,18 @@ Public Class FauxConsultationDao
 
     Public Property DernierMatricule As String = "(non appelé)"
     Public Property DernierInclureInactifs As Boolean
+    Public Property DernierPerimetre As Perimetre
     Public Property EnPanne As Boolean
 
     Private Sub VerifierPanne()
         If EnPanne Then Throw New AccesDonneesException("Panne simulée", New Exception())
     End Sub
 
-    Public Function RechercherPraticiens(texte As String, matriculePortefeuille As String,
+    Public Function RechercherPraticiens(texte As String, perimetre As Perimetre,
                                          inclureInactifs As Boolean, maximum As Integer) As List(Of PraticienResume) Implements IConsultationDao.RechercherPraticiens
         VerifierPanne()
-        DernierMatricule = matriculePortefeuille
+        DernierMatricule = perimetre?.Code
+        DernierPerimetre = perimetre
         DernierInclureInactifs = inclureInactifs
         Return New List(Of PraticienResume) From {New PraticienResume() With {.Numero = 1, .Nom = "Martin"}}
     End Function

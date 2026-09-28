@@ -60,7 +60,7 @@ Public Class ServiceActivite
             Throw New ErreurMetierException($"La consultation est limitée aux trois dernières années (depuis le {DebutConsultable:dd/MM/yyyy}).")
         End If
 
-        Dim synthese = Appeler(Function() _activite.ChargerSynthese(utilisateur.Matricule, debut, fin))
+        Dim synthese = Appeler(Function() _activite.ChargerSynthese(Perimetre.DuCollaborateur(utilisateur.Matricule), debut, fin))
         synthese.ParMois = CompleterMois(synthese.ParMois, debut, fin)
         Return synthese
     End Function
@@ -89,7 +89,7 @@ Public Class ServiceActivite
     ''' </summary>
     Public Function PraticiensARevoir(utilisateur As UtilisateurConnecte) As IReadOnlyList(Of PraticienARevoir)
         VerifierAcces(utilisateur)
-        Dim portefeuille = Appeler(Function() _consultation.RechercherPraticiens(Nothing, utilisateur.Matricule, False, ServiceConsultation.MaxResultats))
+        Dim portefeuille = Appeler(Function() _consultation.RechercherPraticiens(Nothing, Perimetre.DuCollaborateur(utilisateur.Matricule), False, ServiceConsultation.MaxResultats))
         Return Prioriser(portefeuille, Aujourdhui)
     End Function
 

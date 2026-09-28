@@ -108,7 +108,7 @@ Public Class RapportDaoIntegrationTests
 
         Assert.ThrowsExactly(Of AccesDonneesException)(Function() _rapports.Creer(r))
         ' Aucun rapport partiel ne doit rester
-        Assert.IsFalse(_rapports.ListerParAuteur("a131", Date.Today.AddDays(-2)).Any(Function(x) x.Praticien.StartsWith("Durand") AndAlso x.DateVisite = Date.Today.AddDays(-1)))
+        Assert.IsFalse(_rapports.ListerParPerimetre(Perimetre.DuCollaborateur("a131"), Date.Today.AddDays(-2), True).Any(Function(x) x.Praticien.StartsWith("Durand") AndAlso x.DateVisite = Date.Today.AddDays(-1)))
     End Sub
 
     <TestMethod>
@@ -121,7 +121,7 @@ Public Class RapportDaoIntegrationTests
 
     <TestMethod>
     Public Sub ListerParAuteur_TroisAns_ExclutLesVieuxRapports()
-        Dim liste = _rapports.ListerParAuteur("a131", Date.Today.AddYears(-3))
+        Dim liste = _rapports.ListerParPerimetre(Perimetre.DuCollaborateur("a131"), Date.Today.AddYears(-3), True)
 
         Assert.IsTrue(liste.Any(Function(x) x.Numero = 5))
         Assert.IsFalse(liste.Any(Function(x) x.Numero = 1), "Le CR de 2022 ne doit plus apparaître.")

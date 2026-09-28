@@ -6,8 +6,11 @@ Imports GSB.CR.Modeles
 ''' </summary>
 Public Interface IRapportDao
 
-    ''' <summary>Rapports d'un auteur visités depuis <paramref name="depuis"/>, du plus récent au plus ancien.</summary>
-    Function ListerParAuteur(matricule As String, depuis As Date) As List(Of RapportResume)
+    ''' <summary>
+    ''' Rapports des membres du périmètre visités depuis <paramref name="depuis"/>, du plus récent au plus ancien.
+    ''' Les brouillons (travail personnel en cours) ne sont inclus que sur demande.
+    ''' </summary>
+    Function ListerParPerimetre(perimetre As Perimetre, depuis As Date, inclureBrouillons As Boolean) As List(Of RapportResume)
 
     ''' <summary>Rapport complet (produits présentés et échantillons compris). Nothing s'il n'existe pas.</summary>
     Function Charger(numero As Integer) As RapportVisite

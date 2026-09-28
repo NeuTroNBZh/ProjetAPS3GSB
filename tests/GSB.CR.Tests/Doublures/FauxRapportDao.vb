@@ -15,11 +15,12 @@ Public Class FauxRapportDao
         If EnPanne Then Throw New AccesDonneesException("Panne simulée", New Exception())
     End Sub
 
-    Public Function ListerParAuteur(matricule As String, depuis As Date) As List(Of RapportResume) Implements IRapportDao.ListerParAuteur
+    Public Function ListerParPerimetre(perimetre As Perimetre, depuis As Date, inclureBrouillons As Boolean) As List(Of RapportResume) Implements IRapportDao.ListerParPerimetre
         VerifierPanne()
         DernierDepuis = depuis
         Return Rapports.Values.
-            Where(Function(r) r.MatriculeAuteur = matricule AndAlso r.DateVisite.Value >= depuis).
+            Where(Function(r) r.MatriculeAuteur = perimetre.Code AndAlso r.DateVisite.Value >= depuis AndAlso
+                              (inclureBrouillons OrElse r.Etat = EtatRapport.Valide)).
             Select(Function(r) New RapportResume() With {.Numero = r.Numero.Value, .DateVisite = r.DateVisite.Value, .Etat = r.Etat}).
             ToList()
     End Function

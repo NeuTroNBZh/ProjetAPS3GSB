@@ -8,9 +8,9 @@ Public Interface IConsultationDao
 
     ''' <summary>
     ''' Praticiens dont le nom, le prénom ou la ville contient <paramref name="texte"/> (tous si vide),
-    ''' limités au portefeuille de <paramref name="matriculePortefeuille"/> s'il est renseigné.
+    ''' limités aux portefeuilles des membres de <paramref name="perimetre"/> s'il est renseigné.
     ''' </summary>
-    Function RechercherPraticiens(texte As String, matriculePortefeuille As String,
+    Function RechercherPraticiens(texte As String, perimetre As Perimetre,
                                   inclureInactifs As Boolean, maximum As Integer) As List(Of PraticienResume)
 
     ''' <summary>Fiche complète d'un praticien. Nothing s'il n'existe pas.</summary>
