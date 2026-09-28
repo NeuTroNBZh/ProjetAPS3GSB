@@ -5,6 +5,18 @@ et chaque version livrée est marquée par un tag Git `vX.Y.Z`.
 
 ## [Non publié]
 
+## [0.9.0] — 2026-09-28
+
+### Ajouté
+- Installation de production (`bdd/installer_production.sql`) : structure, référentiels et un seul compte administrateur au mot de passe provisoire ; refuse de s'exécuter sur un schéma déjà installé.
+- Compte Oracle des postes `GSB_APP` (`bdd/06_compte_applicatif.sql`), limité à la lecture et à l'écriture des données, et paramètre `Schema` de `appsettings.json` pour travailler sur le schéma GSB.
+- Script de publication du poste client (`scripts/publier.ps1`), avec ou sans runtime .NET, sans jamais inclure d'identifiants.
+- Script de hachage du mot de passe du premier administrateur (`scripts/hacher-mot-de-passe.ps1`).
+- Procédure de mise en exploitation (`docs/mise-en-exploitation.md`), cahier de recette et documentation utilisateur par module avec captures d'écran.
+
+### Modifié
+- Données de base séparées du jeu d'essai : `bdd/04_referentiels.sql` et `bdd/05_jeu_essai.sql`.
+
 ## [0.8.0] — 2026-09-28
 
 ### Ajouté
