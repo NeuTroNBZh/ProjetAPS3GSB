@@ -73,6 +73,11 @@ Public Class FrmAccueil
                     frm.ShowDialog(Me)
                 End Using
                 Return
+            Case ModuleApplication.MonActivite
+                Using frm As New FrmMonActivite(_fabrique.Activite(), _fabrique.Rapports(), _utilisateur)
+                    frm.ShowDialog(Me)
+                End Using
+                Return
             Case ModuleApplication.Praticiens
                 Using frm As New FrmPraticiens(_fabrique.Consultation(), _utilisateur)
                     frm.ShowDialog(Me)

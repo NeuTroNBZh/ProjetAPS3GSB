@@ -102,6 +102,26 @@ Public Class PanneauFiche
         Return grille
     End Function
 
+    ''' <summary>Ajoute un contrôle (graphique…) qui occupe toute la largeur du panneau.</summary>
+    Public Sub AjouterControle(controle As Control)
+        controle.Width = LargeurUtile
+        controle.Margin = New Padding(0, 0, 0, 8)
+        controle.Tag = PleineLargeur
+        Controls.Add(controle)
+    End Sub
+
+    ''' <summary>Ajoute une rangée de tuiles d'indicateurs, passant à la ligne si besoin.</summary>
+    Public Sub AjouterIndicateurs(tuiles As IEnumerable(Of Control))
+        Dim rangee As New FlowLayoutPanel() With {
+            .FlowDirection = FlowDirection.LeftToRight, .WrapContents = True, .AutoSize = True,
+            .AutoSizeMode = AutoSizeMode.GrowAndShrink, .MaximumSize = New Size(LargeurUtile, 0),
+            .Margin = New Padding(0, 4, 0, 4), .Tag = PleineLargeur}
+        rangee.Controls.AddRange(tuiles.ToArray())
+        Controls.Add(rangee)
+    End Sub
+
+    Private Const PleineLargeur As String = "pleine-largeur"
+
     Private Sub Ajouter(etiquette As Label)
         etiquette.AutoSize = True
         etiquette.MaximumSize = New Size(LargeurUtile, 0)
@@ -115,7 +135,9 @@ Public Class PanneauFiche
         For Each c As Control In Controls
             If TypeOf c Is Label Then
                 c.MaximumSize = New Size(LargeurUtile, 0)
-            ElseIf TypeOf c Is DataGridView OrElse (TypeOf c Is Panel AndAlso c.Height = 1) Then
+            ElseIf TypeOf c Is FlowLayoutPanel AndAlso Equals(c.Tag, PleineLargeur) Then
+                c.MaximumSize = New Size(LargeurUtile, 0)
+            ElseIf TypeOf c Is DataGridView OrElse Equals(c.Tag, PleineLargeur) OrElse (TypeOf c Is Panel AndAlso c.Height = 1) Then
                 c.Width = LargeurUtile
             End If
         Next

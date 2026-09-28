@@ -18,6 +18,7 @@ Public Class FrmCompteRendu
     Private ReadOnly _service As ServiceRapports
     Private ReadOnly _utilisateur As UtilisateurConnecte
     Private ReadOnly _numero As Integer?
+    Private ReadOnly _praticienPropose As Integer?
     Private ReadOnly _debutSaisie As DateTime
 
     Private _rapport As RapportVisite
@@ -35,11 +36,14 @@ Public Class FrmCompteRendu
     Public Property EnregistreValide As Boolean
 
     ''' <param name="numero">Numéro du CR à modifier, ou Nothing pour un nouveau CR.</param>
-    Public Sub New(service As ServiceRapports, utilisateur As UtilisateurConnecte, numero As Integer?)
+    ''' <param name="praticienPropose">Pour un nouveau CR : praticien présélectionné (ex. depuis « praticiens à revoir »).</param>
+    Public Sub New(service As ServiceRapports, utilisateur As UtilisateurConnecte, numero As Integer?,
+                   Optional praticienPropose As Integer? = Nothing)
         InitializeComponent()
         _service = service
         _utilisateur = utilisateur
         _numero = numero
+        _praticienPropose = praticienPropose
         _debutSaisie = service.Maintenant
         AppliquerTheme()
     End Sub
@@ -98,6 +102,7 @@ Public Class FrmCompteRendu
     Private Function ChargerDonnees() As (Rapport As RapportVisite, Portefeuille As List(Of Praticien), Praticiens As List(Of Praticien),
                                           Motifs As IReadOnlyList(Of Motif), Medicaments As IReadOnlyList(Of Medicament))
         Dim rapport = If(_numero.HasValue, _service.Charger(_utilisateur, _numero.Value), _service.NouveauRapport(_utilisateur))
+        If rapport.EstNouveau Then rapport.NumeroPraticien = _praticienPropose
         Dim portefeuille = _service.Portefeuille(_utilisateur).ToList()
         Dim praticiens = _service.RechercherPraticiens("").ToList()
 

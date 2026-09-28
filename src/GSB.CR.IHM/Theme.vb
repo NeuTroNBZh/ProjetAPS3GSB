@@ -25,6 +25,13 @@ Public Module Theme
         bouton.ForeColor = Blanc
         bouton.Font = New Font("Segoe UI Semibold", 10.5F)
         bouton.Cursor = Cursors.Hand
+        ' Désactivé : grisé, pour ne pas sembler cliquable (appliqué tout de suite puis à chaque changement)
+        Dim appliquer = Sub()
+                            bouton.BackColor = If(bouton.Enabled, BleuGsb, BleuSurvol)
+                            bouton.ForeColor = If(bouton.Enabled, Blanc, TexteGris)
+                        End Sub
+        AddHandler bouton.EnabledChanged, Sub(s, e) appliquer()
+        appliquer()
     End Sub
 
     ''' <summary>Bouton secondaire : fond blanc, bordure et texte bleus.</summary>
@@ -36,6 +43,12 @@ Public Module Theme
         bouton.ForeColor = BleuGsb
         bouton.Font = New Font("Segoe UI", 10.0F)
         bouton.Cursor = Cursors.Hand
+        Dim appliquer = Sub()
+                            bouton.ForeColor = If(bouton.Enabled, BleuGsb, TexteGris)
+                            bouton.FlatAppearance.BorderColor = If(bouton.Enabled, BleuGsb, BleuSurvol)
+                        End Sub
+        AddHandler bouton.EnabledChanged, Sub(s, e) appliquer()
+        appliquer()
     End Sub
 
     ''' <summary>Titre de section dans un formulaire : bleu, semi-gras.</summary>
