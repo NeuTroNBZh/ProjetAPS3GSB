@@ -6,7 +6,7 @@ Voir [le guide technique](README.md) pour l'architecture et les choix de concept
 
 ## GSB.CR.Modeles
 
-Entités du domaine, sans dépendance (utilisées par toutes les couches). 41 types documentés.
+Entités du domaine, sans dépendance (utilisées par toutes les couches). 42 types documentés.
 
 | Type | Rôle |
 |---|---|
@@ -16,6 +16,7 @@ Entités du domaine, sans dépendance (utilisées par toutes les couches). 41 ty
 | [DestinataireMessage](#destinatairemessage) | Destinataire d'un message et date à laquelle il l'a lu. |
 | [EchantillonOffert](#echantillonoffert) | Échantillons d'un médicament laissés lors d'une visite — table OFFRIR. |
 | [EchantillonsDistribues](#echantillonsdistribues) | Échantillons d'un produit distribués sur une période, et leur coût. |
+| [ElementReferentiel](#elementreferentiel) | Élément d'une petite table de référence (composant, type d'individu, présentation, dosage) : un code et un libellé affiché dans les listes. |
 | [EntreeJournal](#entreejournal) | Tentative de connexion — table JOURNAL_CONNEXION (EX-74). |
 | [EtatPeriodicite](#etatperiodicite) | Situation d'un praticien au regard de la périodicité des visites (tous les 6 à 8 mois). |
 | [EtatRapport](#etatrapport) | État d'un compte-rendu de visite (colonne rap_etat : B / V). |
@@ -107,6 +108,10 @@ Destinataire d'un message et date à laquelle il l'a lu.
 ### EchantillonsDistribues
 
 Échantillons d'un produit distribués sur une période, et leur coût.
+
+### ElementReferentiel
+
+Élément d'une petite table de référence (composant, type d'individu, présentation, dosage) : un code et un libellé affiché dans les listes.
 
 ### EntreeJournal
 
@@ -521,6 +526,8 @@ Administration (EX-70 à EX-74) : comptes, affectations, portefeuilles, référe
 | `AttribuerPraticiens(IEnumerable, String, DateTime)` | Confie des praticiens à un visiteur à partir de : le suivi en cours est clos la veille (ou remplacé s'il commençait le même jour). Une transaction. |
 | `TransfererPortefeuille(String, String, DateTime)` | Transfère tout le portefeuille d'un visiteur à un autre ; renvoie le nombre de praticiens transférés. |
 | `CreerMotif(String, String)` | Crée un motif, placé juste avant « Autre » qui reste en dernier. |
+| `ListerDosages()` | Dosages, libellé lisible (« 500 mg »), par unité puis quantité. |
+| `AjouterInteraction(String, String, String)` | Enregistre que perturbe l'effet de . |
 | `ListerJournal(DateTime, DateTime, String, Boolean, Int32)` | Tentatives de connexion entre deux dates (incluses), les plus récentes d'abord. |
 
 ### ICollaborateurDao
@@ -630,15 +637,17 @@ Filtre SQL commun « ce collaborateur appartient au périmètre ». Région ou s
 
 ## GSB.CR.Metier
 
-Règles de gestion, droits et services appelés par les écrans. 22 types documentés.
+Règles de gestion, droits et services appelés par les écrans. 24 types documentés.
 
 | Type | Rôle |
 |---|---|
 | [Autorisations](#autorisations) | Droits d'accès aux modules selon le profil (EX-02). Le délégué est aussi un visiteur : il a les modules du visiteur en plus des siens. |
 | [ErreurMetierException](#erreurmetierexception) | Erreur destinée à l'utilisateur : action refusée par une règle de gestion ou serveur indisponible. Le message est affichable tel quel. |
+| [ExportStatistiques](#exportstatistiques) | Export des statistiques d'activité au format CSV (EX-51), lisible directement par Excel en français : séparateur point-virgule, virgule décimale, dates jj/mm/aaaa. Le fichier est à enregistrer en UTF-8 avec BOM (`Encodage`) pour que les accents s'affichent correctement. |
 | [FabriqueServices](#fabriqueservices) | Point d'entrée de la couche Métier pour l'IHM : crée les services branchés sur la base Oracle à partir de la configuration (appsettings.json + appsettings.Local.json). L'IHM n'a ainsi jamais besoin de connaître la couche Données. |
 | [GenerateurMotDePasse](#generateurmotdepasse) | Génère des mots de passe provisoires robustes (conformes à `PolitiqueMotDePasse`), sans caractères ambigus à la lecture (O/0, l/1/I) puisqu'ils sont communiqués au collaborateur. |
 | [HacheurMotDePasse](#hacheurmotdepasse) | Hachage et vérification des mots de passe (PBKDF2-SHA256). Format stocké : `PBKDF2-SHA256$<iterations>$<sel base64>$<cle base64>` (identique à celui du jeu d'essai, voir docs/modele-donnees.md). |
+| [LibellesProfils](#libellesprofils) | Libellés des profils, communs à l'affichage et aux exports. |
 | [ModuleApplication](#moduleapplication) | Fonctionnalités de l'application, affichées dans le menu principal selon le profil. |
 | [Perimetres](#perimetres) | Périmètre d'équipe d'un utilisateur selon son profil et son affectation. |
 | [Periodicite](#periodicite) | Règle de périodicité des visites : chaque praticien doit être revu tous les 6 à 8 mois (motif principal des visites selon les visiteurs, EX-24). |
@@ -670,6 +679,17 @@ Droits d'accès aux modules selon le profil (EX-02). Le délégué est aussi un 
 
 Erreur destinée à l'utilisateur : action refusée par une règle de gestion ou serveur indisponible. Le message est affichable tel quel.
 
+### ExportStatistiques
+
+Export des statistiques d'activité au format CSV (EX-51), lisible directement par Excel en français : séparateur point-virgule, virgule décimale, dates jj/mm/aaaa. Le fichier est à enregistrer en UTF-8 avec BOM (`Encodage`) pour que les accents s'affichent correctement.
+
+| Membre | Description |
+|---|---|
+| `Encodage` | Encodage du fichier : UTF-8 avec BOM (reconnu par Excel). |
+| `Generer(String, SyntheseActivite, IEnumerable, DateTime)` | Contenu CSV d'une synthèse : en-tête (périmètre, période, date d'export), indicateurs, visites par mois, motifs, produits présentés, échantillons et, pour une équipe, l'activité de chaque membre. |
+| `Champ(Object)` | Valeur d'une cellule : entre guillemets si elle contient un séparateur, un guillemet ou un retour à la ligne ; précédée d'une apostrophe si elle commence par = + - @ (évite qu'Excel l'interprète comme une formule). |
+| `NomDeFichier(String, DateTime, DateTime)` | Nom de fichier proposé : « GSB-activite-Mon-activite-2026-07-01-au-2026-09-28.csv ». |
+
 ### FabriqueServices
 
 Point d'entrée de la couche Métier pour l'IHM : crée les services branchés sur la base Oracle à partir de la configuration (appsettings.json + appsettings.Local.json). L'IHM n'a ainsi jamais besoin de connaître la couche Données.
@@ -690,6 +710,10 @@ Hachage et vérification des mots de passe (PBKDF2-SHA256). Format stocké : `PB
 |---|---|
 | `Hacher(String)` | Hache un mot de passe avec un sel aléatoire. |
 | `Verifier(String, String)` | Vérifie un mot de passe contre sa valeur hachée. Renvoie Faux si le format est invalide. La comparaison se fait en temps constant. |
+
+### LibellesProfils
+
+Libellés des profils, communs à l'affichage et aux exports.
 
 ### ModuleApplication
 
@@ -790,9 +814,13 @@ Module Administration (EX-70 à EX-74), réservé au profil administrateur : com
 | `ReinitialiserMotDePasse(UtilisateurConnecte, String)` | Nouveau mot de passe provisoire ; le compte est déverrouillé. |
 | `AttribuerPraticiens(UtilisateurConnecte, IEnumerable, String)` | Confie des praticiens à un visiteur ou un délégué en poste, à partir d'aujourd'hui. |
 | `EnregistrerPraticien(UtilisateurConnecte, Praticien)` | Crée (numéro vide) ou modifie un praticien. |
+| `FicheMedicament(UtilisateurConnecte, String)` | Fiche complète d'un médicament (composition, interactions, posologies avec leurs codes). |
+| `CreerComposant(UtilisateurConnecte, String, String)` | Nouveau composant : code de 2 à 4 lettres ou chiffres (mis en majuscules), libellé obligatoire. |
+| `CodeDosage(Decimal, String)` | Code d'un dosage calculé à partir de sa valeur, comme dans le jeu d'essai : « 500MG », « 1G » ; la virgule devient V et le signe % devient PC (« 0V5PC » pour 0,5 %). |
+| `AjouterInteraction(UtilisateurConnecte, String, String, Boolean, String)` | Interaction entre le médicament et un autre ; indique le sens (vrai : le médicament perturbe l'effet de l'autre ; faux : il est perturbé par l'autre). |
 | `ControlerAffectation(Affectation)` | Visiteur / délégué : une région ; responsable : un secteur ; administrateur : rien. |
 | `VerifierVisiteurEnPoste(String)` | Renvoie la fiche si le collaborateur est un visiteur ou un délégué en poste, sinon Nothing. |
-| `Executer(Action, String, String)` | Exécute une écriture et traduit les erreurs de base en messages compréhensibles. |
+| `Executer(Action, String, String, String)` | Exécute une écriture et traduit les erreurs de base en messages compréhensibles. |
 
 ### ServiceAuthentification
 
@@ -903,7 +931,7 @@ Règles de saisie d'un compte-rendu (EX-11 à EX-19, EX-27). Un brouillon n'exig
 
 ## GSB.CR.IHM
 
-Écrans WinForms, composants visuels et point d'entrée. 29 types documentés.
+Écrans WinForms, composants visuels et point d'entrée. 32 types documentés.
 
 | Type | Rôle |
 |---|---|
@@ -911,11 +939,13 @@ Règles de saisie d'un compte-rendu (EX-11 à EX-19, EX-27). Un brouillon n'exig
 | [ChoixProfil](#choixprofil) | Profil proposé dans les listes (libellé lisible). |
 | [ChoixVisiteur](#choixvisiteur) | Visiteur ou délégué proposé dans les listes. |
 | [ElementAnnuaire](#elementannuaire) | Élément affiché dans la liste des destinataires. |
+| [EnregistrementExport](#enregistrementexport) | Enregistrement d'une synthèse d'activité en CSV (EX-51) : choix du fichier, écriture, message de confirmation. Utilisé par « Mon activité », « Ma région » et « Mon secteur ». |
 | [FrmAccueil](#frmaccueil) | Menu principal après connexion : affiche les modules accessibles selon le profil (EX-02). |
 | [FrmAdministration](#frmadministration) | Module Administration (EX-70 à EX-74), réservé à l'administrateur. Ce fichier contient la partie commune et l'onglet Collaborateurs ; les autres onglets sont dans FrmAdministration.Portefeuilles.vb, FrmAdministration.Referentiels.vb et FrmAdministration.Journal.vb. |
 | [FrmChangementMotDePasse](#frmchangementmotdepasse) | Changement du mot de passe (EX-07) : obligatoire à la première connexion, ou à la demande. |
 | [FrmCompteRendu](#frmcompterendu) | Saisie ou modification d'un compte-rendu de visite (EX-10 à EX-19, EX-25 à EX-29). Renvoie DialogResult.OK si le compte-rendu a été enregistré. |
 | [FrmConnexion](#frmconnexion) | Page d'accueil de l'application : uniquement la zone d'identification (EX-01). Renvoie DialogResult.OK quand l'utilisateur est accepté. |
+| [FrmDetailsMedicament](#frmdetailsmedicament) | Composition, interactions et posologie d'un médicament (EX-73), ouvert depuis l'onglet Référentiels de l'administration. Chaque ajout passe par un formulaire contrôlé par `ServiceAdministration`. |
 | [FrmEchantillons](#frmechantillons) | Échantillons de l'équipe : contrôle de stock attribué / distribué du mois (EX-34) et, pour le délégué, saisie des dotations mensuelles (EX-33). Le responsable consulte sans pouvoir modifier. |
 | [FrmEquipe](#frmequipe) | Suivi d'équipe : « Ma région » pour le délégué (EX-31, EX-32, EX-35), « Mon secteur » pour le responsable (EX-40, EX-41). Synthèse, activité par visiteur, comptes-rendus validés en lecture seule, praticiens à revoir. |
 | [FrmFiche](#frmfiche) | Fenêtre de consultation générique : en-tête bleu et fiche remplie en arrière-plan par l'appelant. Sert à lire un compte-rendu d'un membre de l'équipe (EX-32, EX-41) ou la synthèse d'un membre (EX-31). |
@@ -929,6 +959,7 @@ Règles de saisie d'un compte-rendu (EX-11 à EX-19, EX-27). Un brouillon n'exig
 | [FrmPraticiens](#frmpraticiens) | Consultation des praticiens (EX-21) : recherche, fiche détaillée, périodicité des visites et historique (y compris les visites où le praticien était remplaçant). |
 | [GraphiqueBarres](#graphiquebarres) | Histogramme d'une seule série (ex. visites par mois), dessiné en GDI+ : barres de 24 px maximum au sommet arrondi et à la base droite, 2 px d'écart minimum entre barres, grille fine et discrète, graduations rondes, étiquette uniquement sur la valeur maximale, valeur exacte au survol de toute la colonne. Les textes n'utilisent jamais la couleur de la série. |
 | [LibellesModules](#libellesmodules) | Textes affichés pour chaque module dans le menu principal. |
+| [OutilsEcran](#outilsecran) | Construction par code des barres de boutons et des grilles aux couleurs GSB, partagée par les écrans d'administration (FrmAdministration, FrmDetailsMedicament). |
 | [PanneauFiche](#panneaufiche) | Panneau de fiche détaillée aux couleurs GSB : empile verticalement titres, badges, sections, textes et tableaux, en ajustant leur largeur à celle du panneau. Défile si le contenu est long. |
 | [Program](#program) | Point d'entrée : connexion → (changement de mot de passe) → menu principal, en boucle tant que l'utilisateur se déconnecte au lieu de quitter. |
 | [RenduARevoir](#renduarevoir) | Tableau des praticiens à revoir (visiteur ou équipe), avec la situation en couleur. |
@@ -957,6 +988,10 @@ Visiteur ou délégué proposé dans les listes.
 
 Élément affiché dans la liste des destinataires.
 
+### EnregistrementExport
+
+Enregistrement d'une synthèse d'activité en CSV (EX-51) : choix du fichier, écriture, message de confirmation. Utilisé par « Mon activité », « Ma région » et « Mon secteur ».
+
 ### FrmAccueil
 
 Menu principal après connexion : affiche les modules accessibles selon le profil (EX-02).
@@ -976,6 +1011,7 @@ Module Administration (EX-70 à EX-74), réservé à l'administrateur. Ce fichie
 | `VisiteursEnPoste()` | Visiteurs et délégués en poste (les seuls à pouvoir avoir un portefeuille). |
 | `ChoisirDestinataire(String, String, FicheCollaborateur, ResultatOperation})` | Demande le visiteur destinataire (autre que le visiteur affiché). |
 | `FormulairePraticien(Praticien)` | Formulaire praticien (création si n'a pas de numéro). |
+| `DetailsMedicament(Object, EventArgs)` | Composition, interactions et posologie du médicament sélectionné (EX-73). |
 | `Echelle(Int32)` | Mise à l'échelle de l'écran des dimensions des contrôles créés par code. |
 | `Operer(Func, Func)` | Exécute une opération du service en arrière-plan, affiche le résultat (message ou erreurs), communique le mot de passe provisoire éventuel, puis rafraîchit l'affichage. |
 | `Afficher(ResultatOperation)` | Affiche le résultat d'une opération (formulaire ou action directe). |
@@ -1013,6 +1049,16 @@ Page d'accueil de l'application : uniquement la zone d'identification (EX-01). R
 | `Utilisateur` | Utilisateur connecté (renseigné quand la fenêtre renvoie OK). |
 | `ChangementMotDePasseRequis` | Vrai si l'utilisateur doit changer son mot de passe avant d'entrer (EX-07). |
 
+### FrmDetailsMedicament
+
+Composition, interactions et posologie d'un médicament (EX-73), ouvert depuis l'onglet Référentiels de l'administration. Chaque ajout passe par un formulaire contrôlé par `ServiceAdministration`.
+
+| Membre | Description |
+|---|---|
+| `Charger()` | Recharge la fiche et remplit les trois grilles. |
+| `OuvrirFormulaire(FrmFormulaire)` | Ouvre un formulaire ; après validation réussie, affiche le message et recharge la fiche. |
+| `Lire``1(Func)` | Charge une liste de référence ; affiche l'erreur et renvoie Nothing en cas de problème. |
+
 ### FrmEchantillons
 
 Échantillons de l'équipe : contrôle de stock attribué / distribué du mois (EX-34) et, pour le délégué, saisie des dotations mensuelles (EX-33). Le responsable consulte sans pouvoir modifier.
@@ -1028,6 +1074,7 @@ Suivi d'équipe : « Ma région » pour le délégué (EX-31, EX-32, EX-35), « 
 | Membre | Description |
 |---|---|
 | `New(ServiceEquipe, ServiceActivite, UtilisateurConnecte)` |  |
+| `btnExporter_Click(Object, EventArgs)` | Export CSV de la synthèse et de l'activité par visiteur affichées (EX-51). |
 
 ### FrmFiche
 
@@ -1071,6 +1118,10 @@ Messagerie interne (EX-50) : boîte de réception (non lus en gras), messages en
 
 Module « Mon activité » : synthèse de l'activité sur une période (EX-23) et praticiens du portefeuille à revoir (EX-24), avec saisie directe d'un compte-rendu.
 
+| Membre | Description |
+|---|---|
+| `btnExporter_Click(Object, EventArgs)` | Export CSV de la synthèse affichée (EX-51). |
+
 ### FrmNouveauMessage
 
 Rédaction d'un message (EX-50) : destinataires choisis dans l'annuaire (avec recherche) ou par groupe (région, secteur), objet et texte. Renvoie DialogResult.OK une fois le message envoyé.
@@ -1105,6 +1156,15 @@ Histogramme d'une seule série (ex. visites par mois), dessiné en GDI+ : barres
 ### LibellesModules
 
 Textes affichés pour chaque module dans le menu principal.
+
+### OutilsEcran
+
+Construction par code des barres de boutons et des grilles aux couleurs GSB, partagée par les écrans d'administration (FrmAdministration, FrmDetailsMedicament).
+
+| Membre | Description |
+|---|---|
+| `PreparerGrille(DataGridView, String, Int32}}, Boolean)` | Grille en lecture seule, sélection par ligne, colonnes proportionnelles (poids). |
+| `Selection``1(DataGridView)` | Objet (Tag) de la ligne sélectionnée, ou Nothing. |
 
 ### PanneauFiche
 

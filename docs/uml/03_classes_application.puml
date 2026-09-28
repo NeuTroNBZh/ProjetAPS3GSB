@@ -1,6 +1,6 @@
 @startuml 03_classes_application
 !include style.iuml
-title GSB-CR — Diagramme de classes de l'application (architecture en couches, v0.8.0)
+title GSB-CR — Diagramme de classes de l'application (architecture en couches, v1.1.0)
 hide empty members
 skinparam packageStyle rectangle
 set separator none
@@ -43,11 +43,16 @@ package "GSB.CR.IHM" <<WinForms>> {
   class FrmMonActivite {
     -ChargerSynthese()
     -ChargerARevoir()
+    -btnExporter_Click()
   }
   class FrmEquipe {
     -ChargerPeriode()
     -ChargerRapports()
     -ChargerARevoir()
+    -btnExporter_Click()
+  }
+  class EnregistrementExport <<module>> {
+    +Exporter(proprietaire, perimetre, synthese, membres)
   }
   class FrmEchantillons {
     -ChargerStock()
@@ -64,6 +69,15 @@ package "GSB.CR.IHM" <<WinForms>> {
     -ChargerPortefeuille()
     -ChargerJournal()
     -Operer(operation, rafraichir)
+  }
+  class FrmDetailsMedicament {
+    -Charger()
+    -AjouterComposant / AjouterInteraction / AjouterPosologie
+    -NouveauComposant / NouveauDosage
+  }
+  class OutilsEcran <<module>> {
+    +AjouterBouton(barre, texte, action)
+    +PreparerGrille(grille, colonnes)
   }
   class FrmFormulaire {
     +Validation : Func<Task<ResultatOperation>>
@@ -157,7 +171,17 @@ package "GSB.CR.Metier" {
     +TransfererPortefeuille(u, de, vers)
     +EnregistrerPraticien(u, p) / ModifierMedicament(...)
     +CreerMotif(...) / ModifierMotif(...)
+    +FicheMedicament(u, depotLegal)
+    +AjouterComposant / AjouterInteraction / AjouterPosologie(...)
+    +RetirerComposant / RetirerInteraction / RetirerPosologie(...)
+    +CreerComposant(u, code, libelle) / CreerDosage(u, quantite, unite)
+    +{static} CodeDosage(quantite, unite) : String
     +Journal(u, debut, fin, texte, echecs)
+  }
+  class ExportStatistiques <<module>> {
+    +Generer(perimetre, synthese, membres, exporteLe) : String
+    +Champ(valeur) : String
+    +NomDeFichier(perimetre, debut, fin) : String
   }
   class ResultatOperation {
     +Erreurs : List<String>
@@ -364,6 +388,14 @@ FrmNouveauMessage --> ServiceMessagerie
 FrmAccueil ..> FrmAdministration : ouvre
 FrmAdministration --> ServiceAdministration
 FrmAdministration ..> FrmFormulaire : ouvre
+FrmAdministration ..> FrmDetailsMedicament : ouvre
+FrmDetailsMedicament --> ServiceAdministration
+FrmDetailsMedicament ..> FrmFormulaire : ouvre
+FrmAdministration ..> OutilsEcran
+FrmDetailsMedicament ..> OutilsEcran
+FrmMonActivite ..> EnregistrementExport : export CSV
+FrmEquipe ..> EnregistrementExport : export CSV
+EnregistrementExport ..> ExportStatistiques
 FrmAdministration *-- PanneauFiche
 FrmFormulaire ..> ResultatOperation
 FrmFiche ..> ServiceEquipe

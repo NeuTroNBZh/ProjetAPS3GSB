@@ -1,6 +1,6 @@
 # Documentation technique — GSB-CR
 
-Guide destiné au développeur qui reprend l'application (transfert de compétences, EX-60 et EX-62). Version décrite : 1.0.0.
+Guide destiné au développeur qui reprend l'application (transfert de compétences, EX-60 et EX-62). Version décrite : 1.1.0.
 
 | Document | Contenu |
 |---|---|
@@ -104,7 +104,7 @@ End Function
 - **Deux façons de signaler un problème** :
   - une **saisie refusée** renvoie un résultat avec la liste des erreurs (`ResultatEnregistrement`, `ResultatOperation`), que l'écran affiche en rouge ;
   - une **situation anormale** (profil non autorisé, donnée inexistante, base injoignable) lève une `ErreurMetierException` avec un message destiné à l'utilisateur ; les `AccesDonneesException` sont converties en « Le serveur est indisponible… ».
-- **Règles isolées et testables** : `ValidateurRapport` (contrôles d'un compte-rendu), `Periodicite` (6 à 8 mois), `PolitiqueMotDePasse`, `HacheurMotDePasse`, `GenerateurMotDePasse`, `Perimetres`.
+- **Règles isolées et testables** : `ValidateurRapport` (contrôles d'un compte-rendu), `Periodicite` (6 à 8 mois), `PolitiqueMotDePasse`, `HacheurMotDePasse`, `GenerateurMotDePasse`, `Perimetres`, `ExportStatistiques` (contenu CSV d'une synthèse, EX-51), `ServiceAdministration.CodeDosage` (code d'un dosage).
 - **Temps** : les services reçoivent un `TimeProvider` (`TimeProvider.System` en production, une horloge fixe dans les tests) ; aucune règle n'appelle `Date.Now` directement.
 
 ### 4.4 IHM
@@ -119,7 +119,7 @@ End Function
 
 - **Charte** : module `Theme` (couleurs, styles des boutons, grilles, en-têtes) ; ne jamais coder une couleur en dur dans un écran.
 - **Composants réutilisables** : `TuileModule` (menu), `PanneauFiche` (fiche détaillée : titres, badges, sections, tableaux), `GraphiqueBarres`, `TuileIndicateur`, `FrmFiche` (fiche en lecture seule), `FrmFormulaire` (fenêtre de saisie générique de l'administration), `RenduSynthese` et `RenduARevoir` (rendus partagés par « Mon activité » et « Ma région »).
-- **Écrans** : un formulaire par module (`FrmMesComptesRendus`, `FrmCompteRendu`, `FrmEquipe`…) ; `FrmAdministration` est découpé en classes partielles, une par onglet.
+- **Écrans** : un formulaire par module (`FrmMesComptesRendus`, `FrmCompteRendu`, `FrmEquipe`…) ; `FrmAdministration` est découpé en classes partielles, une par onglet ; `FrmDetailsMedicament` (composition, interactions, posologie) s'ouvre depuis l'onglet Référentiels. `OutilsEcran` construit les barres de boutons et les grilles des écrans d'administration ; `EnregistrementExport` enregistre un export CSV (boîte « Enregistrer sous », fichier UTF-8 avec BOM).
 
 ## 5. Base de données
 
