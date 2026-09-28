@@ -11,6 +11,7 @@ Format : date — décision — raison — statut (proposée / validée / abando
 | D-05 | 2026-09-28 | MSTest pour les tests unitaires | Intégré à Visual Studio et `dotnet test` | Validée |
 | D-06 | 2026-09-28 | Git + GitHub (dépôt privé) + GitHub Actions pour l'intégration continue | Livrable « intégration continue » de l'AP | Validée |
 | D-07 | 2026-09-28 | Mots de passe hachés (PBKDF2 via `Rfc2898DeriveBytes`) | Sécurité, aucune dépendance externe | Proposée |
-| D-08 | 2026-09-28 | Serveur Oracle 19c : `100.109.217.110:1521`, base créée **de zéro** (pas de base exemple fournie) | Infos du projet | Validée |
+| D-08 | 2026-09-28 | Serveur : `100.109.217.110:1521`, service **FREEPDB1**, schéma dédié **GSB** créé de zéro (`bdd/00_creation_utilisateur.sql`) | Pas de base exemple fournie ; schéma séparé des autres TP (GESPROD, SCOTT…) | Validée |
 | D-09 | 2026-09-28 | Config : `appsettings.json` (serveur, versionné) + `appsettings.Local.json` (identifiants, **non versionné**) | Aucun secret dans Git | Validée |
 | D-10 | 2026-09-28 | Tests nécessitant Oracle marqués `<TestCategory("Integration")>` et exclus de la CI | La CI GitHub n'a pas accès au serveur | Validée |
+| D-11 | 2026-09-28 | Le serveur est en **Oracle 26ai Free (23.26)** alors que le CDC impose 19c → SQL écrit **compatible 19c** : pas de type `BOOLEAN` SQL (utiliser `CHAR(1)` O/N ou `NUMBER(1)`), pas de `IF [NOT] EXISTS`, pas de `GROUP BY` sur alias, pas de `SELECT` sans `FROM` | Rester conforme au cahier des charges tout en utilisant le serveur disponible | Validée |

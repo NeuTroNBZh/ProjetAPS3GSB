@@ -7,7 +7,7 @@ Liste issue de `AP3.pptx` (« Travail à faire : TOUT »). Cocher au fil de l'ea
 - [x] Dépôt Git + GitHub (privé)
 - [x] Solution Visual Studio (4 projets + tests) — `GSB.CR.slnx`
 - [x] Intégration continue GitHub Actions (build + tests)
-- [ ] Base Oracle 19c : serveur 100.109.217.110 joignable ✔ — reste : compte applicatif + nom de service + `appsettings.Local.json`
+- [x] Base Oracle : schéma GSB sur 100.109.217.110/FREEPDB1, connexion testée depuis l'appli
 
 ## Phase 1 — Conception
 - [ ] Spécifications fonctionnelles générales (cas d'utilisation par module)

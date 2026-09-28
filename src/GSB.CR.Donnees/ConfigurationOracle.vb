@@ -16,7 +16,7 @@ Public Class ConfigurationOracle
     ''' <summary>Port du listener Oracle (1521 par défaut).</summary>
     Public Property Port As Integer = 1521
 
-    ''' <summary>Nom de service Oracle (ex. ORCLPDB1).</summary>
+    ''' <summary>Nom de service Oracle (ex. FREEPDB1).</summary>
     Public Property Service As String = ""
 
     ''' <summary>Utilisateur (schéma) Oracle de l'application.</summary>

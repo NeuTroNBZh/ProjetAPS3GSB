@@ -59,7 +59,7 @@ Public Class ConfigurationOracleTests
 
         Dim version = New ConnexionOracle(config).Tester()
 
-        StringAssert.StartsWith(version, "19")
+        Assert.IsFalse(String.IsNullOrWhiteSpace(version))
     End Sub
 
 End Class
