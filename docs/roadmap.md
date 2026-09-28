@@ -12,7 +12,7 @@ Liste issue de `AP3.pptx` (« Travail à faire : TOUT »). Cocher au fil de l'ea
 ## Phase 1 — Conception
 - [ ] Spécifications fonctionnelles générales (cas d'utilisation par module)
 - [ ] Spécifications fonctionnelles détaillées (écrans, règles de gestion, `EX-xx`)
-- [ ] MCD / MLD définitif (`docs/modele-donnees.md`) + scripts SQL `bdd/`
+- [x] MCD / MLD définitif (`docs/modele-donnees.md`) + scripts SQL `bdd/` (installé et testé : 21 règles OK)
 - [ ] Maquettes des écrans (bleu/blanc)
 
 ## Phase 2 — Programmation (module Visiteur d'abord)

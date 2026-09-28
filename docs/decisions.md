@@ -15,3 +15,9 @@ Format : date — décision — raison — statut (proposée / validée / abando
 | D-09 | 2026-09-28 | Config : `appsettings.json` (serveur, versionné) + `appsettings.Local.json` (identifiants, **non versionné**) | Aucun secret dans Git | Validée |
 | D-10 | 2026-09-28 | Tests nécessitant Oracle marqués `<TestCategory("Integration")>` et exclus de la CI | La CI GitHub n'a pas accès au serveur | Validée |
 | D-11 | 2026-09-28 | Le serveur est en **Oracle 26ai Free (23.26)** alors que le CDC impose 19c → SQL écrit **compatible 19c** : pas de type `BOOLEAN` SQL (utiliser `CHAR(1)` O/N ou `NUMBER(1)`), pas de `IF [NOT] EXISTS`, pas de `GROUP BY` sur alias, pas de `SELECT` sans `FROM` | Rester conforme au cahier des charges tout en utilisant le serveur disponible | Validée |
+| D-12 | 2026-09-28 | Modèle complet : 28 tables, 6 vues, 3 déclencheurs (`docs/modele-donnees.md`) | « Penser à tout » : historique, portefeuille, posologie, composition, stock, messagerie, sécurité | Validée |
+| D-13 | 2026-09-28 | Remplaçant = PRATICIEN à part entière, référencé par `pra_num_remplacant` sur le rapport | Garder son historique s'il reprend un cabinet | Validée |
+| D-14 | 2026-09-28 | CR en **brouillon / validé** ; contraintes de complétude seulement à la validation | Saisie en plusieurs fois sans perdre la garantie de CR complets | Validée |
+| D-15 | 2026-09-28 | Format mot de passe `PBKDF2-SHA256$100000$<sel>$<clé>` (sel 16 o, clé 32 o) | Compatible `Rfc2898DeriveBytes.Pbkdf2` et le jeu d'essai | Validée |
+| D-16 | 2026-09-28 | Règles simples en **base** (CHECK, index uniques, triggers) + règles de droits / périodes en couche **Métier** | Données cohérentes même hors de l'appli, logique métier testable en VB | Validée |
+| D-17 | 2026-09-28 | Module **Administration** (profil ADM) ajouté au périmètre | Gestion des comptes et référentiels non prévue par le CDC | Proposée |
