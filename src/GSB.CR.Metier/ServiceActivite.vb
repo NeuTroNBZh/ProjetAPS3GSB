@@ -53,15 +53,10 @@ Public Class ServiceActivite
     ''' <exception cref="ErreurMetierException">Période invalide ou trop ancienne, ou serveur indisponible.</exception>
     Public Function MaSynthese(utilisateur As UtilisateurConnecte, debut As Date, fin As Date) As SyntheseActivite
         VerifierAcces(utilisateur)
-        debut = debut.Date
-        fin = If(fin.Date > Aujourdhui, Aujourdhui, fin.Date)
-        If debut > fin Then Throw New ErreurMetierException("La date de début doit précéder la date de fin.")
-        If debut < DebutConsultable Then
-            Throw New ErreurMetierException($"La consultation est limitée aux trois dernières années (depuis le {DebutConsultable:dd/MM/yyyy}).")
-        End If
+        Dim periode = Perimetres.ControlerPeriode(debut, fin, Aujourdhui)
 
-        Dim synthese = Appeler(Function() _activite.ChargerSynthese(Perimetre.DuCollaborateur(utilisateur.Matricule), debut, fin))
-        synthese.ParMois = CompleterMois(synthese.ParMois, debut, fin)
+        Dim synthese = Appeler(Function() _activite.ChargerSynthese(Perimetre.DuCollaborateur(utilisateur.Matricule), periode.Debut, periode.Fin))
+        synthese.ParMois = CompleterMois(synthese.ParMois, periode.Debut, periode.Fin)
         Return synthese
     End Function
 

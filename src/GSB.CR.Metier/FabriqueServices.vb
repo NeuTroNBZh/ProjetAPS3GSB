@@ -37,4 +37,14 @@ Public Class FabriqueServices
         Return New ServiceActivite(New ActiviteDao(_connexion), New ConsultationDao(_connexion), TimeProvider.System)
     End Function
 
+    Public Function Equipe() As ServiceEquipe
+        Return New ServiceEquipe(New ActiviteDao(_connexion), New RapportDao(_connexion), New ConsultationDao(_connexion),
+                                 New EquipeDao(_connexion), TimeProvider.System)
+    End Function
+
+    Public Function Echantillons() As ServiceEchantillons
+        Return New ServiceEchantillons(New EchantillonDao(_connexion), New EquipeDao(_connexion),
+                                       New ReferentielDao(_connexion), TimeProvider.System)
+    End Function
+
 End Class
