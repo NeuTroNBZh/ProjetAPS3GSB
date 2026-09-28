@@ -13,6 +13,10 @@ Public Class MembreEquipe
 
     Public Property NomRegion As String
 
+    Public Property CodeSecteur As String
+
+    Public Property LibelleSecteur As String
+
     Public ReadOnly Property NomComplet As String
         Get
             Return $"{Prenom} {Nom}"
