@@ -6,13 +6,11 @@ Imports Oracle.ManagedDataAccess.Client
 ''' vue V_AFFECTATION_EN_COURS). Requêtes paramétrées uniquement.
 ''' </summary>
 Public Class CollaborateurDao
+    Inherits DaoOracle
     Implements ICollaborateurDao
 
-    Private ReadOnly _connexion As ConnexionOracle
-
     Public Sub New(connexion As ConnexionOracle)
-        ArgumentNullException.ThrowIfNull(connexion)
-        _connexion = connexion
+        MyBase.New(connexion)
     End Sub
 
     Public Function TrouverParLogin(login As String) As Collaborateur Implements ICollaborateurDao.TrouverParLogin
@@ -96,7 +94,7 @@ Public Class CollaborateurDao
                     cmd.Parameters.Add("matricule", OracleDbType.Varchar2).Value = matricule
                     Dim nb = cmd.Parameters.Add("nb", OracleDbType.Int32, Data.ParameterDirection.Output)
                     cmd.ExecuteNonQuery()
-                    Return CInt(CType(nb.Value, Oracle.ManagedDataAccess.Types.OracleDecimal).Value)
+                    Return EntierSortie(nb)
                 End Using
             End Function)
     End Function
@@ -136,42 +134,5 @@ Public Class CollaborateurDao
                               cmd.Parameters.Add("succes", OracleDbType.Char).Value = If(succes, "O", "N")
                           End Sub)
     End Sub
-
-    ' ------------------------------------------------------------------
-    ' Outils communs
-    ' ------------------------------------------------------------------
-
-    ''' <summary>Ouvre une connexion, exécute le traitement et traduit les erreurs Oracle.</summary>
-    Private Function Executer(Of T)(messageErreur As String, traitement As Func(Of OracleConnection, T)) As T
-        Try
-            Using cnx = _connexion.Ouvrir()
-                Return traitement(cnx)
-            End Using
-        Catch ex As OracleException
-            Throw New AccesDonneesException(messageErreur, ex)
-        End Try
-    End Function
-
-    Private Sub ExecuterMiseAJour(messageErreur As String, sql As String, parametrer As Action(Of OracleCommand))
-        Executer(messageErreur,
-                 Function(cnx)
-                     Using cmd = Commande(cnx, sql)
-                         parametrer(cmd)
-                         Return cmd.ExecuteNonQuery()
-                     End Using
-                 End Function)
-    End Sub
-
-    Private Shared Function Commande(cnx As OracleConnection, sql As String) As OracleCommand
-        Return New OracleCommand(sql, cnx) With {.BindByName = True}
-    End Function
-
-    Private Shared Function TexteOuRien(lecteur As OracleDataReader, index As Integer) As String
-        Return If(lecteur.IsDBNull(index), Nothing, lecteur.GetString(index))
-    End Function
-
-    Private Shared Function DateOuRien(lecteur As OracleDataReader, index As Integer) As DateTime?
-        Return If(lecteur.IsDBNull(index), CType(Nothing, DateTime?), lecteur.GetDateTime(index))
-    End Function
 
 End Class
