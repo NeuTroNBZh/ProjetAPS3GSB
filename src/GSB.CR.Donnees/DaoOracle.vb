@@ -20,7 +20,7 @@ Public MustInherit Class DaoOracle
                 Return traitement(cnx)
             End Using
         Catch ex As OracleException
-            Throw New AccesDonneesException(messageErreur, ex)
+            Throw New AccesDonneesException(messageErreur, ex.Number, ex)
         End Try
     End Function
 
