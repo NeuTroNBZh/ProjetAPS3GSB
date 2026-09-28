@@ -1,0 +1,47 @@
+name: Release
+
+# Pose d'un tag vX.Y.Z : compilation, tests, préparation des paquets et publication de la release GitHub
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Cohérence tag / version
+        shell: pwsh
+        run: |
+          $version = ([xml](Get-Content Directory.Build.props)).Project.PropertyGroup.Version
+          if ("v$version" -ne '${{ github.ref_name }}') {
+            throw "Le tag ${{ github.ref_name }} ne correspond pas à la version $version de Directory.Build.props."
+          }
+
+      - name: Compilation
+        run: dotnet build GSB.CR.slnx --configuration Release
+
+      - name: Tests unitaires (hors intégration Oracle)
+        run: dotnet test GSB.CR.slnx --configuration Release --no-build --filter "TestCategory!=Integration"
+
+      - name: Préparation de la livraison
+        shell: pwsh
+        run: ./scripts/preparer-livraison.ps1
+
+      - name: Publication de la release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = '${{ github.ref_name }}'
+          $dossier = "publication/livraison-$($tag.TrimStart('v'))"
+          $fichiers = Get-ChildItem $dossier -File | Where-Object Name -ne 'NOTES.md' | ForEach-Object FullName
+          gh release create $tag @fichiers --title "GSB-CR $($tag.TrimStart('v'))" --notes-file "$dossier/NOTES.md" --verify-tag
