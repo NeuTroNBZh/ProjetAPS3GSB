@@ -2,11 +2,12 @@ Imports System.Globalization
 Imports GSB.CR.Metier
 Imports GSB.CR.Modeles
 
-' Onglet Référentiels (EX-73) : praticiens, médicaments, motifs de visite.
+' Onglet Référentiels (EX-73) : praticiens, médicaments (prix, statut, et composition, interactions, posologie
+' dans FrmDetailsMedicament), motifs de visite.
 Partial Public Class FrmAdministration
 
     Private txtRecherchePraticien As TextBox
-    Private btnModifierPraticien, btnActiverPraticien, btnModifierMedicament, btnModifierMotif As Button
+    Private btnModifierPraticien, btnActiverPraticien, btnModifierMedicament, btnDetailsMedicament, btnModifierMotif As Button
     Private _types As IReadOnlyList(Of TypePraticien) = Array.Empty(Of TypePraticien)()
 
     Private Sub PreparerReferentiels()
@@ -24,6 +25,7 @@ Partial Public Class FrmAdministration
 
         ' Médicaments
         btnModifierMedicament = AjouterBouton(flpBarreMedicaments, "Modifier le prix ou le statut", AddressOf ModifierMedicament, principal:=True)
+        btnDetailsMedicament = AjouterBouton(flpBarreMedicaments, "Composition, interactions, posologie", AddressOf DetailsMedicament)
         PreparerGrille(dgvMedicaments, {("Nom commercial", 22), ("Famille", 36), ("Dépôt légal", 16), ("Prix éch.", 12), ("Statut", 14)})
         AddHandler dgvMedicaments.SelectionChanged, Sub(s, e) MettreAJourBoutonsReferentiels()
         AddHandler dgvMedicaments.CellDoubleClick, Sub(s, e) If e.RowIndex >= 0 Then btnModifierMedicament.PerformClick()
@@ -44,6 +46,7 @@ Partial Public Class FrmAdministration
         btnActiverPraticien.Enabled = p IsNot Nothing
         btnActiverPraticien.Text = If(p IsNot Nothing AndAlso Not p.Actif, "Réactiver", "Désactiver")
         btnModifierMedicament.Enabled = dgvMedicaments.SelectedRows.Count > 0
+        btnDetailsMedicament.Enabled = dgvMedicaments.SelectedRows.Count > 0
         btnModifierMotif.Enabled = dgvMotifs.SelectedRows.Count > 0
     End Sub
 
@@ -147,6 +150,15 @@ Partial Public Class FrmAdministration
         frm.AjouterCase("actif", "Commercialisé (proposé à la saisie des comptes-rendus et des dotations)", m.Actif)
         frm.Validation = Function() Task.Run(Function() _service.ModifierMedicament(_utilisateur, m.DepotLegal, frm.Nombre("prix"), frm.Coche("actif")))
         Await OuvrirFormulaire(frm, AddressOf ChargerMedicaments)
+    End Sub
+
+    ''' <summary>Composition, interactions et posologie du médicament sélectionné (EX-73).</summary>
+    Private Sub DetailsMedicament(sender As Object, e As EventArgs)
+        Dim m = Selection(Of Medicament)(dgvMedicaments)
+        If m Is Nothing Then Return
+        Using frm As New FrmDetailsMedicament(_service, _utilisateur, m)
+            frm.ShowDialog(Me)
+        End Using
     End Sub
 
     ' --- Motifs ---------------------------------------------------------------
