@@ -7,6 +7,7 @@ Imports GSB.CR.Modeles
 ''' </summary>
 Public Class FrmAccueil
 
+    Private ReadOnly _fabrique As FabriqueServices
     Private ReadOnly _service As ServiceAuthentification
     Private ReadOnly _utilisateur As UtilisateurConnecte
 
@@ -14,8 +15,9 @@ Public Class FrmAccueil
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)>
     Public Property Deconnexion As Boolean
 
-    Public Sub New(service As ServiceAuthentification, utilisateur As UtilisateurConnecte)
+    Public Sub New(fabrique As FabriqueServices, service As ServiceAuthentification, utilisateur As UtilisateurConnecte)
         InitializeComponent()
+        _fabrique = fabrique
         _service = service
         _utilisateur = utilisateur
         AppliquerTheme()
@@ -65,7 +67,14 @@ Public Class FrmAccueil
 
     Private Sub Tuile_Click(sender As Object, e As EventArgs)
         Dim m = CType(sender, TuileModule).ModuleAssocie
-        ' Les modules seront branchés au fur et à mesure de leur développement
+        Select Case m
+            Case ModuleApplication.MesComptesRendus
+                Using frm As New FrmMesComptesRendus(_fabrique.Rapports(), _utilisateur)
+                    frm.ShowDialog(Me)
+                End Using
+                Return
+        End Select
+        ' Les autres modules seront branchés au fur et à mesure de leur développement
         MessageBox.Show(Me, $"Le module « {LibellesModules.Titre(m)} » sera disponible dans une prochaine version.",
                         "GSB", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub

@@ -38,4 +38,41 @@ Public Module Theme
         bouton.Cursor = Cursors.Hand
     End Sub
 
+    ''' <summary>Titre de section dans un formulaire : bleu, semi-gras.</summary>
+    Public Sub StyliserSection(etiquette As Label)
+        etiquette.Font = New Font("Segoe UI Semibold", 11.5F)
+        etiquette.ForeColor = BleuGsb
+    End Sub
+
+    ''' <summary>Bandeau d'en-tête bleu avec textes blancs.</summary>
+    Public Sub StyliserEntete(bandeau As Panel, ParamArray textes As Label())
+        bandeau.BackColor = BleuGsb
+        For Each t In textes
+            t.ForeColor = Blanc
+        Next
+    End Sub
+
+    ''' <summary>Grille de données aux couleurs GSB (en-têtes bleus, lignes alternées).</summary>
+    Public Sub StyliserGrille(grille As DataGridView)
+        grille.BorderStyle = BorderStyle.FixedSingle
+        grille.BackgroundColor = Blanc
+        grille.GridColor = BleuSurvol
+        grille.EnableHeadersVisualStyles = False
+        grille.ColumnHeadersDefaultCellStyle.BackColor = BleuGsb
+        grille.ColumnHeadersDefaultCellStyle.ForeColor = Blanc
+        grille.ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 9.5F)
+        grille.ColumnHeadersDefaultCellStyle.SelectionBackColor = BleuGsb
+        grille.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+        grille.ColumnHeadersHeight = 32
+        grille.DefaultCellStyle.SelectionBackColor = BleuSurvol
+        grille.DefaultCellStyle.SelectionForeColor = BleuFonce
+        grille.AlternatingRowsDefaultCellStyle.BackColor = BleuClair
+        grille.RowTemplate.Height = 28
+    End Sub
+
+    ''' <summary>Affiche une liste d'erreurs sous forme de puces.</summary>
+    Public Function EnPuces(messages As IEnumerable(Of String)) As String
+        Return String.Join(Environment.NewLine, messages.Select(Function(m) "• " & m))
+    End Function
+
 End Module

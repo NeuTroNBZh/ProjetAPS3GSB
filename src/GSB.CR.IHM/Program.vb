@@ -13,13 +13,14 @@ Friend Module Program
         Application.EnableVisualStyles()
         Application.SetCompatibleTextRenderingDefault(False)
 
-        Dim authentification As ServiceAuthentification
+        Dim fabrique As FabriqueServices
         Try
-            authentification = FabriqueServices.DepuisConfiguration().Authentification()
+            fabrique = FabriqueServices.DepuisConfiguration()
         Catch ex As InvalidOperationException
             MessageBox.Show(ex.Message, "GSB - Configuration", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End Try
+        Dim authentification = fabrique.Authentification()
 
         Do
             Dim utilisateur As UtilisateurConnecte
@@ -37,7 +38,7 @@ Friend Module Program
                 End Using
             End If
 
-            Using accueil As New FrmAccueil(authentification, utilisateur)
+            Using accueil As New FrmAccueil(fabrique, authentification, utilisateur)
                 accueil.ShowDialog()
                 If Not accueil.Deconnexion Then Return
             End Using
