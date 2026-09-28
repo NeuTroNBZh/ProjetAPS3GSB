@@ -32,7 +32,7 @@ Liste issue de `AP3.pptx` (« Travail à faire : TOUT »). Cocher au fil de l'ea
 - [x] Intégration continue (GitHub Actions : build + tests)
 
 ## Phase 4 — Livraison
-- [ ] Gestion de projet (planning, suivi)
+- [x] Gestion de projet (planning, suivi) — `docs/gestion-de-projet.md`
 - [ ] Documentation technique (classes, bibliothèques — EX-60, EX-62)
 - [x] Documentation utilisateur / mode opératoire par module (EX-61) — `docs/utilisateur/`
 - [x] Mise en exploitation (procédure d'installation, déploiement) — `docs/mise-en-exploitation.md`, `scripts/`
