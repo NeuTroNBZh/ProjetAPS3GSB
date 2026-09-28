@@ -1,0 +1,4 @@
+# Fichiers exécutés ou lus directement sous Windows : fins de ligne CRLF conservées
+*.cmd eol=crlf
+deploiement/**/*.txt eol=crlf
+deploiement/**/*.ps1 eol=crlf

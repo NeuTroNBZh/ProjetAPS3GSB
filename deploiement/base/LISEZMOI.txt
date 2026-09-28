@@ -1,0 +1,30 @@
+GSB-CR - Kit d'installation de la base Oracle (production)
+=================================================================
+
+Prérequis : Oracle Database 19c ou plus récent, SQLcl (commande « sql »),
+PowerShell 7 (commande « pwsh ») pour le hachage du mot de passe administrateur.
+Toutes les commandes se lancent depuis le dossier décompressé de ce kit.
+Remplacez <serveur> et <service> par l'adresse et le nom de service Oracle.
+
+1. Créer le schéma GSB (une seule fois, en SYSTEM)
+     sql SYSTEM@//<serveur>:1521/<service> @bdd/00_creation_utilisateur.sql "<mot_de_passe_GSB>"
+
+2. Préparer le mot de passe du premier administrateur
+     pwsh ./hacher-mot-de-passe.ps1
+   Notez le mot de passe provisoire affiché et copiez la valeur hachée (PBKDF2-SHA256$...).
+
+3. Installer la base (en GSB) : tables, vues, déclencheurs, référentiels, compte « admin »
+     sql GSB@//<serveur>:1521/<service> @bdd/installer_production.sql "<valeur_hachée>"
+   Le script s'arrête sans rien modifier si GSB-CR est déjà installé.
+
+4. Créer le compte des postes GSB_APP (en SYSTEM ; à relancer après chaque mise à jour)
+     sql SYSTEM@//<serveur>:1521/<service> @bdd/06_compte_applicatif.sql "<mot_de_passe_GSB_APP>"
+
+5. Installer les postes avec le paquet « GSB-CR-<version>-poste-win-x64.zip »
+   (schéma : GSB, compte : GSB_APP).
+
+6. Se connecter avec le login « admin » et le mot de passe provisoire, puis créer
+   les collaborateurs et les portefeuilles dans le module Administration.
+
+Procédure détaillée (sauvegardes, surveillance, mise à jour, dépannage) :
+  mise-en-exploitation.md, dans ce kit.

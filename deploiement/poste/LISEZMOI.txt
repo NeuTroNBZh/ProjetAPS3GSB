@@ -1,0 +1,42 @@
+GSB-CR - Comptes-rendus de visite
+Paquet d'installation d'un poste Windows (10 ou 11, 64 bits)
+=================================================================
+
+Ce paquet contient le runtime .NET : aucun autre logiciel n'est à installer.
+
+AVANT DE COMMENCER
+  Demandez à l'administrateur de la base :
+    - l'adresse du serveur Oracle, le port (1521 en général) et le nom du service ;
+    - le mot de passe du compte Oracle des postes (GSB_APP).
+
+INSTALLER (ou mettre à jour)
+  1. Décompressez toute l'archive dans un dossier (par exemple Téléchargements).
+  2. Double-cliquez sur « Installer.cmd » et acceptez la demande d'autorisation de Windows.
+     Si Windows affiche « Windows a protégé votre ordinateur », cliquez sur
+     « Informations complémentaires » puis « Exécuter quand même ».
+  3. Répondez aux questions (Entrée = valeur proposée entre crochets).
+  4. Lancez « GSB-CR » depuis le bureau ou le menu Démarrer.
+
+  L'application est installée dans C:\Program Files\GSB-CR.
+  Pour une mise à jour, relancez « Installer.cmd » d'une version plus récente :
+  la configuration existante peut être conservée.
+
+PREMIÈRE CONNEXION
+  Utilisez l'identifiant et le mot de passe provisoire remis par l'administrateur :
+  l'application vous demandera d'en choisir un nouveau.
+
+DÉPLOIEMENT SUR PLUSIEURS POSTES (administrateur)
+  Installation sans questions, depuis une console PowerShell administrateur :
+    powershell -ExecutionPolicy Bypass -File installer.ps1 -Silencieux `
+        -Serveur <serveur> -Service <service> -MotDePasse (Read-Host -AsSecureString)
+  Paramètres facultatifs : -Port (1521), -Schema (GSB), -Utilisateur (GSB_APP).
+
+DÉSINSTALLER
+  Double-cliquez sur « Desinstaller.cmd ». Les données de la base ne sont pas supprimées.
+
+EN CAS DE PROBLÈME
+  « Connexion impossible au serveur » : vérifiez l'adresse, le port et le service
+  en relançant « Installer.cmd » (répondre « n » pour ressaisir la configuration),
+  et que le poste est bien sur le réseau de l'entreprise (ou le VPN).
+
+Documentation complète : https://github.com/NeuTroNBZh/ProjetAPS3GSB
