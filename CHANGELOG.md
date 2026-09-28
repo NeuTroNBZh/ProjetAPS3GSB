@@ -5,6 +5,17 @@ et chaque version livrée est marquée par un tag Git `vX.Y.Z`.
 
 ## [Non publié]
 
+## [0.4.0] — 2026-09-28
+
+### Ajouté
+- Fiches praticiens, pour tous les profils (EX-21) : recherche par nom, prénom ou ville, filtre « mon portefeuille » (visiteurs et délégués), praticiens inactifs ; coordonnées, spécialités avec diplôme et coefficient de prescription, notoriété, visiteur qui le suit ; historique des visites, y compris celles où le praticien a été rencontré comme remplaçant.
+- Périodicité des visites : à jour (moins de 6 mois), à revoir bientôt (6 à 8 mois), à revoir (plus de 8 mois), jamais visité ; prochaine visite conseillée.
+- Fiches médicaments, pour tous les profils (EX-22) : recherche, filtre par famille, médicaments retirés ; effets, contre-indications, composition, interactions dans les deux sens, posologie par type de patient, présentation et dosage.
+- Contrôle réutilisable de fiche détaillée pour l'interface.
+
+### Corrigé
+- Les suites des traitements en arrière-plan reviennent toujours sur le thread de l'interface, y compris entre deux fenêtres modales.
+
 ## [0.3.0] — 2026-09-28
 
 ### Ajouté

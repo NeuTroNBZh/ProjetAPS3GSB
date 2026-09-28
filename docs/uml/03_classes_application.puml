@@ -1,6 +1,6 @@
 @startuml 03_classes_application
 !include style.iuml
-title GSB-CR — Diagramme de classes de l'application (architecture en couches, v0.3.0)
+title GSB-CR — Diagramme de classes de l'application (architecture en couches, v0.4.0)
 hide empty members
 skinparam packageStyle rectangle
 set separator none
@@ -33,6 +33,19 @@ package "GSB.CR.IHM" <<WinForms>> {
   class FrmNouveauRemplacant {
     +Praticien : Praticien
   }
+  class FrmPraticiens {
+    -Rechercher()
+    -AfficherFiche(fiche)
+  }
+  class FrmMedicaments {
+    -AfficherFiche(fiche)
+  }
+  class PanneauFiche {
+    +AjouterTitre(texte)
+    +AjouterBadge(texte, fond, encre)
+    +AjouterSection(texte)
+    +AjouterTableau(colonnes, lignes)
+  }
   class Theme <<module>>
   class LibellesModules <<module>>
 }
@@ -57,6 +70,17 @@ package "GSB.CR.Metier" {
     +Portefeuille(u) : List<Praticien>
     +Motifs() / Medicaments() / TypesPraticien()
     +CreerRemplacant(p) : List<String>
+  }
+  class ServiceConsultation {
+    +RechercherPraticiens(u, texte, monPortefeuille, inactifs)
+    +FichePraticien(u, numero) : FichePraticien
+    +Medicaments(u) : List<Medicament>
+    +FicheMedicament(u, depot) : FicheMedicament
+  }
+  class Periodicite {
+    +{static} MoisMinimum = 6
+    +{static} MoisMaximum = 8
+    +{static} Evaluer(derniere, aujourdhui) : EtatPeriodicite
   }
   class ValidateurRapport {
     +{static} Verifier(rapport, aujourdhui) : List<String>
@@ -99,6 +123,12 @@ package "GSB.CR.Donnees" {
     +CreerPraticien(p) : Integer
     +ListerMedicaments() / ListerMotifs()
   }
+  interface IConsultationDao {
+    +RechercherPraticiens(texte, matricule, inactifs, maximum)
+    +ChargerFichePraticien(numero) : FichePraticien
+    +ChargerFicheMedicament(depot) : FicheMedicament
+  }
+  class ConsultationDao
   class CollaborateurDao
   class RapportDao
   class ReferentielDao
@@ -141,6 +171,15 @@ package "GSB.CR.Modeles" {
   class Praticien
   class TypePraticien
   class Medicament
+  class FichePraticien
+  class FicheMedicament
+  class PraticienResume
+  enum EtatPeriodicite {
+    AJour
+    ARevoirBientot
+    ARevoir
+    JamaisVisite
+  }
   class Motif {
     +{static} CodeAutre = "AUTRE"
   }
@@ -160,12 +199,23 @@ FrmConnexion --> ServiceAuthentification
 FrmMesComptesRendus --> ServiceRapports
 FrmCompteRendu --> ServiceRapports
 FrmNouveauRemplacant --> ServiceRapports
+FrmAccueil ..> FrmPraticiens : ouvre
+FrmAccueil ..> FrmMedicaments : ouvre
+FrmPraticiens --> ServiceConsultation
+FrmMedicaments --> ServiceConsultation
+FrmPraticiens *-- PanneauFiche
+FrmMedicaments *-- PanneauFiche
 FrmAccueil ..> Autorisations
 TuileModule ..> LibellesModules
 
 ' --- Métier
 FabriqueServices ..> ServiceAuthentification : crée
 FabriqueServices ..> ServiceRapports : crée
+FabriqueServices ..> ServiceConsultation : crée
+ServiceConsultation --> IConsultationDao
+ServiceConsultation --> IReferentielDao
+ServiceConsultation ..> Periodicite
+Periodicite ..> EtatPeriodicite
 ServiceAuthentification --> ICollaborateurDao
 ServiceAuthentification ..> HacheurMotDePasse
 ServiceAuthentification ..> PolitiqueMotDePasse
@@ -183,6 +233,8 @@ Autorisations ..> ModuleApplication
 DaoOracle <|-- CollaborateurDao
 DaoOracle <|-- RapportDao
 DaoOracle <|-- ReferentielDao
+DaoOracle <|-- ConsultationDao
+ConsultationDao ..|> IConsultationDao
 CollaborateurDao ..|> ICollaborateurDao
 RapportDao ..|> IRapportDao
 ReferentielDao ..|> IReferentielDao

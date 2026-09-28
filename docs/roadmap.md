@@ -19,7 +19,7 @@ Liste issue de `AP3.pptx` (« Travail à faire : TOUT »). Cocher au fil de l'ea
 - [x] Connexion + redirection par profil (EX-01, EX-02, EX-05 à EX-09) — v0.2.0
 - [x] Saisie d'un CR (EX-10 → EX-19, EX-25 → EX-29) — v0.3.0
 - [x] Consultation CR 3 ans (EX-20) — v0.3.0
-- [ ] Fiches praticiens / produits (EX-21, EX-22)
+- [x] Fiches praticiens / produits (EX-21, EX-22) — v0.4.0
 - [ ] Synthèse d'activité (EX-23)
 - [ ] Module Délégué (EX-30 → EX-33)
 - [ ] Module Responsable (EX-40, EX-41)
