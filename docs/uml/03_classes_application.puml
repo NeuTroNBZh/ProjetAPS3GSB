@@ -1,6 +1,6 @@
 @startuml 03_classes_application
 !include style.iuml
-title GSB-CR — Diagramme de classes de l'application (architecture en couches, v0.4.0)
+title GSB-CR — Diagramme de classes de l'application (architecture en couches, v0.5.0)
 hide empty members
 skinparam packageStyle rectangle
 set separator none
@@ -40,6 +40,14 @@ package "GSB.CR.IHM" <<WinForms>> {
   class FrmMedicaments {
     -AfficherFiche(fiche)
   }
+  class FrmMonActivite {
+    -ChargerSynthese()
+    -ChargerARevoir()
+  }
+  class GraphiqueBarres {
+    +DefinirDonnees(donnees)
+  }
+  class TuileIndicateur
   class PanneauFiche {
     +AjouterTitre(texte)
     +AjouterBadge(texte, fond, encre)
@@ -76,6 +84,13 @@ package "GSB.CR.Metier" {
     +FichePraticien(u, numero) : FichePraticien
     +Medicaments(u) : List<Medicament>
     +FicheMedicament(u, depot) : FicheMedicament
+  }
+  class ServiceActivite {
+    +PeriodesPredefinies() : List<Periode>
+    +MaSynthese(u, debut, fin) : SyntheseActivite
+    +PraticiensARevoir(u) : List<PraticienARevoir>
+    +{static} CompleterMois(mois, debut, fin)
+    +{static} Prioriser(praticiens, aujourdhui)
   }
   class Periodicite {
     +{static} MoisMinimum = 6
@@ -129,6 +144,10 @@ package "GSB.CR.Donnees" {
     +ChargerFicheMedicament(depot) : FicheMedicament
   }
   class ConsultationDao
+  interface IActiviteDao {
+    +ChargerSynthese(matricule, debut, fin) : SyntheseActivite
+  }
+  class ActiviteDao
   class CollaborateurDao
   class RapportDao
   class ReferentielDao
@@ -172,6 +191,9 @@ package "GSB.CR.Modeles" {
   class TypePraticien
   class Medicament
   class FichePraticien
+  class SyntheseActivite
+  class PraticienARevoir
+  class Periode
   class FicheMedicament
   class PraticienResume
   enum EtatPeriodicite {
@@ -202,6 +224,13 @@ FrmNouveauRemplacant --> ServiceRapports
 FrmAccueil ..> FrmPraticiens : ouvre
 FrmAccueil ..> FrmMedicaments : ouvre
 FrmPraticiens --> ServiceConsultation
+FrmAccueil ..> FrmMonActivite : ouvre
+FrmMonActivite --> ServiceActivite
+FrmMonActivite --> ServiceRapports
+FrmMonActivite ..> FrmCompteRendu : saisie directe
+FrmMonActivite *-- PanneauFiche
+PanneauFiche o-- GraphiqueBarres
+PanneauFiche o-- TuileIndicateur
 FrmMedicaments --> ServiceConsultation
 FrmPraticiens *-- PanneauFiche
 FrmMedicaments *-- PanneauFiche
@@ -212,6 +241,10 @@ TuileModule ..> LibellesModules
 FabriqueServices ..> ServiceAuthentification : crée
 FabriqueServices ..> ServiceRapports : crée
 FabriqueServices ..> ServiceConsultation : crée
+FabriqueServices ..> ServiceActivite : crée
+ServiceActivite --> IActiviteDao
+ServiceActivite --> IConsultationDao
+ServiceActivite ..> Periodicite
 ServiceConsultation --> IConsultationDao
 ServiceConsultation --> IReferentielDao
 ServiceConsultation ..> Periodicite
@@ -234,6 +267,8 @@ DaoOracle <|-- CollaborateurDao
 DaoOracle <|-- RapportDao
 DaoOracle <|-- ReferentielDao
 DaoOracle <|-- ConsultationDao
+DaoOracle <|-- ActiviteDao
+ActiviteDao ..|> IActiviteDao
 ConsultationDao ..|> IConsultationDao
 CollaborateurDao ..|> ICollaborateurDao
 RapportDao ..|> IRapportDao

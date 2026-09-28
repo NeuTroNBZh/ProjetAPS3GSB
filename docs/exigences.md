@@ -45,7 +45,7 @@ Priorité : **P1** = module Visiteur (urgent), **P2** = Délégué, **P3** = Res
 | EX-21 | Consulter les **fiches praticiens** (coordonnées, infos détaillées, date de dernière visite). | P1 |
 | EX-22 | Consulter les **fiches produits** (description, composition, effets, contre-indications, interactions, posologie). | P1 |
 | EX-23 | **Vue synthétique** de son activité : nombre de visites sur une période, statistiques diverses. | P1 |
-| EX-24 | Aide à la périodicité : repérer les praticiens non vus depuis 6 à 8 mois. | P3 |
+| EX-24 | Aide à la périodicité : repérer les praticiens non vus depuis 6 à 8 mois (ou dont la visite prévue est dépassée), du plus urgent au moins urgent. | P1 |
 
 ## Module Délégué régional
 

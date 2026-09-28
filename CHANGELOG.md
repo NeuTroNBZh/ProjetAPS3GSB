@@ -5,6 +5,19 @@ et chaque version livrée est marquée par un tag Git `vX.Y.Z`.
 
 ## [Non publié]
 
+## [0.5.0] — 2026-09-28
+
+### Ajouté
+- Module « Mon activité » (visiteurs et délégués) :
+  - synthèse sur une période prédéfinie ou personnalisée, limitée aux trois dernières années (EX-23) : visites, praticiens vus, remplaçants rencontrés, confiance moyenne, échantillons et leur coût, temps de saisie, brouillons à terminer ;
+  - visites par mois (graphique et tableau), répartition par motif, produits présentés, échantillons par produit ;
+  - praticiens du portefeuille à revoir, classés par urgence : plus de 8 mois, jamais visités, visite prévue dépassée, 6 à 8 mois (EX-24) ; saisie directe d'un compte-rendu pour le praticien choisi.
+- Composants d'interface réutilisables : histogramme et tuiles d'indicateurs.
+
+### Corrigé
+- Boutons désactivés grisés pour ne pas sembler cliquables.
+- Moyennes arrondies côté base (la précision d'Oracle dépasse celle du type Decimal).
+
 ## [0.4.0] — 2026-09-28
 
 ### Ajouté
