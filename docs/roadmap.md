@@ -1,0 +1,35 @@
+# Roadmap — livrables de l'AP
+
+Liste issue de `AP3.pptx` (« Travail à faire : TOUT »). Cocher au fil de l'eau.
+
+## Phase 0 — Mise en place
+- [x] Documentation du projet (`docs/`)
+- [x] Dépôt Git + GitHub (privé)
+- [ ] Solution Visual Studio (4 projets + tests)
+- [ ] Base Oracle 19c accessible (locale ou serveur école) + chaîne de connexion
+
+## Phase 1 — Conception
+- [ ] Spécifications fonctionnelles générales (cas d'utilisation par module)
+- [ ] Spécifications fonctionnelles détaillées (écrans, règles de gestion, `EX-xx`)
+- [ ] MCD / MLD définitif (`docs/modele-donnees.md`) + scripts SQL `bdd/`
+- [ ] Maquettes des écrans (bleu/blanc)
+
+## Phase 2 — Programmation (module Visiteur d'abord)
+- [ ] Connexion + redirection par profil (EX-01, EX-02, EX-05)
+- [ ] Saisie d'un CR (EX-10 → EX-19)
+- [ ] Consultation CR 3 ans (EX-20)
+- [ ] Fiches praticiens / produits (EX-21, EX-22)
+- [ ] Synthèse d'activité (EX-23)
+- [ ] Module Délégué (EX-30 → EX-33)
+- [ ] Module Responsable (EX-40, EX-41)
+
+## Phase 3 — Qualité
+- [ ] Tests unitaires couche Métier
+- [ ] Plan de tests / cahier de recette
+- [ ] Intégration continue (GitHub Actions : build + tests)
+
+## Phase 4 — Livraison
+- [ ] Gestion de projet (planning, suivi)
+- [ ] Documentation technique (classes, bibliothèques — EX-60, EX-62)
+- [ ] Documentation utilisateur / mode opératoire par module (EX-61)
+- [ ] Mise en exploitation (procédure d'installation, déploiement)
