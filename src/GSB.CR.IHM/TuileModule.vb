@@ -48,6 +48,13 @@ Public Class TuileModule
         AddHandler MouseLeave, Sub(s, e) Survoler(ClientRectangle.Contains(PointToClient(MousePosition)))
     End Sub
 
+    ''' <summary>Remplace la description ; <paramref name="alerte"/> la met en évidence (ex. messages non lus).</summary>
+    Public Sub DefinirDescription(texte As String, alerte As Boolean)
+        _lblDescription.Text = texte
+        _lblDescription.ForeColor = If(alerte, Theme.Erreur, Theme.TexteGris)
+        _lblDescription.Font = New Font("Segoe UI", 9.5F, If(alerte, FontStyle.Bold, FontStyle.Regular))
+    End Sub
+
     Private Sub Survoler(actif As Boolean)
         BackColor = If(actif, Theme.BleuSurvol, Theme.BleuClair)
     End Sub

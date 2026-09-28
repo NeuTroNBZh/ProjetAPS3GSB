@@ -111,9 +111,37 @@ Public Class FrmAccueil
                     frm.ShowDialog(Me)
                 End Using
                 Return True
+            Case ModuleApplication.Messagerie
+                Using frm As New FrmMessagerie(_fabrique.Messagerie(), _utilisateur)
+                    frm.ShowDialog(Me)
+                End Using
+                ActualiserMessagesNonLus()
+                Return True
         End Select
         Return False
     End Function
+
+    Private Sub FrmAccueil_Shown(sender As Object, e As EventArgs) Handles Me.Shown
+        ActualiserMessagesNonLus()
+    End Sub
+
+    ''' <summary>Affiche le nombre de messages non lus sur la tuile Messagerie.</summary>
+    Private Async Sub ActualiserMessagesNonLus()
+        Dim tuile = flpModules.Controls.OfType(Of TuileModule)().FirstOrDefault(Function(t) t.ModuleAssocie = ModuleApplication.Messagerie)
+        If tuile Is Nothing Then Return
+        Try
+            Dim service = _fabrique.Messagerie()
+            Dim nombre = Await Task.Run(Function() service.NombreNonLus(_utilisateur))
+            If IsDisposed Then Return
+            If nombre > 0 Then
+                tuile.DefinirDescription($"{nombre} message(s) non lu(s)", alerte:=True)
+            Else
+                tuile.DefinirDescription(LibellesModules.Description(ModuleApplication.Messagerie), alerte:=False)
+            End If
+        Catch ex As ErreurMetierException
+            ' Le compteur est un confort : en cas de problème, la tuile garde sa description
+        End Try
+    End Sub
 
     Private Sub btnMotDePasse_Click(sender As Object, e As EventArgs) Handles btnMotDePasse.Click
         Using frm As New FrmChangementMotDePasse(_service, _utilisateur, obligatoire:=False)
