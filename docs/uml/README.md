@@ -20,7 +20,7 @@ Avec [PlantUML](https://plantuml.com) (Java requis), depuis ce dossier :
 
 ```bash
 java -jar plantuml.jar -charset UTF-8 -tsvg 0*.puml
-java -DPLANTUML_LIMIT_SIZE=8192 -jar plantuml.jar -charset UTF-8 -tpng 0*.puml   # limite relevée : grands diagrammes
+java -DPLANTUML_LIMIT_SIZE=12000 -jar plantuml.jar -charset UTF-8 -tpng 0*.puml   # limite relevée : grands diagrammes
 ```
 
 Extension VS Code conseillée : *PlantUML* (aperçu en direct avec `Alt+D`).

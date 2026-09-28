@@ -21,8 +21,8 @@ Liste issue de `AP3.pptx` (« Travail à faire : TOUT »). Cocher au fil de l'ea
 - [x] Consultation CR 3 ans (EX-20) — v0.3.0
 - [x] Fiches praticiens / produits (EX-21, EX-22) — v0.4.0
 - [x] Synthèse d'activité et praticiens à revoir (EX-23, EX-24) — v0.5.0
-- [ ] Module Délégué (EX-30 → EX-33)
-- [ ] Module Responsable (EX-40, EX-41)
+- [x] Module Délégué (EX-30 → EX-35) — v0.6.0
+- [x] Module Responsable (EX-40, EX-41) — v0.6.0
 
 ## Phase 3 — Qualité
 - [ ] Tests unitaires couche Métier

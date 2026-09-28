@@ -1,6 +1,6 @@
 @startuml 03_classes_application
 !include style.iuml
-title GSB-CR — Diagramme de classes de l'application (architecture en couches, v0.5.0)
+title GSB-CR — Diagramme de classes de l'application (architecture en couches, v0.6.0)
 hide empty members
 skinparam packageStyle rectangle
 set separator none
@@ -44,6 +44,21 @@ package "GSB.CR.IHM" <<WinForms>> {
     -ChargerSynthese()
     -ChargerARevoir()
   }
+  class FrmEquipe {
+    -ChargerPeriode()
+    -ChargerRapports()
+    -ChargerARevoir()
+  }
+  class FrmEchantillons {
+    -ChargerStock()
+    -btnEnregistrer_Click()
+  }
+  class FrmFiche {
+    +{static} CompteRendu(service, u, numero, auteur)
+    +{static} SyntheseMembre(service, u, membre, debut, fin)
+  }
+  class RenduSynthese <<module>>
+  class RenduARevoir <<module>>
   class GraphiqueBarres {
     +DefinirDonnees(donnees)
   }
@@ -91,6 +106,25 @@ package "GSB.CR.Metier" {
     +PraticiensARevoir(u) : List<PraticienARevoir>
     +{static} CompleterMois(mois, debut, fin)
     +{static} Prioriser(praticiens, aujourdhui)
+  }
+  class ServiceEquipe {
+    +PerimetreDe(u) : Perimetre
+    +Synthese(u, debut, fin) : SyntheseActivite
+    +ActiviteParMembre(u, debut, fin)
+    +SyntheseMembre(u, matricule, debut, fin)
+    +RapportsEquipe(u) : List<RapportResume>
+    +ChargerRapport(u, numero) : RapportVisite
+    +PraticiensARevoir(u)
+  }
+  class ServiceEchantillons {
+    +{static} PeutSaisir(u) : Boolean
+    +Stock(u, mois, seulementLesEcarts)
+    +EnregistrerDotation(u, matricule, depot, mois, quantite)
+    +SupprimerDotation(u, matricule, depot, mois)
+  }
+  class Perimetres {
+    +{static} DeLEquipe(u) : Perimetre
+    +{static} ControlerPeriode(debut, fin, aujourdhui)
   }
   class Periodicite {
     +{static} MoisMinimum = 6
@@ -148,6 +182,19 @@ package "GSB.CR.Donnees" {
     +ChargerSynthese(matricule, debut, fin) : SyntheseActivite
   }
   class ActiviteDao
+  interface IEquipeDao {
+    +ListerMembres(perimetre) : List<MembreEquipe>
+  }
+  class EquipeDao
+  interface IEchantillonDao {
+    +Stock(perimetre, mois) : List<LigneStock>
+    +EnregistrerDotation(...)
+    +SupprimerDotation(...)
+  }
+  class EchantillonDao
+  class SqlPerimetre <<module>> {
+    +Condition(colonne, perimetre) : String
+  }
   class CollaborateurDao
   class RapportDao
   class ReferentielDao
@@ -192,6 +239,22 @@ package "GSB.CR.Modeles" {
   class Medicament
   class FichePraticien
   class SyntheseActivite
+  class Perimetre {
+    +Type : TypePerimetre
+    +Code : String
+  }
+  enum TypePerimetre {
+    Collaborateur
+    Region
+    Secteur
+  }
+  class MembreEquipe
+  class ActiviteMembre
+  class LigneStock {
+    +Attribue : Integer
+    +Distribue : Integer
+    +Ecart : Integer
+  }
   class PraticienARevoir
   class Periode
   class FicheMedicament
@@ -226,6 +289,15 @@ FrmAccueil ..> FrmMedicaments : ouvre
 FrmPraticiens --> ServiceConsultation
 FrmAccueil ..> FrmMonActivite : ouvre
 FrmMonActivite --> ServiceActivite
+FrmAccueil ..> FrmEquipe : ouvre
+FrmAccueil ..> FrmEchantillons : ouvre
+FrmEquipe --> ServiceEquipe
+FrmEquipe ..> FrmFiche : ouvre
+FrmEchantillons --> ServiceEchantillons
+FrmFiche ..> ServiceEquipe
+FrmMonActivite ..> RenduSynthese
+FrmEquipe ..> RenduSynthese
+FrmEquipe ..> RenduARevoir
 FrmMonActivite --> ServiceRapports
 FrmMonActivite ..> FrmCompteRendu : saisie directe
 FrmMonActivite *-- PanneauFiche
@@ -242,6 +314,15 @@ FabriqueServices ..> ServiceAuthentification : crée
 FabriqueServices ..> ServiceRapports : crée
 FabriqueServices ..> ServiceConsultation : crée
 FabriqueServices ..> ServiceActivite : crée
+FabriqueServices ..> ServiceEquipe : crée
+FabriqueServices ..> ServiceEchantillons : crée
+ServiceEquipe --> IActiviteDao
+ServiceEquipe --> IRapportDao
+ServiceEquipe --> IEquipeDao
+ServiceEquipe ..> Perimetres
+ServiceEchantillons --> IEchantillonDao
+ServiceEchantillons --> IEquipeDao
+ServiceEchantillons ..> Perimetres
 ServiceActivite --> IActiviteDao
 ServiceActivite --> IConsultationDao
 ServiceActivite ..> Periodicite
@@ -268,6 +349,12 @@ DaoOracle <|-- RapportDao
 DaoOracle <|-- ReferentielDao
 DaoOracle <|-- ConsultationDao
 DaoOracle <|-- ActiviteDao
+DaoOracle <|-- EquipeDao
+DaoOracle <|-- EchantillonDao
+EquipeDao ..|> IEquipeDao
+EchantillonDao ..|> IEchantillonDao
+DaoOracle ..> SqlPerimetre
+Perimetre --> TypePerimetre
 ActiviteDao ..|> IActiviteDao
 ConsultationDao ..|> IConsultationDao
 CollaborateurDao ..|> ICollaborateurDao

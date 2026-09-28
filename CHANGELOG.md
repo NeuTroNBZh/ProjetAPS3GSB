@@ -5,6 +5,18 @@ et chaque version livrée est marquée par un tag Git `vX.Y.Z`.
 
 ## [Non publié]
 
+## [0.6.0] — 2026-09-28
+
+### Ajouté
+- Module Délégué, « Ma région » (EX-30 à EX-35) et module Responsable, « Mon secteur » (EX-40, EX-41), construits sur la notion de périmètre (région ou secteur) :
+  - synthèse de l'équipe sur une période ; activité de chaque visiteur (visiteurs sans visite signalés) et détail d'un visiteur ;
+  - comptes-rendus validés de l'équipe, filtrables par visiteur et praticien, consultables en lecture seule (les brouillons restent privés) ;
+  - praticiens suivis par l'équipe à revoir, avec le visiteur qui les suit.
+- Échantillons (EX-33, EX-34) : contrôle de stock mensuel attribué / distribué avec dépassements signalés ; saisie, correction et suppression des dotations par le délégué pour les visiteurs de sa région ; consultation seule pour le responsable.
+
+### Modifié
+- Accès aux données : filtre commun par périmètre (collaborateur, région, secteur) réutilisé par l'activité, les comptes-rendus et les praticiens.
+
 ## [0.5.0] — 2026-09-28
 
 ### Ajouté
