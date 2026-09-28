@@ -279,6 +279,118 @@ Public Class AdministrationDao
     End Sub
 
     ' ------------------------------------------------------------------
+    ' Médicaments : composition, interactions, posologie
+    ' ------------------------------------------------------------------
+
+    Public Function ListerComposants() As List(Of ElementReferentiel) Implements IAdministrationDao.ListerComposants
+        Return ListerElements("Lecture des composants impossible.", "select cmp_code, cmp_libelle from COMPOSANT order by cmp_libelle")
+    End Function
+
+    Public Function ListerTypesIndividu() As List(Of ElementReferentiel) Implements IAdministrationDao.ListerTypesIndividu
+        ' Du plus âgé au plus jeune, comme sur la fiche médicament
+        Return ListerElements("Lecture des types d'individu impossible.",
+            "select tin_code, tin_libelle from TYPE_INDIVIDU
+              order by case tin_code when 'ADU' then 1 when 'JAD' then 2 when 'ENF' then 3
+                                     when 'JEN' then 4 when 'NOU' then 5 else 6 end, tin_libelle")
+    End Function
+
+    Public Function ListerPresentations() As List(Of ElementReferentiel) Implements IAdministrationDao.ListerPresentations
+        Return ListerElements("Lecture des présentations impossible.", "select pre_code, pre_libelle from PRESENTATION order by pre_libelle")
+    End Function
+
+    Public Function ListerDosages() As List(Of ElementReferentiel) Implements IAdministrationDao.ListerDosages
+        Return Lister("Lecture des dosages impossible.",
+                      "select dos_code, dos_quantite, dos_unite from DOSAGE order by dos_unite, dos_quantite", Nothing,
+                      Function(l) New ElementReferentiel() With {.Code = l.GetString(0), .Libelle = $"{l.GetDecimal(1):0.###} {l.GetString(2)}"})
+    End Function
+
+    Public Sub CreerComposant(code As String, libelle As String) Implements IAdministrationDao.CreerComposant
+        ExecuterMiseAJour("Création du composant impossible.",
+            "insert into COMPOSANT (cmp_code, cmp_libelle) values (:code, :libelle)",
+            Sub(cmd)
+                Parametre(cmd, "code", OracleDbType.Varchar2, code)
+                Parametre(cmd, "libelle", OracleDbType.Varchar2, libelle)
+            End Sub)
+    End Sub
+
+    Public Sub CreerDosage(code As String, quantite As Decimal, unite As String) Implements IAdministrationDao.CreerDosage
+        ExecuterMiseAJour("Création du dosage impossible.",
+            "insert into DOSAGE (dos_code, dos_quantite, dos_unite) values (:code, :quantite, :unite)",
+            Sub(cmd)
+                Parametre(cmd, "code", OracleDbType.Varchar2, code)
+                Parametre(cmd, "quantite", OracleDbType.Decimal, quantite)
+                Parametre(cmd, "unite", OracleDbType.Varchar2, unite)
+            End Sub)
+    End Sub
+
+    Public Sub AjouterComposition(depotLegal As String, codeComposant As String, quantite As Decimal, unite As String) Implements IAdministrationDao.AjouterComposition
+        ExecuterMiseAJour("Ajout du composant impossible.",
+            "insert into CONSTITUER (med_depot_legal, cmp_code, cst_quantite, cst_unite) values (:depot, :composant, :quantite, :unite)",
+            Sub(cmd)
+                Parametre(cmd, "depot", OracleDbType.Varchar2, depotLegal)
+                Parametre(cmd, "composant", OracleDbType.Varchar2, codeComposant)
+                Parametre(cmd, "quantite", OracleDbType.Decimal, quantite)
+                Parametre(cmd, "unite", OracleDbType.Varchar2, unite)
+            End Sub)
+    End Sub
+
+    Public Sub RetirerComposition(depotLegal As String, codeComposant As String) Implements IAdministrationDao.RetirerComposition
+        ExecuterMiseAJour("Retrait du composant impossible.",
+            "delete from CONSTITUER where med_depot_legal = :depot and cmp_code = :composant",
+            Sub(cmd)
+                Parametre(cmd, "depot", OracleDbType.Varchar2, depotLegal)
+                Parametre(cmd, "composant", OracleDbType.Varchar2, codeComposant)
+            End Sub)
+    End Sub
+
+    Public Sub AjouterInteraction(perturbateur As String, perturbe As String, description As String) Implements IAdministrationDao.AjouterInteraction
+        ExecuterMiseAJour("Ajout de l'interaction impossible.",
+            "insert into INTERAGIR (med_perturbateur, med_perturbe, itr_description) values (:perturbateur, :perturbe, :description)",
+            Sub(cmd)
+                Parametre(cmd, "perturbateur", OracleDbType.Varchar2, perturbateur)
+                Parametre(cmd, "perturbe", OracleDbType.Varchar2, perturbe)
+                Parametre(cmd, "description", OracleDbType.Varchar2, description)
+            End Sub)
+    End Sub
+
+    Public Sub RetirerInteraction(perturbateur As String, perturbe As String) Implements IAdministrationDao.RetirerInteraction
+        ExecuterMiseAJour("Retrait de l'interaction impossible.",
+            "delete from INTERAGIR where med_perturbateur = :perturbateur and med_perturbe = :perturbe",
+            Sub(cmd)
+                Parametre(cmd, "perturbateur", OracleDbType.Varchar2, perturbateur)
+                Parametre(cmd, "perturbe", OracleDbType.Varchar2, perturbe)
+            End Sub)
+    End Sub
+
+    Public Sub AjouterPosologie(depotLegal As String, codeTypeIndividu As String, codePresentation As String, codeDosage As String, texte As String) Implements IAdministrationDao.AjouterPosologie
+        ExecuterMiseAJour("Ajout de la posologie impossible.",
+            "insert into PRESCRIRE (med_depot_legal, tin_code, pre_code, dos_code, prs_posologie)
+             values (:depot, :individu, :presentation, :dosage, :texte)",
+            Sub(cmd)
+                ParametresPosologie(cmd, depotLegal, codeTypeIndividu, codePresentation, codeDosage)
+                Parametre(cmd, "texte", OracleDbType.Varchar2, texte)
+            End Sub)
+    End Sub
+
+    Public Sub RetirerPosologie(depotLegal As String, codeTypeIndividu As String, codePresentation As String, codeDosage As String) Implements IAdministrationDao.RetirerPosologie
+        ExecuterMiseAJour("Retrait de la posologie impossible.",
+            "delete from PRESCRIRE
+              where med_depot_legal = :depot and tin_code = :individu and pre_code = :presentation and dos_code = :dosage",
+            Sub(cmd) ParametresPosologie(cmd, depotLegal, codeTypeIndividu, codePresentation, codeDosage))
+    End Sub
+
+    Private Shared Sub ParametresPosologie(cmd As OracleCommand, depot As String, individu As String, presentation As String, dosage As String)
+        Parametre(cmd, "depot", OracleDbType.Varchar2, depot)
+        Parametre(cmd, "individu", OracleDbType.Varchar2, individu)
+        Parametre(cmd, "presentation", OracleDbType.Varchar2, presentation)
+        Parametre(cmd, "dosage", OracleDbType.Varchar2, dosage)
+    End Sub
+
+    Private Function ListerElements(message As String, sql As String) As List(Of ElementReferentiel)
+        Return Lister(message, sql, Nothing, Function(l) New ElementReferentiel() With {.Code = l.GetString(0), .Libelle = l.GetString(1)})
+    End Function
+
+    ' ------------------------------------------------------------------
     ' Journal
     ' ------------------------------------------------------------------
 
