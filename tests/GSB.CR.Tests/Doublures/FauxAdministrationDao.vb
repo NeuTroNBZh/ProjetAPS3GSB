@@ -107,6 +107,58 @@ Public Class FauxAdministrationDao
         Ecrire($"motif {code} {actif}")
     End Sub
 
+    Private Shared Function Elements(ParamArray codes As String()) As List(Of ElementReferentiel)
+        Return codes.Select(Function(c) New ElementReferentiel() With {.Code = c, .Libelle = c}).ToList()
+    End Function
+
+    Public Function ListerComposants() As List(Of ElementReferentiel) Implements IAdministrationDao.ListerComposants
+        Return Elements("IBUP", "PARA")
+    End Function
+
+    Public Function ListerTypesIndividu() As List(Of ElementReferentiel) Implements IAdministrationDao.ListerTypesIndividu
+        Return Elements("ADU", "ENF")
+    End Function
+
+    Public Function ListerPresentations() As List(Of ElementReferentiel) Implements IAdministrationDao.ListerPresentations
+        Return Elements("CP", "SIR")
+    End Function
+
+    Public Function ListerDosages() As List(Of ElementReferentiel) Implements IAdministrationDao.ListerDosages
+        Return Elements("400MG", "500MG")
+    End Function
+
+    Public Sub CreerComposant(code As String, libelle As String) Implements IAdministrationDao.CreerComposant
+        Ecrire($"composant {code} {libelle}")
+    End Sub
+
+    Public Sub CreerDosage(code As String, quantite As Decimal, unite As String) Implements IAdministrationDao.CreerDosage
+        Ecrire($"dosage {code} {quantite.ToString(Globalization.CultureInfo.InvariantCulture)} {unite}")
+    End Sub
+
+    Public Sub AjouterComposition(depotLegal As String, codeComposant As String, quantite As Decimal, unite As String) Implements IAdministrationDao.AjouterComposition
+        Ecrire($"composition {depotLegal} {codeComposant} {quantite.ToString(Globalization.CultureInfo.InvariantCulture)} {unite}")
+    End Sub
+
+    Public Sub RetirerComposition(depotLegal As String, codeComposant As String) Implements IAdministrationDao.RetirerComposition
+        Ecrire($"retirer composition {depotLegal} {codeComposant}")
+    End Sub
+
+    Public Sub AjouterInteraction(perturbateur As String, perturbe As String, description As String) Implements IAdministrationDao.AjouterInteraction
+        Ecrire($"interaction {perturbateur}>{perturbe} {description}")
+    End Sub
+
+    Public Sub RetirerInteraction(perturbateur As String, perturbe As String) Implements IAdministrationDao.RetirerInteraction
+        Ecrire($"retirer interaction {perturbateur}>{perturbe}")
+    End Sub
+
+    Public Sub AjouterPosologie(depotLegal As String, codeTypeIndividu As String, codePresentation As String, codeDosage As String, texte As String) Implements IAdministrationDao.AjouterPosologie
+        Ecrire($"posologie {depotLegal} {codeTypeIndividu} {codePresentation} {codeDosage} {texte}")
+    End Sub
+
+    Public Sub RetirerPosologie(depotLegal As String, codeTypeIndividu As String, codePresentation As String, codeDosage As String) Implements IAdministrationDao.RetirerPosologie
+        Ecrire($"retirer posologie {depotLegal} {codeTypeIndividu} {codePresentation} {codeDosage}")
+    End Sub
+
     Public Function ListerJournal(debut As Date, fin As Date, texte As String, echecsSeulement As Boolean, maximum As Integer) As List(Of EntreeJournal) Implements IAdministrationDao.ListerJournal
         Return New List(Of EntreeJournal)
     End Function
