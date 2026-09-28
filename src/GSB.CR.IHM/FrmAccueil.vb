@@ -117,6 +117,11 @@ Public Class FrmAccueil
                 End Using
                 ActualiserMessagesNonLus()
                 Return True
+            Case ModuleApplication.Administration
+                Using frm As New FrmAdministration(_fabrique.Administration(), _utilisateur)
+                    frm.ShowDialog(Me)
+                End Using
+                Return True
         End Select
         Return False
     End Function
